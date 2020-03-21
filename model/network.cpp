@@ -10,3 +10,14 @@ Network::~Network()
 {
 
 }
+
+
+int Network::getCenter()
+{
+    return center;
+}
+
+int Network::getEdgeCapacity()
+{
+    return edge_capacity;
+}

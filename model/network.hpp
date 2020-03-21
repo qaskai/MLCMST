@@ -2,6 +2,7 @@
 
 #include <vector>
 
+
 class Network
 {
     int center;
@@ -11,4 +12,7 @@ class Network
 public:
     Network(std::vector<std::vector<int>> costs, int center, int edge_capacity);
     ~Network();
+
+    int getCenter();
+    int getEdgeCapacity();
 };
