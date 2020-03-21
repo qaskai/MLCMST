@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "network.hpp"
+#include <model/network.hpp>
 
 
 class MultiLevelNetwork

@@ -1,4 +1,4 @@
-#include "multi_level_network.h"
+#include <model/multi_level_network.hpp>
 
 
 MultiLevelNetwork::MultiLevelNetwork(const std::vector<Network>& networks) : networks(networks)
