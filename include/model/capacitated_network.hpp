@@ -6,10 +6,10 @@
 class CapacitatedNetwork
 {
     int edge_capacity;
-    std::vector<std::vector<int>> costs;
+    std::vector<std::vector<double>> costs;
 
 public:
-    CapacitatedNetwork(int edge_capacity, std::vector<std::vector<int>> costs);
+    CapacitatedNetwork(int edge_capacity, std::vector<std::vector<double>> costs);
     ~CapacitatedNetwork();
 
     int getEdgeCapacity() const;

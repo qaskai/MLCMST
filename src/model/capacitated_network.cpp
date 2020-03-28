@@ -1,6 +1,6 @@
 #include <model/capacitated_network.hpp>
 
-CapacitatedNetwork::CapacitatedNetwork(int edge_capacity, std::vector<std::vector<int>> costs) :
+CapacitatedNetwork::CapacitatedNetwork(int edge_capacity, std::vector<std::vector<double>> costs) :
     edge_capacity(edge_capacity), costs(costs)
 {
     
