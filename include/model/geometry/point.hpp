@@ -1,6 +1,10 @@
 #pragma once
 
 
+namespace MLCMST {
+namespace model {
+namespace geometry {
+
 template <typename T>
 struct Point
 {
@@ -11,3 +15,7 @@ struct Point
     ~Point();
     
 };
+
+}
+}
+}

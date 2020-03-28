@@ -1,5 +1,5 @@
 file(
-    GLOB model_SRC
+    GLOB_RECURSE model_SRC
     "*.cpp"
 )
 

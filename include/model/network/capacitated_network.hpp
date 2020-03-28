@@ -3,6 +3,10 @@
 #include <vector>
 
 
+namespace MLCMST {
+namespace model {
+namespace network {
+
 class CapacitatedNetwork
 {
     int edge_capacity;
@@ -14,3 +18,7 @@ public:
 
     int getEdgeCapacity() const;
 };
+
+}
+}
+}

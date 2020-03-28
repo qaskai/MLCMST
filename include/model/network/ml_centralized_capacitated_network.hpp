@@ -2,8 +2,12 @@
 
 #include <vector>
 
-#include <model/capacitated_network.hpp>
+#include <model/network/capacitated_network.hpp>
 
+
+namespace MLCMST {
+namespace model {
+namespace network {
 
 class MLCentralizedCapacitatedNetwork
 {
@@ -17,3 +21,7 @@ public:
     ~MLCentralizedCapacitatedNetwork();
     
 };
+
+}
+}
+}
