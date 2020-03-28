@@ -1,0 +1,17 @@
+#pragma once
+
+#include <vector>
+
+#include <model/capacitated_network.hpp>
+
+
+class MLCentralizedCapacitatedNetwork
+{
+    int center;
+    std::vector<CapacitatedNetwork> networks;
+
+public:
+    MLCentralizedCapacitatedNetwork(int center, const std::vector<CapacitatedNetwork>& networks);
+    ~MLCentralizedCapacitatedNetwork();
+    
+};
