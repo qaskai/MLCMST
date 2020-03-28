@@ -3,4 +3,4 @@ file(
     "*.cpp"
 )
 
-add_library(model_lib ${model_SRC})
+add_library(model ${model_SRC})
