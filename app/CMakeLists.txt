@@ -1,2 +1,2 @@
 add_executable(app app.cpp)
-target_link_libraries(app PUBLIC model)
+target_link_libraries(app generation)
