@@ -6,8 +6,8 @@ namespace MLCMST {
 namespace model {
 namespace network {
 
-CapacitatedNetwork::CapacitatedNetwork(int edge_capacity, std::vector<std::vector<double>> costs) :
-    edge_capacity(edge_capacity), costs(costs)
+CapacitatedNetwork::CapacitatedNetwork(const std::vector<std::vector<double>>& costs, int edge_capacity) :
+    Network(costs), edge_capacity(edge_capacity)
 {
     
 }

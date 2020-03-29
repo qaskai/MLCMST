@@ -2,18 +2,18 @@
 
 #include <vector>
 
+#include <model/network/network.hpp>
 
 namespace MLCMST {
 namespace model {
 namespace network {
 
-class CapacitatedNetwork
+class CapacitatedNetwork : public Network
 {
     int edge_capacity;
-    std::vector<std::vector<double>> costs;
 
 public:
-    CapacitatedNetwork(int edge_capacity, std::vector<std::vector<double>> costs);
+    CapacitatedNetwork(const std::vector<std::vector<double>>& costs, int edge_capacity);
     ~CapacitatedNetwork();
 
     int getEdgeCapacity() const;
