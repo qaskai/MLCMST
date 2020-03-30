@@ -1,7 +1,6 @@
 #pragma once
 
-#include <random>
-#include <functional>
+#include <memory>
 
 #include <util/generator.hpp>
 #include <geometry/point.hpp>
@@ -14,15 +13,12 @@ class RealPointGenerator : public util::Generator<Point<double> >
 {
 
 private:
-    double from, to;
-
-    std::default_random_engine random_generator;
-    std::uniform_real_distribution<double> random_distribution;
-    std::function<double(void)> draw_random_number;
+    std::unique_ptr< util::Generator<double> > number_generator;
 
 
 public:
     RealPointGenerator(double from = -10.0, double to = 10.0);
+    RealPointGenerator(std::unique_ptr< util::Generator<double> > number_generator);
     ~RealPointGenerator();
     
     Point<double> generate();

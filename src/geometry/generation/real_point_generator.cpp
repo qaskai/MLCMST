@@ -1,21 +1,22 @@
 #include <geometry/generation/real_point_generator.hpp>
 
-#include <cassert>
-#include <functional>
-#include <random>
+#include <util/number/real_number_generator.hpp>
 
 namespace MLCMST {
 namespace geometry {
 namespace generation {
 
 RealPointGenerator::RealPointGenerator(double from, double to)
-    : from(from), to(to)
+    : RealPointGenerator(std::make_unique<util::number::RealNumberGenerator>(from, to))
 {
-    assert(("Interval start should be smaller than end", from < to));
+    
+}
 
-    random_generator = std::default_random_engine();
-    random_distribution = std::uniform_real_distribution<double>(from, to);
-    draw_random_number = std::bind( random_distribution, random_generator );
+RealPointGenerator::RealPointGenerator(
+    std::unique_ptr< util::Generator<double> > number_generator
+    ) : number_generator(std::move(number_generator))
+{
+
 }
 
 RealPointGenerator::~RealPointGenerator()
@@ -25,7 +26,7 @@ RealPointGenerator::~RealPointGenerator()
 
 Point<double> RealPointGenerator::generate()
 {
-    return Point<double>( draw_random_number(), draw_random_number() );
+    return Point<double>( number_generator->generate(), number_generator->generate() );
 }
 
 }
