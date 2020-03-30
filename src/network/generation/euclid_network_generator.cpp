@@ -10,14 +10,14 @@ namespace network {
 namespace generation {
 
 EuclidNetworkGenerator::EuclidNetworkGenerator(int N)
-    : EuclidNetworkGenerator(N, std::make_shared<geometry::generation::RealPointGenerator>())
+    : EuclidNetworkGenerator(N, std::make_unique<geometry::generation::RealPointGenerator>())
 {
 
 }
 
 EuclidNetworkGenerator::EuclidNetworkGenerator(
-    int N, shared_ptr<Generator<Point<double>>> point_generator
-    ) : N(N), point_generator(point_generator)
+    int N, unique_ptr<Generator<Point<double>>> point_generator
+    ) : N(N), point_generator(std::move(point_generator))
 {
 
 }
