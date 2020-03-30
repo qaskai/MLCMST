@@ -9,6 +9,7 @@ namespace generation {
 namespace geometry {
 
 RealPointGenerator::RealPointGenerator(double from, double to)
+    : from(from), to(to)
 {
     assert(("Interval start should be smaller than end", from < to));
 
