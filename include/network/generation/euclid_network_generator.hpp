@@ -13,23 +13,20 @@ namespace generation {
 
 using geometry::Point;
 
-using std::unique_ptr;
 using std::vector;
 
 class EuclidNetworkGenerator : public util::Generator<Network>
 {
 
 private:
-    int N;
-    unique_ptr<util::Generator<Point<double>>> point_generator;
+    std::unique_ptr< util::Generator<vector<Point<double>>> > point_set_generator;
 
     double eulcidDistance(const Point<double>& p, const Point<double>& q);
-    vector<Point<double>> generatePoints(int N);
     vector<vector<double>> createDistanceMatrix(const vector<Point<double>>& points);
 
 public:
     EuclidNetworkGenerator(int N);
-    EuclidNetworkGenerator(int N, unique_ptr<util::Generator<Point<double>>> point_generator);
+    EuclidNetworkGenerator(std::unique_ptr< util::Generator<vector<Point<double>>> > point_set_generator);
     ~EuclidNetworkGenerator();
     
     Network generate();
