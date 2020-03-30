@@ -14,6 +14,7 @@ public:
     Network(const std::vector<std::vector<double>>& costs);
     virtual ~Network();
 
+    int getSize() const;
     double& edgeCost(int v, int w);
     const double& edgeCost(int v, int w) const;
 

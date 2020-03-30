@@ -13,6 +13,11 @@ Network::~Network()
 
 }
 
+int Network::getSize() const
+{
+    return costs.size();
+}
+
 double& Network::edgeCost(int v, int w)
 {
     return costs[v][w];
