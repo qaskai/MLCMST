@@ -5,7 +5,7 @@
 
 #include <network/network.hpp>
 #include <geometry/point.hpp>
-#include <generator.hpp>
+#include <util/generator.hpp>
 
 namespace MLCMST {
 namespace network {
@@ -16,12 +16,12 @@ using geometry::Point;
 using std::unique_ptr;
 using std::vector;
 
-class EuclidNetworkGenerator : public Generator<Network>
+class EuclidNetworkGenerator : public util::Generator<Network>
 {
 
 private:
     int N;
-    unique_ptr<Generator<Point<double>>> point_generator;
+    unique_ptr<util::Generator<Point<double>>> point_generator;
 
     double eulcidDistance(const Point<double>& p, const Point<double>& q);
     vector<Point<double>> generatePoints(int N);
@@ -29,7 +29,7 @@ private:
 
 public:
     EuclidNetworkGenerator(int N);
-    EuclidNetworkGenerator(int N, unique_ptr<Generator<Point<double>>> point_generator);
+    EuclidNetworkGenerator(int N, unique_ptr<util::Generator<Point<double>>> point_generator);
     ~EuclidNetworkGenerator();
     
     Network generate();

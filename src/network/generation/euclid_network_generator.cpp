@@ -16,7 +16,7 @@ EuclidNetworkGenerator::EuclidNetworkGenerator(int N)
 }
 
 EuclidNetworkGenerator::EuclidNetworkGenerator(
-    int N, unique_ptr<Generator<Point<double>>> point_generator
+    int N, unique_ptr<util::Generator<Point<double>>> point_generator
     ) : N(N), point_generator(std::move(point_generator))
 {
 
