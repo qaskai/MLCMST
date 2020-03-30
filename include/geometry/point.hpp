@@ -2,7 +2,6 @@
 
 
 namespace MLCMST {
-namespace model {
 namespace geometry {
 
 template <typename T>
@@ -36,6 +35,5 @@ Point<T>::~Point()
 
 }
 
-}
 }
 }

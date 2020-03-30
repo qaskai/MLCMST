@@ -1,16 +1,16 @@
-#include <generation/network/euclid_network_generator.hpp>
+#include <network/generation/euclid_network_generator.hpp>
 
 #include <cmath>
 #include <set>
 
-#include <generation/geometry/real_point_generator.hpp>
+#include <geometry/generation/real_point_generator.hpp>
 
 namespace MLCMST {
-namespace generation {
 namespace network {
+namespace generation {
 
 EuclidNetworkGenerator::EuclidNetworkGenerator(int N)
-    : EuclidNetworkGenerator(N, std::make_shared<geometry::RealPointGenerator>())
+    : EuclidNetworkGenerator(N, std::make_shared<geometry::generation::RealPointGenerator>())
 {
 
 }

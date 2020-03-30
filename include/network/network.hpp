@@ -3,7 +3,6 @@
 #include <vector>
 
 namespace MLCMST {
-namespace model {
 namespace network {
 
 class Network
@@ -20,6 +19,5 @@ public:
 
 };
 
-}
 }
 }

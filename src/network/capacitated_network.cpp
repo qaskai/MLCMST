@@ -1,9 +1,8 @@
-#include <model/network/capacitated_network.hpp>
+#include <network/capacitated_network.hpp>
 
 
 
 namespace MLCMST {
-namespace model {
 namespace network {
 
 CapacitatedNetwork::CapacitatedNetwork(const std::vector<std::vector<double>>& costs, int edge_capacity) :
@@ -23,6 +22,5 @@ int CapacitatedNetwork::getEdgeCapacity() const
     return edge_capacity;
 }
 
-}
 }
 }

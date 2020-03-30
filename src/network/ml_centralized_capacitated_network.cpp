@@ -1,9 +1,8 @@
-#include <model/network/ml_centralized_capacitated_network.hpp>
+#include <network/ml_centralized_capacitated_network.hpp>
 
 
 
 namespace MLCMST {
-namespace model {
 namespace network {
 
 MLCentralizedCapacitatedNetwork::MLCentralizedCapacitatedNetwork(
@@ -21,6 +20,5 @@ MLCentralizedCapacitatedNetwork::~MLCentralizedCapacitatedNetwork()
 
 }
 
-}
 }
 }

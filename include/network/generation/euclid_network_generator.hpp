@@ -3,16 +3,15 @@
 #include <memory>
 #include <vector>
 
-#include <model/network/network.hpp>
-#include <model/geometry/point.hpp>
-#include <generation/generator.hpp>
+#include <network/network.hpp>
+#include <geometry/point.hpp>
+#include <generator.hpp>
 
 namespace MLCMST {
-namespace generation {
 namespace network {
+namespace generation {
 
-using model::network::Network;
-using model::geometry::Point;
+using geometry::Point;
 
 using std::shared_ptr;
 using std::vector;

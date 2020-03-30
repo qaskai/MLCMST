@@ -2,10 +2,9 @@
 
 #include <vector>
 
-#include <model/network/network.hpp>
+#include <network/network.hpp>
 
 namespace MLCMST {
-namespace model {
 namespace network {
 
 class CapacitatedNetwork : public Network
@@ -19,6 +18,5 @@ public:
     int getEdgeCapacity() const;
 };
 
-}
 }
 }

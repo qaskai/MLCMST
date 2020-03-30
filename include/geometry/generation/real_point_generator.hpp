@@ -3,14 +3,14 @@
 #include <random>
 #include <functional>
 
-#include <generation/generator.hpp>
-#include <model/geometry/point.hpp>
+#include <generator.hpp>
+#include <geometry/point.hpp>
 
 namespace MLCMST {
-namespace generation {
 namespace geometry {
+namespace generation {
 
-class RealPointGenerator : public Generator<model::geometry::Point<double> >
+class RealPointGenerator : public Generator<Point<double> >
 {
 
 private:
@@ -25,7 +25,7 @@ public:
     RealPointGenerator(double from = -10.0, double to = 10.0);
     ~RealPointGenerator();
     
-    model::geometry::Point<double> generate();
+    Point<double> generate();
     
 };
 

@@ -1,7 +1,6 @@
-#include <model/network/network.hpp>
+#include <network/network.hpp>
 
 namespace MLCMST {
-namespace model {
 namespace network {
 
 Network::Network(const std::vector<std::vector<double>>& costs) : costs(costs)
@@ -24,6 +23,5 @@ const double& Network::edgeCost(int v, int w) const
     return costs[v][w];
 }
 
-}
 }
 }

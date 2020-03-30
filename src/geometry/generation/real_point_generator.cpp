@@ -1,12 +1,12 @@
-#include <generation/geometry/real_point_generator.hpp>
+#include <geometry/generation/real_point_generator.hpp>
 
 #include <cassert>
 #include <functional>
 #include <random>
 
 namespace MLCMST {
-namespace generation {
 namespace geometry {
+namespace generation {
 
 RealPointGenerator::RealPointGenerator(double from, double to)
     : from(from), to(to)
@@ -23,9 +23,9 @@ RealPointGenerator::~RealPointGenerator()
 
 }
 
-model::geometry::Point<double> RealPointGenerator::generate()
+Point<double> RealPointGenerator::generate()
 {
-    return model::geometry::Point<double>( draw_random_number(), draw_random_number() );
+    return Point<double>( draw_random_number(), draw_random_number() );
 }
 
 }
