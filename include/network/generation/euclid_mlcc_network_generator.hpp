@@ -5,7 +5,7 @@
 
 #include <geometry/point.hpp>
 #include <network/network.hpp>
-#include <network/ml_centralized_capacitated_network.hpp>
+#include <network/mlcc_network.hpp>
 #include <network/generation/level.hpp>
 #include <util/generator.hpp>
 
@@ -18,7 +18,7 @@ using util::Generator;
 
 using std::vector;
 
-class EuclidMLCentralizedCapacitatedNetworkGenerator : public Generator<MLCentralizedCapacitatedNetwork>
+class EuclidMLCCNetworkGenerator : public Generator<MLCCNetwork>
 {
 private:
     std::vector<Level> levels;
@@ -30,14 +30,14 @@ private:
     vector<vector<double>> break_up(int N, const vector<double>& v);
 
 public:
-    EuclidMLCentralizedCapacitatedNetworkGenerator(int N, const std::vector<Level>& levels);
-    EuclidMLCentralizedCapacitatedNetworkGenerator(
+    EuclidMLCCNetworkGenerator(int N, const std::vector<Level>& levels);
+    EuclidMLCCNetworkGenerator(
         const std::vector<Level>& levels,
         std::unique_ptr< Generator<std::vector<Point<double>>> > point_set_generator
         );
-    ~EuclidMLCentralizedCapacitatedNetworkGenerator();
+    ~EuclidMLCCNetworkGenerator();
     
-    MLCentralizedCapacitatedNetwork generate();
+    MLCCNetwork generate();
 };
 
 }

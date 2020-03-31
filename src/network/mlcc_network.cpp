@@ -1,11 +1,11 @@
-#include <network/ml_centralized_capacitated_network.hpp>
+#include <network/mlcc_network.hpp>
 
 
 
 namespace MLCMST {
 namespace network {
 
-MLCentralizedCapacitatedNetwork::MLCentralizedCapacitatedNetwork(
+MLCCNetwork::MLCCNetwork(
     int center,
     const std::vector<CapacitatedNetwork>& networks,
     const std::vector<int>& demands
@@ -15,7 +15,7 @@ MLCentralizedCapacitatedNetwork::MLCentralizedCapacitatedNetwork(
 }
 
 
-MLCentralizedCapacitatedNetwork::~MLCentralizedCapacitatedNetwork()
+MLCCNetwork::~MLCCNetwork()
 {
 
 }
