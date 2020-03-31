@@ -18,6 +18,11 @@ int Network::getSize() const
     return costs.size();
 }
 
+const std::vector<std::vector<double>>& Network::getCosts() const
+{
+    return costs;
+}
+
 double& Network::edgeCost(int v, int w)
 {
     return costs[v][w];
