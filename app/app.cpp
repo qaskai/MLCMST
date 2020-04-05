@@ -11,7 +11,7 @@ int main(int argc, char const *argv[])
     auto p = g.generate();
     std::cout << p.x << " " << p.y << std::endl;
 
-    MLCMST::network::CapacitatedNetwork qq({ {1.0, 2.3}, {2.3, 1.2}}, 3);
+    MLCMST::network::Network qq({ {1.0, 2.3}, {2.3, 1.2}});
     std::cout << qq.edgeCost(0,1) << std::endl;
     return 0;
 }

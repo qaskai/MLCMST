@@ -7,7 +7,7 @@ namespace network {
 
 class Network
 {
-protected:
+private:
     std::vector<std::vector<double>> costs;
 
 public:

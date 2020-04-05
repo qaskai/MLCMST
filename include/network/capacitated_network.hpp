@@ -7,12 +7,13 @@
 namespace MLCMST {
 namespace network {
 
-class CapacitatedNetwork : public Network
+class CapacitatedNetwork
 {
+    Network network;
     int edge_capacity;
 
 public:
-    CapacitatedNetwork(const std::vector<std::vector<double>>& costs, int edge_capacity);
+    CapacitatedNetwork(const Network& network, int edge_capacity);
     ~CapacitatedNetwork();
 
     int getEdgeCapacity() const;

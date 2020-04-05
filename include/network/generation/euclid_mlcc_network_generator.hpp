@@ -22,7 +22,6 @@ class EuclidMLCCNetworkGenerator : public Generator<MLCCNetwork>
 {
 private:
     std::vector<Level> levels;
-    // std::unique_ptr< Generator<std::vector<Point<double>>> > point_set_generator;
     std::unique_ptr< Generator<Network> > network_generator;
 
     vector<double> flatten(const vector<vector<double>>& v);
@@ -34,7 +33,7 @@ public:
     EuclidMLCCNetworkGenerator(
         const std::vector<Level>& levels,
         std::unique_ptr< Generator<std::vector<Point<double>>> > point_set_generator
-        );
+    );
     ~EuclidMLCCNetworkGenerator();
     
     MLCCNetwork generate();
