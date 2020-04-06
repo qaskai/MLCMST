@@ -21,9 +21,6 @@ class EuclidNetworkGenerator : public util::Generator<Network>
 private:
     std::unique_ptr< util::Generator<vector<Point<double>>> > point_set_generator;
 
-    double eulcidDistance(const Point<double>& p, const Point<double>& q);
-    vector<vector<double>> createDistanceMatrix(const vector<Point<double>>& points);
-
 public:
     EuclidNetworkGenerator(int N);
     EuclidNetworkGenerator(std::unique_ptr< util::Generator<vector<Point<double>>> > point_set_generator);
