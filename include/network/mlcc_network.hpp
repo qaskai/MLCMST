@@ -24,6 +24,7 @@ public:
         int center, const std::vector<CapacitatedNetwork>& networks, const std::vector<int>& demands);
     ~MLCCNetwork();
     
+    int getSize() const;
 };
 
 }

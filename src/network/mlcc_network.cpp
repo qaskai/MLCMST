@@ -20,5 +20,10 @@ MLCCNetwork::~MLCCNetwork()
 
 }
 
+int MLCCNetwork::getSize() const
+{
+    return networks[0].getSize();
+}
+
 }
 }

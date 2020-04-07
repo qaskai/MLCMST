@@ -17,6 +17,11 @@ CapacitatedNetwork::~CapacitatedNetwork()
 }
 
 
+int CapacitatedNetwork::getSize() const
+{
+    return network.getSize();
+}
+
 int CapacitatedNetwork::getEdgeCapacity() const
 {
     return edge_capacity;

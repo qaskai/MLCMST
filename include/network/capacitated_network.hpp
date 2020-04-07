@@ -16,6 +16,7 @@ public:
     CapacitatedNetwork(const Network& network, int edge_capacity);
     ~CapacitatedNetwork();
 
+    int getSize() const;
     int getEdgeCapacity() const;
     const Network& getNetwork() const;
 };
