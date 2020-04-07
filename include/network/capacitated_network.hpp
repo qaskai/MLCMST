@@ -17,6 +17,7 @@ public:
     ~CapacitatedNetwork();
 
     int getEdgeCapacity() const;
+    const Network& getNetwork() const;
 };
 
 }

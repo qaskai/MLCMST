@@ -22,5 +22,10 @@ int CapacitatedNetwork::getEdgeCapacity() const
     return edge_capacity;
 }
 
+const Network& CapacitatedNetwork::getNetwork() const
+{
+    return network;
+}
+
 }
 }
