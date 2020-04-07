@@ -9,7 +9,7 @@ namespace MLCMST {
 namespace util {
 namespace number {
 
-class IntGenerator : public Generator<int>
+class IntGenerator final : public Generator<int>
 {
 private:
     int from, to;

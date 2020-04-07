@@ -15,7 +15,7 @@ using geometry::Point;
 
 using std::vector;
 
-class EuclidNetworkGenerator : public util::Generator<Network>
+class EuclidNetworkGenerator final : public util::Generator<Network>
 {
 
 private:

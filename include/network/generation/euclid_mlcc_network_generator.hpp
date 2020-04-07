@@ -19,7 +19,7 @@ using util::Generator;
 
 using std::vector;
 
-class EuclidMLCCNetworkGenerator : public Generator<MLCCNetwork>
+class EuclidMLCCNetworkGenerator final : public Generator<MLCCNetwork>
 {
 private:
     CenterPosition center_position;

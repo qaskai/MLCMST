@@ -13,7 +13,7 @@ namespace network {
  * MLCC stands for Multi Level Centralized Capacitated
  * 
  */
-class MLCCNetwork
+class MLCCNetwork final
 {
     int center;
     std::vector<CapacitatedNetwork> networks;

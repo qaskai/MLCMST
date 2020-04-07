@@ -12,7 +12,7 @@ namespace network {
 namespace serialization {
 
 
-class CapacitatedNetworkSerializer : public util::Serializer<CapacitatedNetwork>
+class CapacitatedNetworkSerializer final : public util::Serializer<CapacitatedNetwork>
 {
 private:
     std::shared_ptr< util::Serializer<Network> > network_serializer;
@@ -28,7 +28,7 @@ public:
 
 
 
-class CapacitatedNetworkDeserializer : public util::Deserializer<CapacitatedNetwork>
+class CapacitatedNetworkDeserializer final : public util::Deserializer<CapacitatedNetwork>
 {
     std::shared_ptr< util::Deserializer<Network> > network_deserializer;
 

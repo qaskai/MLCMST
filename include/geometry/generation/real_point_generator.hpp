@@ -9,7 +9,7 @@ namespace MLCMST {
 namespace geometry {
 namespace generation {
 
-class RealPointGenerator : public util::Generator<Point<double> >
+class RealPointGenerator final : public util::Generator<Point<double> >
 {
 
 private:

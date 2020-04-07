@@ -5,7 +5,7 @@
 namespace MLCMST {
 namespace network {
 
-class Network
+class Network final
 {
 private:
     std::vector<std::vector<double>> costs;

@@ -9,7 +9,7 @@ namespace MLCMST {
 namespace util {
 namespace number {
 
-class RealNumberGenerator : public Generator<double>
+class RealNumberGenerator final : public Generator<double>
 {
 
 private:

@@ -5,7 +5,7 @@ namespace MLCMST {
 namespace network {
 namespace generation {
 
-struct Level
+struct Level final
 {
     int capacity;
     double cost_multiplier;

@@ -9,7 +9,7 @@ namespace MLCMST {
 namespace network {
 namespace serialization {
 
-class NetworkSerializer : public util::Serializer<Network>
+class NetworkSerializer final : public util::Serializer<Network>
 {
 public:
     NetworkSerializer();
@@ -21,7 +21,7 @@ public:
 
 
 
-class NetworkDeserializer : public util::Deserializer<Network>
+class NetworkDeserializer final : public util::Deserializer<Network>
 {
 public:
     NetworkDeserializer();

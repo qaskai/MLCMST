@@ -12,7 +12,7 @@ namespace MLCMST {
 namespace geometry {
 namespace generation {
 
-class RealPointSetGenerator : public util::Generator<std::vector<Point<double>> >
+class RealPointSetGenerator final : public util::Generator<std::vector<Point<double>> >
 {
 
 private:

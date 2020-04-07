@@ -7,7 +7,7 @@
 namespace MLCMST {
 namespace network {
 
-class CapacitatedNetwork
+class CapacitatedNetwork final
 {
     Network network;
     int edge_capacity;

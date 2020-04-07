@@ -5,7 +5,7 @@ namespace MLCMST {
 namespace geometry {
 
 template <typename T>
-struct Point
+struct Point final
 {
     T x, y;
 

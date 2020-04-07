@@ -7,7 +7,7 @@
 namespace MLCMST {
 namespace network {
 
-class MLCMST
+class MLCMST final
 {
 private:
     const MLCCNetwork& network;
