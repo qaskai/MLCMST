@@ -9,7 +9,7 @@ namespace serialization {
 // ************ CapacitatedNetworkSerializer ************ //
 
 CapacitatedNetworkSerializer::CapacitatedNetworkSerializer()
-:   CapacitatedNetworkSerializer(std::make_shared<NetworkSerializer>())
+    : CapacitatedNetworkSerializer(std::make_shared<NetworkSerializer>())
 {
 
 }
@@ -17,7 +17,7 @@ CapacitatedNetworkSerializer::CapacitatedNetworkSerializer()
 CapacitatedNetworkSerializer::CapacitatedNetworkSerializer(
     std::shared_ptr< util::Serializer<Network> > network_serializer
 )
-:   network_serializer(network_serializer)
+    : network_serializer(network_serializer)
 {
 
 }
@@ -39,7 +39,7 @@ void CapacitatedNetworkSerializer::serialize(const CapacitatedNetwork& network, 
 
 
 CapacitatedNetworkDeserializer::CapacitatedNetworkDeserializer()
-:   CapacitatedNetworkDeserializer(std::make_shared<NetworkDeserializer>())
+    : CapacitatedNetworkDeserializer(std::make_shared<NetworkDeserializer>())
 {
 
 }
@@ -47,7 +47,7 @@ CapacitatedNetworkDeserializer::CapacitatedNetworkDeserializer()
 CapacitatedNetworkDeserializer::CapacitatedNetworkDeserializer(
     std::shared_ptr< util::Deserializer<Network> > network_deserializer
 )
-:   network_deserializer(network_deserializer)
+    : network_deserializer(network_deserializer)
 {
 
 }

@@ -9,7 +9,8 @@ MLCCNetwork::MLCCNetwork(
     int center,
     const std::vector<CapacitatedNetwork>& networks,
     const std::vector<int>& demands
-) : center(center), networks(networks), demands(demands)
+)
+    : center(center), networks(networks), demands(demands)
 {
 
 }

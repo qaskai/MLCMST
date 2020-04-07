@@ -16,7 +16,8 @@ RealPointSetGenerator::RealPointSetGenerator(int N, double from, double to)
 
 RealPointSetGenerator::RealPointSetGenerator(
     int N, std::unique_ptr<util::Generator<Point<double>>> point_generator
-    ) : N(N), point_generator(std::move(point_generator))
+)
+    : N(N), point_generator(std::move(point_generator))
 {
 
 }

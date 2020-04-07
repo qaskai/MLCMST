@@ -14,9 +14,10 @@ namespace generation {
 EuclidMLCCNetworkGenerator::EuclidMLCCNetworkGenerator(
     int N, CenterPosition center_position, const std::vector<Level>& levels
 ) 
-: EuclidMLCCNetworkGenerator(
-    center_position, levels,
-    std::make_unique< geometry::generation::RealPointSetGenerator >(N))
+    : EuclidMLCCNetworkGenerator(
+        center_position, levels,
+        std::make_unique< geometry::generation::RealPointSetGenerator >(N)
+    )
 {
 
 }
@@ -26,7 +27,7 @@ EuclidMLCCNetworkGenerator::EuclidMLCCNetworkGenerator(
     const std::vector<Level>& levels,
     std::unique_ptr< Generator<std::vector<Point<double>>> > point_set_generator
 )
-: center_position(center_position), levels(levels), point_set_generator(std::move(point_set_generator))
+    : center_position(center_position), levels(levels), point_set_generator(std::move(point_set_generator))
 {
 
 }
