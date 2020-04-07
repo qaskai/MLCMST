@@ -1,15 +1,15 @@
 #pragma once
 
 #include <network/network.hpp>
-#include <util/serializer.hpp>
-#include <util/deserializer.hpp>
+#include <serializer.hpp>
+#include <deserializer.hpp>
 
 
 namespace MLCMST {
 namespace network {
 namespace serialization {
 
-class NetworkSerializer final : public util::Serializer<Network>
+class NetworkSerializer final : public Serializer<Network>
 {
 public:
     NetworkSerializer();
@@ -21,7 +21,7 @@ public:
 
 
 
-class NetworkDeserializer final : public util::Deserializer<Network>
+class NetworkDeserializer final : public Deserializer<Network>
 {
 public:
     NetworkDeserializer();

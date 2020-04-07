@@ -1,15 +1,15 @@
 #pragma once
 
 #include <geometry/point.hpp>
-#include <util/serializer.hpp>
-#include <util/deserializer.hpp>
+#include <serializer.hpp>
+#include <deserializer.hpp>
 
 namespace MLCMST {
 namespace geometry {
 namespace serialization {
 
 template<typename T>
-class PointSerializer final : util::Serializer<Point<T>>
+class PointSerializer final : Serializer<Point<T>>
 {
 public:
     PointSerializer() = default;
@@ -20,7 +20,7 @@ public:
 
 
 template<typename T>
-class PointDeserializer final : util::Deserializer<Point<T>>
+class PointDeserializer final : Deserializer<Point<T>>
 {
 public:
     PointDeserializer() = default;

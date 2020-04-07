@@ -8,14 +8,13 @@
 #include <network/mlcc_network.hpp>
 #include <network/generation/center_position.hpp>
 #include <network/generation/level.hpp>
-#include <util/generator.hpp>
+#include <generator.hpp>
 
 namespace MLCMST {
 namespace network {
 namespace generation {
 
 using geometry::Point;
-using util::Generator;
 
 using std::vector;
 
@@ -24,7 +23,7 @@ class EuclidMLCCNetworkGenerator final : public Generator<MLCCNetwork>
 private:
     CenterPosition center_position;
     std::vector<Level> levels;
-    std::unique_ptr< util::Generator<vector<Point<double>>> > point_set_generator;
+    std::unique_ptr< Generator<vector<Point<double>>> > point_set_generator;
 
     vector<double> flatten(const vector<vector<double>>& v);
     vector<double> multiply(vector<double> v, double scalar);

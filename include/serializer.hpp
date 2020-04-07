@@ -3,7 +3,6 @@
 #include <ostream>
 
 namespace MLCMST {
-namespace util {
 
 template <typename T>
 class Serializer
@@ -15,5 +14,4 @@ public:
 
 };
 
-}
 }

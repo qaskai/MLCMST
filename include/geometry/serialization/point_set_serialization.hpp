@@ -4,22 +4,22 @@
 #include <memory>
 
 #include <geometry/serialization/point_serialization.hpp>
-#include <util/serializer.hpp>
-#include <util/deserializer.hpp>
+#include <serializer.hpp>
+#include <deserializer.hpp>
 
 namespace MLCMST {
 namespace geometry {
 namespace serialization {
 
 template<typename T>
-class PointSetSerializer final : util::Serializer< std::vector<Point<T>> >
+class PointSetSerializer final : Serializer< std::vector<Point<T>> >
 {
 private:
-    std::shared_ptr< util::Serializer<Point<T>> > point_serializer;
+    std::shared_ptr< Serializer<Point<T>> > point_serializer;
 
 public:
     PointSetSerializer();
-    PointSetSerializer(std::shared_ptr< util::Serializer<Point<T>> > point_serializer);
+    PointSetSerializer(std::shared_ptr< Serializer<Point<T>> > point_serializer);
     ~PointSetSerializer() = default;
     
     void serialize(const std::vector<Point<T>>& points, std::ostream& stream);
@@ -27,14 +27,14 @@ public:
 
 
 template<typename T>
-class PointSetDeserializer final : util::Deserializer< std::vector<Point<T>> >
+class PointSetDeserializer final : Deserializer< std::vector<Point<T>> >
 {
 private:
-    std::shared_ptr< util::Deserializer<Point<T>> > point_deserializer;
+    std::shared_ptr< Deserializer<Point<T>> > point_deserializer;
 
 public:
     PointSetDeserializer();
-    PointSetDeserializer(std::shared_ptr< util::Deserializer<Point<T>> > point_deserializer);
+    PointSetDeserializer(std::shared_ptr< Deserializer<Point<T>> > point_deserializer);
     ~PointSetDeserializer() = default;
     
     std::vector<Point<T>> deserialize(std::istream& stream);
@@ -52,7 +52,7 @@ PointSetSerializer<T>::PointSetSerializer()
 
 template<typename T>
 PointSetSerializer<T>::PointSetSerializer(
-    std::shared_ptr< util::Serializer<Point<T>> > point_serializer
+    std::shared_ptr< Serializer<Point<T>> > point_serializer
 )
     : point_serializer(point_serializer)
 {
@@ -81,7 +81,7 @@ PointSetDeserializer<T>::PointSetDeserializer()
 
 template<typename T>
 PointSetDeserializer<T>::PointSetDeserializer(
-    std::shared_ptr< util::Deserializer<Point<T>> > point_deserializer
+    std::shared_ptr< Deserializer<Point<T>> > point_deserializer
 )
     : point_deserializer(point_deserializer)
 {

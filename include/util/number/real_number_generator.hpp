@@ -3,7 +3,7 @@
 #include <random>
 #include <functional>
 
-#include <util/generator.hpp>
+#include <generator.hpp>
 
 namespace MLCMST {
 namespace util {

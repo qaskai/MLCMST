@@ -15,7 +15,7 @@ CapacitatedNetworkSerializer::CapacitatedNetworkSerializer()
 }
 
 CapacitatedNetworkSerializer::CapacitatedNetworkSerializer(
-    std::shared_ptr< util::Serializer<Network> > network_serializer
+    std::shared_ptr< Serializer<Network> > network_serializer
 )
     : network_serializer(network_serializer)
 {
@@ -45,7 +45,7 @@ CapacitatedNetworkDeserializer::CapacitatedNetworkDeserializer()
 }
 
 CapacitatedNetworkDeserializer::CapacitatedNetworkDeserializer(
-    std::shared_ptr< util::Deserializer<Network> > network_deserializer
+    std::shared_ptr< Deserializer<Network> > network_deserializer
 )
     : network_deserializer(network_deserializer)
 {
