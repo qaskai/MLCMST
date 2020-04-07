@@ -16,6 +16,8 @@ struct Point
 };
 
 
+// *********** IMPLEMENTATION *********** //
+
 template <typename T>
 Point<T>::Point()
 {
