@@ -25,6 +25,11 @@ public:
     ~MLCCNetwork();
     
     int getSize() const;
+    int getCenter() const;
+    int getLevelsNumber() const;
+    int getDemand(int v) const;
+    const CapacitatedNetwork& getNetwork(int i) const;
+
 };
 
 }
