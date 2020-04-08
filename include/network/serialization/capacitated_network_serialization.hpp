@@ -14,13 +14,10 @@ namespace serialization {
 
 class CapacitatedNetworkSerializer final : public Serializer<CapacitatedNetwork>
 {
-private:
-    std::shared_ptr< Serializer<Network> > network_serializer;
 
 public:
-    CapacitatedNetworkSerializer();
-    CapacitatedNetworkSerializer(std::shared_ptr< Serializer<Network> > network_serializer);
-    ~CapacitatedNetworkSerializer();
+    CapacitatedNetworkSerializer() = default;
+    ~CapacitatedNetworkSerializer() = default;
     
     void serialize(const CapacitatedNetwork& network, std::ostream& stream);
 
@@ -30,12 +27,9 @@ public:
 
 class CapacitatedNetworkDeserializer final : public Deserializer<CapacitatedNetwork>
 {
-    std::shared_ptr< Deserializer<Network> > network_deserializer;
-
 public:
-    CapacitatedNetworkDeserializer();
-    CapacitatedNetworkDeserializer(std::shared_ptr< Deserializer<Network> > network_deserializer);
-    ~CapacitatedNetworkDeserializer();
+    CapacitatedNetworkDeserializer() = default;
+    ~CapacitatedNetworkDeserializer() = default;
     
     CapacitatedNetwork deserialize(std::istream& stream);
     
