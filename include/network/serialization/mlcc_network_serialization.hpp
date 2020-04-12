@@ -11,7 +11,7 @@ namespace network {
 namespace serialization {
 
 
-class MLCCNetworkSerializer final : Serializer<MLCCNetwork>
+class MLCCNetworkSerializer final : public Serializer<MLCCNetwork>
 {
 
 public:
@@ -22,7 +22,7 @@ public:
 };
 
 
-class MLCCNetworkDeserializer final : Deserializer<MLCCNetwork>
+class MLCCNetworkDeserializer final : public Deserializer<MLCCNetwork>
 {
 public:
     MLCCNetworkDeserializer() = default;

@@ -12,7 +12,7 @@ namespace geometry {
 namespace serialization {
 
 template<typename T>
-class PointSetSerializer final : Serializer< std::vector<Point<T>> >
+class PointSetSerializer final : public Serializer< std::vector<Point<T>> >
 {
 private:
     std::shared_ptr< Serializer<Point<T>> > point_serializer;
@@ -27,7 +27,7 @@ public:
 
 
 template<typename T>
-class PointSetDeserializer final : Deserializer< std::vector<Point<T>> >
+class PointSetDeserializer final : public Deserializer< std::vector<Point<T>> >
 {
 private:
     std::shared_ptr< Deserializer<Point<T>> > point_deserializer;

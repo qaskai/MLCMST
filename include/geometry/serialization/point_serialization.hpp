@@ -9,7 +9,7 @@ namespace geometry {
 namespace serialization {
 
 template<typename T>
-class PointSerializer final : Serializer<Point<T>>
+class PointSerializer final : public Serializer<Point<T>>
 {
 public:
     PointSerializer() = default;
@@ -20,7 +20,7 @@ public:
 
 
 template<typename T>
-class PointDeserializer final : Deserializer<Point<T>>
+class PointDeserializer final : public Deserializer<Point<T>>
 {
 public:
     PointDeserializer() = default;
