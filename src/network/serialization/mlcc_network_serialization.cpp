@@ -26,17 +26,17 @@ void MLCCNetworkSerializer::serialize(const MLCCNetwork& network, std::ostream& 
 {
     stream << network.getSize() << " ";
     stream << network.getCenter() << " ";
-    stream << network.getLevelsNumber() << std::endl;
+    stream << network.getLevelsNumber() << "\n";
 
     for (int i=0; i<network.getSize(); i++) {
         stream << network.getDemand(i) << " ";
     }
-    stream << std::endl;
+    stream << "\n";
 
     FixedSizeNetworkSerializer network_serializer(network.getSize());
     for (int i=0; i<network.getLevelsNumber(); i++) {
         const CapacitatedNetwork& cap_net = network.getNetwork(i);
-        stream << cap_net.getEdgeCapacity() << std::endl;
+        stream << cap_net.getEdgeCapacity() << "\n";
         network_serializer.serialize(cap_net.getNetwork(), stream);
     }
 }

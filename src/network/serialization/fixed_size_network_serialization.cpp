@@ -21,7 +21,7 @@ void FixedSizeNetworkSerializer::serialize(const Network& network, std::ostream&
         for (int j=0; j<size; j++) {
             stream << network.edgeCost(i, j) << " ";
         }
-        stream << std::endl;
+        stream << "\n";
     }
 }
 

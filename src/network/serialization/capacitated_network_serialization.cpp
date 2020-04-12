@@ -11,7 +11,7 @@ namespace serialization {
 
 void CapacitatedNetworkSerializer::serialize(const CapacitatedNetwork& network, std::ostream& stream)
 {
-    stream << network.getSize() << " " <<  network.getEdgeCapacity() << std::endl;
+    stream << network.getSize() << " " <<  network.getEdgeCapacity() << "\n";
     FixedSizeNetworkSerializer(network.getSize()).serialize(network.getNetwork(), stream);
 }
 

@@ -35,7 +35,7 @@ public:
 template<typename T>
 void PointSerializer<T>::serialize(const Point<T>& p, std::ostream& stream)
 {
-    stream << p.x << " " << p.y << std::endl;
+    stream << p.x << " " << p.y << "\n";
 }
 
 

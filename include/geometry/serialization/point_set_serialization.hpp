@@ -62,7 +62,7 @@ PointSetSerializer<T>::PointSetSerializer(
 template<typename T>
 void PointSetSerializer<T>::serialize(const std::vector<Point<T>>& points, std::ostream& stream)
 {
-    stream << points.size() << std::endl;
+    stream << points.size() << "\n";
     for (const Point<T>& p : points) {
         point_serializer->serialize(p);
     }
