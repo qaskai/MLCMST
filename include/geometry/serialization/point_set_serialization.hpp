@@ -64,7 +64,7 @@ void PointSetSerializer<T>::serialize(const std::vector<Point<T>>& points, std::
 {
     stream << points.size() << "\n";
     for (const Point<T>& p : points) {
-        point_serializer->serialize(p);
+        point_serializer->serialize(p, stream);
     }
 }
 
