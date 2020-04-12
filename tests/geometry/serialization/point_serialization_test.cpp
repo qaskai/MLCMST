@@ -4,7 +4,9 @@
 
 #include <geometry/point.hpp>
 #include <geometry/serialization/point_serialization.hpp>
+#include <util/util.hpp>
 
+using namespace MLCMST;
 using namespace MLCMST::geometry;
 
 
@@ -15,9 +17,8 @@ TEST_CASE( "Point serialization", "[geometry][serialization][point]")
 
     SECTION( "serialize" ) {
         serialization::PointSerializer<int>().serialize(p, ss);
-        Point<int> q;
-        ss >> q.x >> q.y;
-        REQUIRE( p == q );
+        std::string serialized_p = util::read_stream(ss);
+        REQUIRE( serialized_p == "1 2\n" );
     }
     SECTION( "deserialize" ) {
         ss << "1 2";

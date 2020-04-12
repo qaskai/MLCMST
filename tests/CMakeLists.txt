@@ -10,12 +10,11 @@ target_link_libraries(catch_main PUBLIC Catch2::Catch2)
 
 file(
     GLOB_RECURSE TESTS_SRC
-    "*.cpp"
+    "*test.cpp"
 )
-list(REMOVE_ITEM TESTS_SRC "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp")
 
 add_executable(MLCMST_tests "${TESTS_SRC}")
-target_link_libraries(MLCMST_tests catch_main)
+target_link_libraries(MLCMST_tests catch_main MLCMST)
 
 include(Catch)
 catch_discover_tests(MLCMST_tests)
