@@ -15,15 +15,13 @@ TEST_CASE( "Point serialization", "[geometry][serialization][point]")
 
     SECTION( "serialize" ) {
         serialization::PointSerializer<int>().serialize(p, ss);
-        int x, y;
-        ss >> x >> y;
-        REQUIRE( x == 1 );
-        REQUIRE( y == 2 );
+        Point<int> q;
+        ss >> q.x >> q.y;
+        REQUIRE( p == q );
     }
     SECTION( "deserialize" ) {
         ss << "1 2";
         Point<int> q = serialization::PointDeserializer<int>().deserialize(ss);
-        REQUIRE( q.x == p.x );
-        REQUIRE( q.y == p.y );
+        REQUIRE( q == p );
     }
 }
