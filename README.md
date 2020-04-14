@@ -13,7 +13,7 @@ Application binaries will be placed in `./build/app/`, test binaries go to `./bu
 When new files are added to the project, `cmake -S . -B build` always needs to be run, as CMake makes a file list in configure time and only tracks changes in those files. When files are only updated this command can be skipped.
 
 ### Testing
-Tests can be run through Catch binary `./build/tests/MLCMST_tests` - [option docs](https://github.com/catchorg/Catch2/blob/master/docs/command-line.md#top "option docs"). Another option is to run them with CMake - `cmake --build build -t test`.
+Tests can be run through Catch binary `./build/tests/mlcmst_tests` - [option docs](https://github.com/catchorg/Catch2/blob/master/docs/command-line.md#top "option docs"). Another option is to run them with CMake - `cmake --build build -t test`.
 
 ## Features
 

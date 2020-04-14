@@ -13,9 +13,9 @@ file(
     "*test.cpp"
 )
 
-add_executable(MLCMST_tests "${TESTS_SRC}")
-target_link_libraries(MLCMST_tests catch_main MLCMST)
+add_executable(mlcmst_tests "${TESTS_SRC}")
+target_link_libraries(mlcmst_tests catch_main mlcmst)
 
 include(Catch)
-catch_discover_tests(MLCMST_tests)
+catch_discover_tests(mlcmst_tests)
 

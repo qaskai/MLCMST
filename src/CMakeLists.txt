@@ -3,4 +3,4 @@ file(
     "*.cpp"
 )
 
-add_library(MLCMST ${MLCMST_SRC})
+add_library(mlcmst ${MLCMST_SRC})
