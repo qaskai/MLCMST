@@ -25,16 +25,22 @@ private:
     std::vector<Level> levels;
     std::unique_ptr< Generator<vector<Point<double>>> > point_set_generator;
 
+    EuclidMLCCNetworkGenerator(
+        CenterPosition center_position,
+        const std::vector<Level>& levels,
+        std::unique_ptr< Generator<std::vector<Point<double>>> > point_set_generator
+    );
+
     vector<double> flatten(const vector<vector<double>>& v);
     vector<double> multiply(vector<double> v, double scalar);
     vector<vector<double>> break_up(int N, const vector<double>& v);
 
 public:
-    EuclidMLCCNetworkGenerator(int N, CenterPosition center_position, const std::vector<Level>& levels);
     EuclidMLCCNetworkGenerator(
-        CenterPosition center_position,
-        const std::vector<Level>& levels,
-        std::unique_ptr< Generator<std::vector<Point<double>>> > point_set_generator
+        int N, double from, double to, CenterPosition center_position, const std::vector<Level>& levels);
+    EuclidMLCCNetworkGenerator(
+        int N, CenterPosition center_position, const std::vector<Level>& levels,
+        std::unique_ptr< Generator<Point<double>> > point_generator
     );
     ~EuclidMLCCNetworkGenerator();
     

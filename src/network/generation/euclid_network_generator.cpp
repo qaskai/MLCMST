@@ -3,6 +3,7 @@
 #include <cmath>
 #include <set>
 
+#include <geometry/generation/real_point_generator.hpp>
 #include <geometry/generation/real_point_set_generator.hpp>
 #include <geometry/util.hpp>
 
@@ -10,8 +11,17 @@ namespace MLCMST {
 namespace network {
 namespace generation {
 
-EuclidNetworkGenerator::EuclidNetworkGenerator(int N)
-    : EuclidNetworkGenerator(std::make_unique<geometry::generation::RealPointSetGenerator>(N))
+EuclidNetworkGenerator::EuclidNetworkGenerator(int N, double from, double to)
+    : EuclidNetworkGenerator(N, std::make_unique<geometry::generation::RealPointGenerator>(from, to))
+{
+
+}
+
+EuclidNetworkGenerator::EuclidNetworkGenerator(
+    int N, std::unique_ptr< Generator<Point<double>> > point_generator
+)
+    : EuclidNetworkGenerator(
+        std::make_unique<geometry::generation::RealPointSetGenerator>(N, std::move(point_generator)))
 {
 
 }
