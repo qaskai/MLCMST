@@ -65,7 +65,7 @@ MLCCNetwork MLCCNetworkDeserializer::deserialize(std::istream& stream)
     for (int i=0; i<level_number; i++) {
         int capacity;
         stream >> capacity;
-        networks.emplace_back(network_deserializer.deserialize(stream), capacity);
+        networks.emplace_back(capacity, network_deserializer.deserialize(stream));
     }
 
     return MLCCNetwork(center, networks, demands);

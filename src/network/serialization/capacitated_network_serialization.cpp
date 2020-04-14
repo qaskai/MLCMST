@@ -23,7 +23,7 @@ CapacitatedNetwork CapacitatedNetworkDeserializer::deserialize(std::istream& str
     int size, edge_capacity;
     stream >> size >> edge_capacity;
     Network network = FixedSizeNetworkDeserializer(size).deserialize(stream);
-    return CapacitatedNetwork(network, edge_capacity);
+    return CapacitatedNetwork(edge_capacity, network);
 }
 
 

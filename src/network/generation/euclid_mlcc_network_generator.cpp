@@ -58,7 +58,7 @@ MLCCNetwork EuclidMLCCNetworkGenerator::generate()
     vector<CapacitatedNetwork> network_levels;
     for (Level level : levels) {
         auto new_costs = break_up(N, multiply(flatten(network.getCosts()), level.cost_multiplier));
-        network_levels.emplace_back(Network(new_costs), level.capacity);
+        network_levels.emplace_back(level.capacity, Network(new_costs));
     }
     vector<int> demands = vector<int>(N, 1);
     return MLCCNetwork(0, network_levels, demands);
