@@ -33,5 +33,22 @@ const double& Network::edgeCost(int v, int w) const
     return costs[v][w];
 }
 
+
+bool operator==(const Network& n1, const Network& n2)
+{
+    if (n1.getSize() != n2.getSize()) {
+        return false;
+    }
+
+    int size = n1.getSize();
+    for (int i=0; i<size; i++) {
+        for (int j=0; j<size; j++) {
+            if (n1.edgeCost(i,j) != n2.edgeCost(i,j))
+                return false;
+        }
+    }
+    return true;
+}
+
 }
 }

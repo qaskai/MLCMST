@@ -11,21 +11,6 @@ using namespace MLCMST;
 using namespace MLCMST::network;
 
 
-bool network_equal(const Network& n1, const Network& n2)
-{
-    if (n1.getSize() != n2.getSize())
-        return false;
-    int size = n1.getSize();
-    for (int i=0; i<size; i++) {
-        for (int j=0; j<size; j++) {
-            if (n1.edgeCost(i,j) != n2.edgeCost(i,j))
-                return false;
-        }
-    }
-
-    return true;
-}
-
 TEST_CASE( "Fixed size network serialization test" , "[network][serialization]" )
 {
     const int size = 3;
@@ -50,6 +35,6 @@ TEST_CASE( "Fixed size network serialization test" , "[network][serialization]" 
         ss << serialized_network;
         Network deserialized_network = serialization::FixedSizeNetworkDeserializer(size).deserialize(ss);
 
-        REQUIRE( network_equal( deserialized_network, network ) );
+        REQUIRE( deserialized_network == network );
     }
 }

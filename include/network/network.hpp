@@ -19,6 +19,7 @@ public:
     double& edgeCost(int v, int w);
     const double& edgeCost(int v, int w) const;
 
+    friend bool operator==(const Network&, const Network&);
 };
 
 }
