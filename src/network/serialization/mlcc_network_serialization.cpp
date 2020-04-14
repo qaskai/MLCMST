@@ -12,16 +12,7 @@ namespace serialization {
 
 // ************ MLCCNetworkSerializer ************ //
 
-/**
- * Format:
- * size center level_number
- * demands vector
- * capacity_level1
- * network_level1
- * capacity_level2
- * network_level2
- *
- **/
+
 void MLCCNetworkSerializer::serialize(const MLCCNetwork& network, std::ostream& stream)
 {
     stream << network.getSize() << " ";

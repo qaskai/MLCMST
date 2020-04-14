@@ -10,6 +10,16 @@ namespace MLCMST {
 namespace network {
 namespace serialization {
 
+/**
+ * Format:
+ * size center level_number
+ * demands vector
+ * capacity_level1
+ * network_level1
+ * capacity_level2
+ * network_level2
+ *
+ **/
 
 class MLCCNetworkSerializer final : public Serializer<MLCCNetwork>
 {
