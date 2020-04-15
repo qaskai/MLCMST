@@ -11,18 +11,17 @@ namespace number {
 
 class IntGenerator final : public Generator<int>
 {
-private:
-    int from, to;
-
-    std::default_random_engine random_generator;
-    std::uniform_int_distribution<int> random_distribution;
-    std::function<int(void)> draw_random_number;
-
 public:
     IntGenerator(int from, int to);
-    ~IntGenerator();
-    
-    int generate();
+    ~IntGenerator() override;
+
+    int generate() override;
+
+private:
+    int _from, _to;
+    std::default_random_engine _random_generator;
+    std::uniform_int_distribution<int> _random_distribution;
+    std::function<int(void)> _draw_random_number;
 
 };
 

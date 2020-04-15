@@ -13,7 +13,7 @@ using namespace MLCMST::network;
 TEST_CASE( "Euclidean distance network generation", "[network][generation]" )
 {
     auto costs_in_range = [] (const Network& n, double max_cost) -> bool {
-        int size = n.getSize();
+        int size = n.size();
         for (int i=0; i<size; i++) {
             for (int j=0; j<size; j++) {
                 double cost = n.edgeCost(i,j);
@@ -26,7 +26,7 @@ TEST_CASE( "Euclidean distance network generation", "[network][generation]" )
     };
 
     auto loops_free = [] (const Network& n) -> bool {
-        int size = n.getSize();
+        int size = n.size();
         for (int i=0; i<size; i++) {
             if (n.edgeCost(i,i) != 0)
                 return false;
@@ -40,7 +40,7 @@ TEST_CASE( "Euclidean distance network generation", "[network][generation]" )
 
     Network network = generation::EuclidNetworkGenerator(size, l, r).generate();
 
-    REQUIRE( network.getSize() == size );
+    REQUIRE(network.size() == size );
     REQUIRE( costs_in_range(network, max_cost) );
     REQUIRE( loops_free(network) );
 }

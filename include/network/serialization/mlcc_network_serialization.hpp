@@ -23,22 +23,21 @@ namespace serialization {
 
 class MLCCNetworkSerializer final : public Serializer<MLCCNetwork>
 {
-
 public:
-    MLCCNetworkSerializer() = default;
-    ~MLCCNetworkSerializer() = default;
+    MLCCNetworkSerializer();
+    ~MLCCNetworkSerializer() override;
 
-    void serialize(const MLCCNetwork& network, std::ostream& stream);
+    void serialize(const MLCCNetwork& network, std::ostream& stream) override;
 };
 
 
 class MLCCNetworkDeserializer final : public Deserializer<MLCCNetwork>
 {
 public:
-    MLCCNetworkDeserializer() = default;
-    ~MLCCNetworkDeserializer() = default;
+    MLCCNetworkDeserializer();
+    ~MLCCNetworkDeserializer() override;
 
-    MLCCNetwork deserialize(std::istream& stream);
+    MLCCNetwork deserialize(std::istream& stream) override;
 };
 
 }

@@ -7,23 +7,20 @@ namespace util {
 namespace number {
 
 IntGenerator::IntGenerator(int from, int to)
-    : from(from), to(to)
+    : _from(from), _to(to)
 {
     assert(("Interval start should be smaller than end", from < to));
 
-    random_generator = std::default_random_engine();
-    random_distribution = std::uniform_int_distribution<int>(from, to);
-    draw_random_number = std::bind( random_distribution, random_generator );
+    _random_generator = std::default_random_engine();
+    _random_distribution = std::uniform_int_distribution<int>(from, to);
+    _draw_random_number = std::bind(_random_distribution, _random_generator );
 }
 
-IntGenerator::~IntGenerator()
-{
-
-}
+IntGenerator::~IntGenerator() = default;
 
 int IntGenerator::generate()
 {
-    return draw_random_number();
+    return _draw_random_number();
 }
 
 }

@@ -1,6 +1,5 @@
 #include <network/generation/euclid_network_generator.hpp>
 
-#include <cmath>
 #include <set>
 
 #include <geometry/generation/real_point_generator.hpp>
@@ -29,19 +28,16 @@ EuclidNetworkGenerator::EuclidNetworkGenerator(
 EuclidNetworkGenerator::EuclidNetworkGenerator(
     std::unique_ptr< Generator<vector<Point<double>>> > point_set_generator
 )
-    : point_set_generator(std::move(point_set_generator))
+    : _point_set_generator(std::move(point_set_generator))
 {
 
 }
 
-EuclidNetworkGenerator::~EuclidNetworkGenerator()
-{
-
-}
+EuclidNetworkGenerator::~EuclidNetworkGenerator() = default;
 
 Network EuclidNetworkGenerator::generate()
 {
-    vector<Point<double>> points = point_set_generator->generate();
+    vector<Point<double>> points = _point_set_generator->generate();
     vector<vector<double>> distances = geometry::util::createDistanceMatrix(points);
     return Network(distances);
 }

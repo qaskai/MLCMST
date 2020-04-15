@@ -14,12 +14,11 @@ namespace serialization {
 
 class CapacitatedNetworkSerializer final : public Serializer<CapacitatedNetwork>
 {
-
 public:
-    CapacitatedNetworkSerializer() = default;
-    ~CapacitatedNetworkSerializer() = default;
+    CapacitatedNetworkSerializer();
+    ~CapacitatedNetworkSerializer() override;
     
-    void serialize(const CapacitatedNetwork& network, std::ostream& stream);
+    void serialize(const CapacitatedNetwork& network, std::ostream& stream) override;
 
 };
 
@@ -28,11 +27,11 @@ public:
 class CapacitatedNetworkDeserializer final : public Deserializer<CapacitatedNetwork>
 {
 public:
-    CapacitatedNetworkDeserializer() = default;
-    ~CapacitatedNetworkDeserializer() = default;
+    CapacitatedNetworkDeserializer();
+    ~CapacitatedNetworkDeserializer() override;
     
-    CapacitatedNetwork deserialize(std::istream& stream);
-    
+    CapacitatedNetwork deserialize(std::istream& stream) override;
+
 };
 
 

@@ -9,14 +9,22 @@ namespace serialization {
 // ************ CapacitatedNetworkSerializer ************ //
 
 
+CapacitatedNetworkSerializer::CapacitatedNetworkSerializer() = default;
+
+CapacitatedNetworkSerializer::~CapacitatedNetworkSerializer() = default;
+
 void CapacitatedNetworkSerializer::serialize(const CapacitatedNetwork& network, std::ostream& stream)
 {
-    stream << network.getSize() << " " <<  network.getEdgeCapacity() << "\n";
-    FixedSizeNetworkSerializer(network.getSize()).serialize(network.getNetwork(), stream);
+    stream << network.size() << " " << network.edgeCapacity() << "\n";
+    FixedSizeNetworkSerializer(network.size()).serialize(network.network(), stream);
 }
 
 
 // ************ CapacitatedNetworkDeserializer ************ //
+
+CapacitatedNetworkDeserializer::CapacitatedNetworkDeserializer() = default;
+
+CapacitatedNetworkDeserializer::~CapacitatedNetworkDeserializer() = default;
 
 CapacitatedNetwork CapacitatedNetworkDeserializer::deserialize(std::istream& stream)
 {

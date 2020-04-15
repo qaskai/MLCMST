@@ -8,27 +8,27 @@
 namespace MLCMST {
 namespace network {
 
-
 /**
  * MLCC stands for Multi Level Centralized Capacitated
  * 
  */
 class MLCCNetwork final
 {
-    int center;
-    std::vector<CapacitatedNetwork> networks;
-    std::vector<int> demands;
-
 public:
     MLCCNetwork(
         int center, const std::vector<CapacitatedNetwork>& networks, const std::vector<int>& demands);
     ~MLCCNetwork();
-    
-    int getSize() const;
-    int getCenter() const;
-    int getLevelsNumber() const;
-    int getDemand(int v) const;
-    const CapacitatedNetwork& getNetwork(int i) const;
+
+    int size() const;
+    int center() const;
+    int levelsNumber() const;
+    int demand(int v) const;
+    const CapacitatedNetwork& network(int i) const;
+
+private:
+    int _center;
+    std::vector<CapacitatedNetwork> _networks;
+    std::vector<int> _demands;
 
 };
 

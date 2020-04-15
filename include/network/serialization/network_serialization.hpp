@@ -13,9 +13,9 @@ class NetworkSerializer final : public Serializer<Network>
 {
 public:
     NetworkSerializer();
-    ~NetworkSerializer();
+    ~NetworkSerializer() override;
     
-    void serialize(const Network& network, std::ostream& stream);
+    void serialize(const Network& network, std::ostream& stream) override;
 
 };
 
@@ -25,9 +25,9 @@ class NetworkDeserializer final : public Deserializer<Network>
 {
 public:
     NetworkDeserializer();
-    ~NetworkDeserializer();
+    ~NetworkDeserializer() override;
     
-    Network deserialize(std::istream& stream);
+    Network deserialize(std::istream& stream) override;
     
 };
 

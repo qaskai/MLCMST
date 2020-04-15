@@ -10,19 +10,13 @@ namespace serialization {
 // *************** NetworkSerializer *************** //
 
 
-NetworkSerializer::NetworkSerializer()
-{
+NetworkSerializer::NetworkSerializer() = default;
 
-}
-
-NetworkSerializer::~NetworkSerializer()
-{
-
-}
+NetworkSerializer::~NetworkSerializer() = default;
 
 void NetworkSerializer::serialize(const Network& network, std::ostream& stream)
 {
-    int N = network.getSize();
+    int N = network.size();
     stream << N << "\n";
     for (int i=0; i<N; i++) {
         for (int j=0; j<N; j++) {
@@ -37,15 +31,9 @@ void NetworkSerializer::serialize(const Network& network, std::ostream& stream)
 
 // *************** NetworkDeserializer *************** //
 
-NetworkDeserializer::NetworkDeserializer()
-{
+NetworkDeserializer::NetworkDeserializer() = default;
 
-}
-
-NetworkDeserializer::~NetworkDeserializer()
-{
-
-}
+NetworkDeserializer::~NetworkDeserializer() = default;
 
 Network NetworkDeserializer::deserialize(std::istream& stream)
 {

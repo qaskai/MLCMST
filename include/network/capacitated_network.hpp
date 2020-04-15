@@ -9,16 +9,17 @@ namespace network {
 
 class CapacitatedNetwork final
 {
-    int edge_capacity;
-    Network network;
-
 public:
     CapacitatedNetwork(int edge_capacity, const Network& network);
     ~CapacitatedNetwork();
 
-    int getSize() const;
-    int getEdgeCapacity() const;
-    const Network& getNetwork() const;
+    int size() const;
+    int edgeCapacity() const;
+    const Network& network() const;
+
+private:
+    int _edge_capacity;
+    Network _network;
 };
 
 }

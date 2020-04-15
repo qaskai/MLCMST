@@ -13,9 +13,9 @@ class PointSerializer final : public Serializer<Point<T>>
 {
 public:
     PointSerializer() = default;
-    ~PointSerializer() = default;
-    
-    void serialize(const Point<T>& p, std::ostream& stream);
+    ~PointSerializer() override = default;
+
+    void serialize(const Point<T>& p, std::ostream& stream) override;
 };
 
 
@@ -24,9 +24,9 @@ class PointDeserializer final : public Deserializer<Point<T>>
 {
 public:
     PointDeserializer() = default;
-    ~PointDeserializer() = default;
+    ~PointDeserializer() override = default;
     
-    Point<T> deserialize(std::istream& stream);
+    Point<T> deserialize(std::istream& stream) override;
 };
 
 

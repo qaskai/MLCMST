@@ -37,7 +37,7 @@ TEST_CASE( "Capacitated network serialization", "[network][serialization]" )
         CapacitatedNetwork deserialized_network =
             serialization::CapacitatedNetworkDeserializer().deserialize(ss);
 
-        REQUIRE( deserialized_network.getEdgeCapacity() == network.getEdgeCapacity() );
-        REQUIRE( deserialized_network.getNetwork() == network.getNetwork() );
+        REQUIRE(deserialized_network.edgeCapacity() == network.edgeCapacity() );
+        REQUIRE(deserialized_network.network() == network.network() );
     }
 }

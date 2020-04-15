@@ -7,19 +7,20 @@ namespace network {
 
 class Network final
 {
-private:
-    std::vector<std::vector<double>> costs;
-
 public:
     Network(const std::vector<std::vector<double>>& costs);
-    virtual ~Network();
+    ~Network();
 
-    int getSize() const;
-    const std::vector<std::vector<double>>& getCosts() const;
+    int size() const;
+    const std::vector<std::vector<double>>& costs() const;
     double& edgeCost(int v, int w);
     const double& edgeCost(int v, int w) const;
 
     friend bool operator==(const Network&, const Network&);
+
+private:
+    std::vector<std::vector<double>> _costs;
+
 };
 
 }

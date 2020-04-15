@@ -53,16 +53,16 @@ TEST_CASE( "Multi-level capacitated network serialization", "[network][serializa
         ss << serialized_mlcc_network;
         MLCCNetwork deserialized_network = serialization::MLCCNetworkDeserializer().deserialize(ss);
 
-        REQUIRE( deserialized_network.getSize() == network.getSize() );
-        REQUIRE( deserialized_network.getLevelsNumber() == network.getLevelsNumber() );
-        for (int i=0; i<network.getSize(); i++) {
-            REQUIRE( deserialized_network.getDemand(i) == network.getDemand(i) );
+        REQUIRE(deserialized_network.size() == network.size() );
+        REQUIRE(deserialized_network.levelsNumber() == network.levelsNumber() );
+        for (int i=0; i< network.size(); i++) {
+            REQUIRE(deserialized_network.demand(i) == network.demand(i) );
         }
-        for (int i=0; i<deserialized_network.getLevelsNumber(); i++) {
-            const CapacitatedNetwork& cn = deserialized_network.getNetwork(i);
-            REQUIRE( cn.getSize() == network.getSize() );
-            REQUIRE( cn.getEdgeCapacity() == network.getNetwork(i).getEdgeCapacity() );
-            REQUIRE( cn.getNetwork() == network.getNetwork(i).getNetwork() );
+        for (int i=0; i< deserialized_network.levelsNumber(); i++) {
+            const CapacitatedNetwork& cn = deserialized_network.network(i);
+            REQUIRE(cn.size() == network.size() );
+            REQUIRE(cn.edgeCapacity() == network.network(i).edgeCapacity() );
+            REQUIRE(cn.network() == network.network(i).network() );
         }
     }
 }

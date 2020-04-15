@@ -14,30 +14,32 @@ namespace serialization {
 template<typename T>
 class PointSetSerializer final : public Serializer< std::vector<Point<T>> >
 {
-private:
-    std::shared_ptr< Serializer<Point<T>> > point_serializer;
-
 public:
     PointSetSerializer();
     PointSetSerializer(std::shared_ptr< Serializer<Point<T>> > point_serializer);
-    ~PointSetSerializer() = default;
-    
-    void serialize(const std::vector<Point<T>>& points, std::ostream& stream);
+    ~PointSetSerializer() override;
+
+    void serialize(const std::vector<Point<T>>& points, std::ostream& stream) override;
+
+private:
+    std::shared_ptr< Serializer<Point<T>> > _point_serializer;
+
 };
 
 
 template<typename T>
 class PointSetDeserializer final : public Deserializer< std::vector<Point<T>> >
 {
-private:
-    std::shared_ptr< Deserializer<Point<T>> > point_deserializer;
-
 public:
     PointSetDeserializer();
     PointSetDeserializer(std::shared_ptr< Deserializer<Point<T>> > point_deserializer);
-    ~PointSetDeserializer() = default;
-    
-    std::vector<Point<T>> deserialize(std::istream& stream);
+    ~PointSetDeserializer() override;
+
+    std::vector<Point<T>> deserialize(std::istream& stream) override;
+
+private:
+    std::shared_ptr< Deserializer<Point<T>> > _point_deserializer;
+
 };
 
 
@@ -54,17 +56,20 @@ template<typename T>
 PointSetSerializer<T>::PointSetSerializer(
     std::shared_ptr< Serializer<Point<T>> > point_serializer
 )
-    : point_serializer(point_serializer)
+    : _point_serializer(point_serializer)
 {
 
 }
+
+template<typename T>
+PointSetSerializer<T>::~PointSetSerializer() = default;
 
 template<typename T>
 void PointSetSerializer<T>::serialize(const std::vector<Point<T>>& points, std::ostream& stream)
 {
     stream << points.size() << "\n";
     for (const Point<T>& p : points) {
-        point_serializer->serialize(p, stream);
+        _point_serializer->serialize(p, stream);
     }
 }
 
@@ -73,7 +78,7 @@ void PointSetSerializer<T>::serialize(const std::vector<Point<T>>& points, std::
 // ************* PointSetDeserializer implementation ************* //
 
 template<typename T>
-PointSetDeserializer<T>::PointSetDeserializer() 
+PointSetDeserializer<T>::PointSetDeserializer()
     : PointSetDeserializer(std::make_shared<PointDeserializer<T>>())
 {
 
@@ -83,10 +88,13 @@ template<typename T>
 PointSetDeserializer<T>::PointSetDeserializer(
     std::shared_ptr< Deserializer<Point<T>> > point_deserializer
 )
-    : point_deserializer(point_deserializer)
+    : _point_deserializer(point_deserializer)
 {
 
 }
+
+template<typename T>
+PointSetDeserializer<T>::~PointSetDeserializer() = default;
 
 template<typename T>
 std::vector<Point<T>> PointSetDeserializer<T>::deserialize(std::istream& stream)
@@ -96,7 +104,7 @@ std::vector<Point<T>> PointSetDeserializer<T>::deserialize(std::istream& stream)
     std::vector<Point<T>> points;
     points.reserve(size);
     for (int i=0; i<size; i++) {
-        Point<T> p = point_deserializer->deserialize(stream);
+        Point<T> p = _point_deserializer->deserialize(stream);
         points.push_back(p);
     }
     return points;

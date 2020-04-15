@@ -12,17 +12,16 @@ namespace generation {
 class RealPointGenerator final : public Generator<Point<double> >
 {
 
-private:
-    std::unique_ptr< Generator<double> > number_generator;
-
-
 public:
     RealPointGenerator(double from = -10.0, double to = 10.0);
     RealPointGenerator(std::unique_ptr< Generator<double> > number_generator);
-    ~RealPointGenerator();
-    
-    Point<double> generate();
-    
+    ~RealPointGenerator() override;
+
+    Point<double> generate() override;
+
+private:
+    std::unique_ptr< Generator<double> > _number_generator;
+
 };
 
 }

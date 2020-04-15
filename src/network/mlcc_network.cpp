@@ -10,40 +10,36 @@ MLCCNetwork::MLCCNetwork(
     const std::vector<CapacitatedNetwork>& networks,
     const std::vector<int>& demands
 )
-    : center(center), networks(networks), demands(demands)
+    : _center(center), _networks(networks), _demands(demands)
 {
 
 }
 
+MLCCNetwork::~MLCCNetwork() = default;
 
-MLCCNetwork::~MLCCNetwork()
+int MLCCNetwork::size() const
 {
-
+    return _networks[0].size();
 }
 
-int MLCCNetwork::getSize() const
+int MLCCNetwork::center() const
 {
-    return networks[0].getSize();
-}
-
-int MLCCNetwork::getCenter() const
-{
-    return center;
+    return _center;
 }
     
-int MLCCNetwork::getLevelsNumber() const
+int MLCCNetwork::levelsNumber() const
 {
-    return networks.size();
+    return _networks.size();
 }
 
-int MLCCNetwork::getDemand(int v) const
+int MLCCNetwork::demand(int v) const
 {
-    return demands[v];
+    return _demands[v];
 }
 
-const CapacitatedNetwork& MLCCNetwork::getNetwork(int i) const
+const CapacitatedNetwork& MLCCNetwork::network(int i) const
 {
-    return networks[i];
+    return _networks[i];
 }
 
 }

@@ -23,8 +23,8 @@ TEST_CASE( "Eucliden multi-level capacitated network generation", "[network][gen
     int size = 5;
 
     auto cost_in_range = [] (const MLCCNetwork& n, double max_cost) {
-        int size = n.getSize();
-        const Network& originalNetwork = n.getNetwork(0).getNetwork();
+        int size = n.size();
+        const Network& originalNetwork = n.network(0).network();
         for (int i=0; i<size; i++) {
             for (int j=0; j<size; j++) {
                 double cost = originalNetwork.edgeCost(i,j);
@@ -35,19 +35,19 @@ TEST_CASE( "Eucliden multi-level capacitated network generation", "[network][gen
     };
 
     auto check_demands = [] (const MLCCNetwork& n) {
-        for (int i=0; i<n.getSize(); i++) {
-            REQUIRE( n.getDemand(i) == 1 );
+        for (int i=0; i< n.size(); i++) {
+            REQUIRE(n.demand(i) == 1 );
         }
     };
 
     auto check_capacities = [] (const MLCCNetwork& n, const std::vector<Level>& levels) {
-        for (int i=0; i<n.getLevelsNumber(); i++) {
-            REQUIRE( n.getNetwork(i).getEdgeCapacity() == levels[i].capacity );
+        for (int i=0; i< n.levelsNumber(); i++) {
+            REQUIRE(n.network(i).edgeCapacity() == levels[i].capacity );
         }
     };
 
     auto check_multiplier = [] (double scalar, const Network& original, const Network& copy) {
-        int size = original.getSize();
+        int size = original.size();
         for (int i=0; i<size; i++) {
             for (int j=0; j<size; j++) {
                 REQUIRE( original.edgeCost(i,j) * scalar == copy.edgeCost(i,j) );
@@ -57,17 +57,17 @@ TEST_CASE( "Eucliden multi-level capacitated network generation", "[network][gen
 
     MLCCNetwork network = EuclidMLCCNetworkGenerator(size, from, to, center_position, levels).generate();
 
-    REQUIRE( network.getSize() == size );
-    REQUIRE( network.getCenter() == 0 );
-    REQUIRE( network.getLevelsNumber() == levels.size() );
+    REQUIRE(network.size() == size );
+    REQUIRE(network.center() == 0 );
+    REQUIRE(network.levelsNumber() == levels.size() );
     cost_in_range(network, max_cost);
     check_demands(network);
     check_capacities(network, levels);
-    for (int i=0; i<network.getLevelsNumber(); i++) {
+    for (int i=0; i< network.levelsNumber(); i++) {
         check_multiplier( 
             levels[i].cost_multiplier,
-            network.getNetwork(0).getNetwork(),
-            network.getNetwork(i).getNetwork()
+            network.network(0).network(),
+            network.network(i).network()
         );
     }
 }

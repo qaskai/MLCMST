@@ -15,19 +15,16 @@ RealPointGenerator::RealPointGenerator(double from, double to)
 RealPointGenerator::RealPointGenerator(
     std::unique_ptr< Generator<double> > number_generator
 )
-    : number_generator(std::move(number_generator))
+    : _number_generator(std::move(number_generator))
 {
 
 }
 
-RealPointGenerator::~RealPointGenerator()
-{
-
-}
+RealPointGenerator::~RealPointGenerator() = default;
 
 Point<double> RealPointGenerator::generate()
 {
-    return Point<double>( number_generator->generate(), number_generator->generate() );
+    return Point<double>(_number_generator->generate(), _number_generator->generate() );
 }
 
 }

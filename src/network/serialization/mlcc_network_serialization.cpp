@@ -13,28 +13,36 @@ namespace serialization {
 // ************ MLCCNetworkSerializer ************ //
 
 
+MLCCNetworkSerializer::MLCCNetworkSerializer() = default;
+
+MLCCNetworkSerializer::~MLCCNetworkSerializer() = default;
+
 void MLCCNetworkSerializer::serialize(const MLCCNetwork& network, std::ostream& stream)
 {
-    stream << network.getSize() << " ";
-    stream << network.getCenter() << " ";
-    stream << network.getLevelsNumber() << "\n";
+    stream << network.size() << " ";
+    stream << network.center() << " ";
+    stream << network.levelsNumber() << "\n";
 
-    for (int i=0; i<network.getSize(); i++) {
-        stream << network.getDemand(i) << " ";
+    for (int i=0; i< network.size(); i++) {
+        stream << network.demand(i) << " ";
     }
     stream << "\n";
 
-    FixedSizeNetworkSerializer network_serializer(network.getSize());
-    for (int i=0; i<network.getLevelsNumber(); i++) {
-        const CapacitatedNetwork& cap_net = network.getNetwork(i);
-        stream << cap_net.getEdgeCapacity() << "\n";
-        network_serializer.serialize(cap_net.getNetwork(), stream);
+    FixedSizeNetworkSerializer network_serializer(network.size());
+    for (int i=0; i< network.levelsNumber(); i++) {
+        const CapacitatedNetwork& cap_net = network.network(i);
+        stream << cap_net.edgeCapacity() << "\n";
+        network_serializer.serialize(cap_net.network(), stream);
     }
 }
 
 
 // ************ MLCCNetworkDeserializer ************ //
 
+
+MLCCNetworkDeserializer::MLCCNetworkDeserializer() = default;
+
+MLCCNetworkDeserializer::~MLCCNetworkDeserializer() = default;
 
 MLCCNetwork MLCCNetworkDeserializer::deserialize(std::istream& stream)
 {

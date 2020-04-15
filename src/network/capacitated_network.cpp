@@ -6,30 +6,27 @@ namespace MLCMST {
 namespace network {
 
 CapacitatedNetwork::CapacitatedNetwork(int edge_capacity, const Network& network)
-    : edge_capacity(edge_capacity), network(network)
+    : _edge_capacity(edge_capacity), _network(network)
 {
     
 }
 
-CapacitatedNetwork::~CapacitatedNetwork()
-{
+CapacitatedNetwork::~CapacitatedNetwork() = default;
 
+
+int CapacitatedNetwork::size() const
+{
+    return _network.size();
 }
 
-
-int CapacitatedNetwork::getSize() const
+int CapacitatedNetwork::edgeCapacity() const
 {
-    return network.getSize();
+    return _edge_capacity;
 }
 
-int CapacitatedNetwork::getEdgeCapacity() const
+const Network& CapacitatedNetwork::network() const
 {
-    return edge_capacity;
-}
-
-const Network& CapacitatedNetwork::getNetwork() const
-{
-    return network;
+    return _network;
 }
 
 }

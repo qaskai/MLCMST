@@ -4,10 +4,12 @@ namespace MLCMST {
 namespace network {
 
 MLCMST::MLCMST(const MLCCNetwork& network)
-    : network(network), parent(network.getSize()), edge_level(network.getSize())
+    : _network(network), _parent(network.size()), _edge_level(network.size())
 {
 
 }
+
+MLCMST::~MLCMST() = default;
 
 }
 }

@@ -11,14 +11,14 @@ namespace serialization {
 
 class FixedSizeNetworkSerializer final : public Serializer<Network>
 {
-private:
-    int size;
-
 public:
     FixedSizeNetworkSerializer(int size);
-    ~FixedSizeNetworkSerializer() = default;
-    
-    void serialize(const Network& network, std::ostream& stream);
+    ~FixedSizeNetworkSerializer() override;
+
+    void serialize(const Network& network, std::ostream& stream) override;
+
+private:
+    int _size;
 
 };
 
@@ -26,15 +26,15 @@ public:
 
 class FixedSizeNetworkDeserializer final : public Deserializer<Network>
 {
-private:
-    int size;
-
 public:
     FixedSizeNetworkDeserializer(int size);
-    ~FixedSizeNetworkDeserializer() = default;
-    
-    Network deserialize(std::istream& stream);
-    
+    ~FixedSizeNetworkDeserializer() override;
+
+    Network deserialize(std::istream& stream) override;
+
+private:
+    int _size;
+
 };
 
 }

@@ -9,15 +9,15 @@ namespace network {
 
 class MLCMST final
 {
-private:
-    const MLCCNetwork& network;
-
-    std::vector<int> parent;
-    std::vector<int> edge_level;
-
 public:
     MLCMST(const MLCCNetwork& network);
-    ~MLCMST() = default;
+    ~MLCMST();
+
+private:
+    const MLCCNetwork& _network;
+    std::vector<int> _parent;
+    std::vector<int> _edge_level;
+
 };
 
 }
