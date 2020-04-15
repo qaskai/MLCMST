@@ -4,8 +4,6 @@
 #include <vector>
 
 #include <network/mlcc_network.hpp>
-#include <network/generation/center_position.hpp>
-#include <network/generation/level.hpp>
 #include <network/generation/euclid_mlcc_network_generator.hpp>
 
 using namespace MLCMST::network;
@@ -13,6 +11,9 @@ using namespace MLCMST::network::generation;
 
 TEST_CASE( "Eucliden multi-level capacitated network generation", "[network][generation]" )
 {
+    typedef EuclidMLCCNetworkGenerator::Level Level;
+    typedef EuclidMLCCNetworkGenerator::CenterPosition CenterPosition;
+
     CenterPosition center_position = CenterPosition::RANDOM;
     std::vector<Level> levels{
         Level{1, 1.0}, Level{2, 1.5}, Level{5, 4.0}

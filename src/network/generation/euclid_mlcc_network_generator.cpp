@@ -4,8 +4,6 @@
 #include <geometry/generation/real_point_set_generator.hpp>
 #include <geometry/util.hpp>
 #include <network/capacitated_network.hpp>
-#include <network/generation/euclid_network_generator.hpp>
-
 
 namespace MLCMST {
 namespace network {
