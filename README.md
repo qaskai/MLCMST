@@ -1,6 +1,7 @@
 ### Dependencies
 - CMake >= 3.16
-- [Catch2](https://github.com/catchorg/Catch2 "Catch2") (downloaded automatically by CMake)
+- [Catch2](https://github.com/catchorg/Catch2 "Catch2") (downloaded by CMake)
+- [or-tools](https://github.com/google/or-tools "or-tools") (downloaded by CMake)
 
 ### Build
 When in project root run the following.
@@ -11,6 +12,8 @@ cmake --build build
 Application binaries will be placed in `./build/app/`, test binaries go to `./build/tests/`.
 
 When new files are added to the project, `cmake -S . -B build` always needs to be run, as CMake makes a file list in configure time and only tracks changes in those files. When files are only updated this command can be skipped.
+
+If CMake crashes with errors related to or-tools dependencies, try adding `-DBUILD_DEPS=ON`.
 
 ### Testing
 Tests can be run through Catch binary `./build/tests/mlcmst_tests` - [option docs](https://github.com/catchorg/Catch2/blob/master/docs/command-line.md#top "option docs"). Another option is to run them with CMake - `cmake --build build -t test`.
