@@ -21,7 +21,7 @@ void simple_mip_program() {
     // x <= 3.5.
     MPConstraint* const c1 = solver.MakeRowConstraint(-infinity, 3.5, "c1");
     c1->SetCoefficient(x, 1);
-    c1->SetCoefficient(y, 0);
+//    c1->SetCoefficient(y, 0);
 
     LOG(INFO) << "Number of constraints = " << solver.NumConstraints();
 
