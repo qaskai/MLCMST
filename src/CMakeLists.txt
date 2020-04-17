@@ -4,3 +4,4 @@ file(
 )
 
 add_library(mlcmst ${MLCMST_SRC})
+target_link_libraries(mlcmst PUBLIC ortools::ortools)

@@ -9,22 +9,35 @@ namespace mp {
 class MPSolver
 {
 public:
-    const double infinity;
-    struct ResultStatus
+    enum ResultStatus
     {
-
+        /// optimal.
+        OPTIMAL,
+        /// feasible, or stopped by limit.
+        FEASIBLE,
+        /// proven infeasible.
+        INFEASIBLE,
+        /// proven unbounded.
+        UNBOUNDED,
+        /// abnormal, i.e., error of some kind.
+        ABNORMAL,
+        /// the model is trivially invalid (NaN coefficients, etc).
+        MODEL_INVALID,
+        /// not been solved yet.
+        NOT_SOLVED = 6
     };
 
-    MPSolver(double infinity);
     virtual ~MPSolver();
 
-    virtual void addIntVariable(std::string name) = 0;
-    virtual void addIntVariableArray(int size, std::string name) = 0;
-    virtual void addNumVariable(std::string name) = 0;
-    virtual void addNumVariableArray(int size, std::string name) = 0;
+    virtual double infinity() = 0;
 
-    virtual void addConstraint(double lb, double ub, std::string name) = 0;
-    virtual void addConstraintArray(int size, double lb, double ub, std::string name) = 0;
+    virtual void makeIntVariable(double lb, double ub, std::string name) = 0;
+    virtual void makeIntVariableArray(int size, double lb, double ub, std::string name) = 0;
+    virtual void makeNumVariable(double lb, double ub, std::string name) = 0;
+    virtual void makeNumVariableArray(int size, double lb, double ub, std::string name) = 0;
+
+    virtual void makeConstraint(double lb, double ub, std::string name) = 0;
+    virtual void makeConstraintArray(int size, double lb, double ub, std::string name) = 0;
     virtual void setConstraintCoefficient(double c, std::string var_name, std::string constraint_name) = 0;
     virtual void setConstraintCoefficient(double c, std::string var_name, int var_i, std::string constraint_name) = 0;
     virtual void setConstraintCoefficient(double c, std::string var_name, std::string constraint_name, int cons_i) = 0;
