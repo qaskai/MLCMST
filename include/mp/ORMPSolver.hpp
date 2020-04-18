@@ -23,20 +23,20 @@ public:
     void makeIntVariable(double lb, double ub, std::string name) override;
     void makeIntVariableArray(int size, double lb, double ub, std::string name) override;
     void makeNumVariable(double lb, double ub, std::string name) override;
-
     void makeNumVariableArray(int size, double lb, double ub, std::string name) override;
+
     void makeConstraint(double lb, double ub, std::string name) override;
     void makeConstraintArray(int size, double lb, double ub, std::string name) override;
     void setConstraintCoefficient(double c, std::string var_name, std::string constraint_name) override;
     void setConstraintCoefficient(double c, std::string var_name, int var_i, std::string constraint_name) override;
     void setConstraintCoefficient(double c, std::string var_name, std::string constraint_name, int cons_i) override;
-
     void setConstraintCoefficient(double c, std::string var_name, int var_i, std::string constraint_name, int cons_i) override;
+
     void setMinimization() override;
     void setMaximization() override;
     void setObjectiveCoefficient(double c, std::string var_name) override;
-
     void setObjectiveCoefficient(double c, std::string var_name, int var_i) override;
+
     ResultStatus resultStatus() override;
     double objectiveValue() override;
     double variableValue(std::string name) override;
@@ -44,7 +44,7 @@ public:
 
     void solve() override;
 
-// protected:
+protected:
     ORMPSolver(or_::MPSolver::OptimizationProblemType problemType);
 
 private:

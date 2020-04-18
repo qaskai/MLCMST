@@ -1,14 +1,13 @@
 #include "ortools/linear_solver/linear_solver.h"
 
-#include <mp/ORMPSolver.hpp>
+#include <mp/ORMIPSolver.hpp>
 #include <memory>
 
 namespace MLCMST {
 namespace mp {
 void simple_mip_program() {
     // Create the mip solver with the CBC backend.
-    std::unique_ptr< MPSolver > solver = std::make_unique<ORMPSolver>(
-            operations_research::MPSolver::CBC_MIXED_INTEGER_PROGRAMMING);
+    std::unique_ptr< MPSolver > solver = std::make_unique<ORMIPSolver>();
 
     const double infinity = solver->infinity();
     // x and y are integer non-negative variables.
