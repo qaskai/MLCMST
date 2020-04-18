@@ -20,6 +20,13 @@ GIT_TAG master
 )
 FetchContent_MakeAvailable(or-tools)
 
+FetchContent_Declare(
+glog
+GIT_REPOSITORY "https://github.com/google/glog.git"
+GIT_TAG master
+)
+FetchContent_MakeAvailable(glog)
+
 
 include_directories(include)
 

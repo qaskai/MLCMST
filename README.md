@@ -2,6 +2,7 @@
 - CMake >= 3.16
 - [Catch2](https://github.com/catchorg/Catch2 "Catch2") (downloaded by CMake)
 - [or-tools](https://github.com/google/or-tools "or-tools") (downloaded by CMake)
+- [glog](https://github.com/google/glog "glog") (downloaded by CMake)
 
 ### Build
 When in project root run the following.
