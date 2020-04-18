@@ -29,13 +29,13 @@ void ORMPSolver::makeIntVariableArray(int size, double lb, double ub, std::strin
 
 void ORMPSolver::makeNumVariable(double lb, double ub, std::string name)
 {
-    _variables[name] = _solver.MakeIntVar(lb, ub, name);
+    _variables[name] = _solver.MakeNumVar(lb, ub, name);
 }
 
 void ORMPSolver::makeNumVariableArray(int size, double lb, double ub, std::string name)
 {
     _variable_arrays[name].clear();
-    _solver.MakeIntVarArray(size, lb, ub, name, &(_variable_arrays[name]));
+    _solver.MakeNumVarArray(size, lb, ub, name, &(_variable_arrays[name]));
 }
 
 void ORMPSolver::makeConstraint(double lb, double ub, std::string name)
