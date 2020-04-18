@@ -1,4 +1,4 @@
-#include <mp/ORMPSolver.hpp>
+#include <mp/or_mp_solver.hpp>
 
 namespace MLCMST {
 namespace mp {

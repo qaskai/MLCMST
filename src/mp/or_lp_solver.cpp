@@ -1,4 +1,4 @@
-#include <mp/ORLPSolver.hpp>
+#include <mp/or_lp_solver.hpp>
 
 #include <stdexcept>
 

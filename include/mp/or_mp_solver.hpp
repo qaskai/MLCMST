@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include <mp/MPSolver.hpp>
+#include <mp/mp_solver.hpp>
 
 #include <ortools/linear_solver/linear_solver.h>
 

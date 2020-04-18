@@ -1,4 +1,4 @@
-#include <mp/ORMIPSolver.hpp>
+#include <mp/or_mip_solver.hpp>
 
 #include <ortools/linear_solver/linear_solver.h>
 

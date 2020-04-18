@@ -1,18 +1,18 @@
 #include "ortools/linear_solver/linear_solver.h"
 
-#include <mp/ORMIPSolver.hpp>
+#include <mp/or_lp_solver.hpp>
 #include <memory>
 
 namespace MLCMST {
 namespace mp {
 void simple_mip_program() {
     // Create the mip solver with the CBC backend.
-    std::unique_ptr< MPSolver > solver = std::make_unique<ORMIPSolver>();
+    std::unique_ptr< MPSolver > solver = std::make_unique<ORLPSolver>();
 
     const double infinity = solver->infinity();
     // x and y are integer non-negative variables.
-    solver->makeIntVariable(0.0, infinity, "x");
-    solver->makeIntVariable(0.0, infinity, "y");
+    solver->makeNumVariable(0.0, infinity, "x");
+    solver->makeNumVariable(0.0, infinity, "y");
 
     // x + 7 * y <= 17.5.
     solver->makeConstraint(-infinity, 17.5, "c0");
