@@ -16,7 +16,7 @@ using namespace MLCMST::mp;
  * x,y >= 0
  */
 
-TEST_CASE( "or-tools linear programming wrapper | basic functionality", "[mp][or-tools][linear]" )
+TEST_CASE( "or-tools linear programming wrapper | correctness", "[mp][or-tools][linear]" )
 {
     ORLPSolver solver;
     const double infinity = solver.infinity();
@@ -57,6 +57,23 @@ TEST_CASE( "or-tools linear programming wrapper | basic functionality", "[mp][or
         REQUIRE( solver.objectiveValue() == expected_objective_value );
         REQUIRE( solver.variableValue("x") == expected_var_value[0] );
         REQUIRE( solver.variableValue("y") == expected_var_value[1] );
+    }
+}
+
+TEST_CASE( "or-tools linear programming wrapper | basic functionality", "[mp][or-tools][linear]" )
+{
+    ORLPSolver solver;
+
+    SECTION( "default variable creation" ) {
+        solver.makeVariable(0, 1, "x");
+
+        REQUIRE( !solver.isInteger("x") );
+    }
+    SECTION( "default variable array creation" ) {
+        solver.makeVariableArray(2, 0, 1, "arr");
+
+        REQUIRE( !solver.isInteger("arr", 0) );
+        REQUIRE( !solver.isInteger("arr", 1) );
     }
 }
 

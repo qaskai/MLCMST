@@ -11,6 +11,8 @@ public:
     ORLPSolver();
     ~ORLPSolver() override;
 
+    void makeVariable(double lb, double ub, std::string name) override;
+    void makeVariableArray(int size, double lb, double ub, std::string name) override;
     void makeIntVariable(double lb, double ub, std::string name) override;
     void makeIntVariableArray(int size, double lb, double ub, std::string name) override;
 };

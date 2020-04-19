@@ -12,5 +12,15 @@ ORMIPSolver::ORMIPSolver() : ORMPSolver(operations_research::MPSolver::CBC_MIXED
 
 ORMIPSolver::~ORMIPSolver() = default;
 
+void ORMIPSolver::makeVariable(double lb, double ub, std::string name)
+{
+    makeIntVariable(lb, ub, name);
+}
+
+void ORMIPSolver::makeVariableArray(int size, double lb, double ub, std::string name)
+{
+    makeIntVariableArray(size, lb, ub, name);
+}
+
 }
 }

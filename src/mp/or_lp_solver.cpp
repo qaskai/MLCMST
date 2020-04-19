@@ -15,6 +15,16 @@ ORLPSolver::ORLPSolver() : ORMPSolver(operations_research::MPSolver::GLOP_LINEAR
 
 ORLPSolver::~ORLPSolver() = default;
 
+void ORLPSolver::makeVariable(double lb, double ub, std::string name)
+{
+    makeNumVariable(lb, ub, name);
+}
+
+void ORLPSolver::makeVariableArray(int size, double lb, double ub, std::string name)
+{
+    makeNumVariableArray(size, lb, ub, name);
+}
+
 void ORLPSolver::makeIntVariable(double lb, double ub, std::string name)
 {
     throw std::logic_error("Integer variables are not allowed in linear program");

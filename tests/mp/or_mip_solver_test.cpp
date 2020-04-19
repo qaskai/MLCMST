@@ -14,7 +14,7 @@ using namespace MLCMST::mp;
  * x >= 0
  * y >= 1
  */
-TEST_CASE( "or-tools integer programming wrapper | basic functionality", "[mp][or-tools][ip]" )
+TEST_CASE( "or-tools mixed integer programming wrapper | IP correctness", "[mp][or-tools][mip]" )
 {
     ORMIPSolver solver;
     const double infinity = solver.infinity();
@@ -68,7 +68,7 @@ TEST_CASE( "or-tools integer programming wrapper | basic functionality", "[mp][o
  * x >= 0
  * y >= 1 - integer
  */
-TEST_CASE( "or-tools mixed integer programming wrapper | basic functionality", "[mp][or-tools][mip]" )
+TEST_CASE( "or-tools mixed integer programming wrapper | MIP correctness", "[mp][or-tools][mip]" )
 {
     const double error_epsilon = 0.001;
 
@@ -110,5 +110,22 @@ TEST_CASE( "or-tools mixed integer programming wrapper | basic functionality", "
         REQUIRE( solver.objectiveValue() == expected_objective_value );
         REQUIRE( solver.variableValue("x") == Approx(expected_variable_value[0]).epsilon(error_epsilon) );
         REQUIRE( solver.variableValue("y") == expected_variable_value[1] );
+    }
+}
+
+TEST_CASE( "or-tools mixed integer programming wrapper | basic functionality", "[mp][or-tools][mip]" )
+{
+    ORMIPSolver solver;
+
+    SECTION( "default variable creation" ) {
+        solver.makeVariable(0, 1, "x");
+
+        REQUIRE( solver.isInteger("x") );
+    }
+    SECTION( "default variable array creation" ) {
+        solver.makeVariableArray(2, 0, 1, "arr");
+
+        REQUIRE( solver.isInteger("arr", 0) );
+        REQUIRE( solver.isInteger("arr", 1) );
     }
 }

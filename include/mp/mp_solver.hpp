@@ -31,6 +31,8 @@ public:
 
     virtual double infinity() = 0;
 
+    virtual void makeVariable(double lb, double ub, std::string name) = 0;
+    virtual void makeVariableArray(int size, double lb, double ub, std::string name) = 0;
     virtual void makeIntVariable(double lb, double ub, std::string name) = 0;
     virtual void makeIntVariableArray(int size, double lb, double ub, std::string name) = 0;
     virtual void makeNumVariable(double lb, double ub, std::string name) = 0;

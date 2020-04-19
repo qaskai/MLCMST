@@ -9,6 +9,8 @@ using namespace MLCMST::mp;
 struct Solver : public ORMPSolver
 {
     Solver() : ORMPSolver(operations_research::MPSolver::CBC_MIXED_INTEGER_PROGRAMMING) {}
+    void makeVariable(double, double, std::string) override {}
+    void makeVariableArray(int, double, double, std::string) override {}
 };
 
 /**
