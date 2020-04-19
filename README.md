@@ -27,11 +27,12 @@ Tests can be run through Catch binary `./build/tests/mlcmst_tests` - [option doc
 - Catch2 integration
 - basic data generation
 - basic data serialization
+- simple tests
+- integration with [Google LP solver ](https://developers.google.com/optimization/mip/integer_opt "Google LP solver ")
 
 ### Todo
-- tests for existing code
-- integration with [Google LP solver ](https://developers.google.com/optimization/mip/integer_opt "Google LP solver ")
+- implementation of MLCMST heuristics and LP folmulations (various), [this](https://terpconnect.umd.edu/~raghavan/preprints/mlcmst.pdf "this") will go first
 - benchmark application
 - data generation application
 - preparation of set benchmark datasets
-- implementation of MLCMST heuristics and LP folmulations (various), [this](https://terpconnect.umd.edu/~raghavan/preprints/mlcmst.pdf "this") will go first
+- improve tests for existing code
