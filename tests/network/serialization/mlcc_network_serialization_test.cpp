@@ -59,10 +59,9 @@ TEST_CASE( "Multi-level capacitated network serialization", "[network][serializa
             REQUIRE(deserialized_network.demand(i) == network.demand(i) );
         }
         for (int i=0; i< deserialized_network.levelsNumber(); i++) {
-            const CapacitatedNetwork& cn = deserialized_network.network(i);
-            REQUIRE(cn.size() == network.size() );
-            REQUIRE(cn.edgeCapacity() == network.network(i).edgeCapacity() );
-            REQUIRE(cn.network() == network.network(i).network() );
+            REQUIRE( deserialized_network.network(i).size() == network.size() );
+            REQUIRE( deserialized_network.edgeCapacity(i) == network.edgeCapacity(i) );
+            REQUIRE( deserialized_network.network(i) == network.network(i) );
         }
     }
 }

@@ -15,15 +15,15 @@ namespace network {
 class MLCCNetwork final
 {
 public:
-    MLCCNetwork(
-        int center, const std::vector<CapacitatedNetwork>& networks, const std::vector<int>& demands);
+    MLCCNetwork(int center, const std::vector<CapacitatedNetwork>& networks, const std::vector<int>& demands);
     ~MLCCNetwork();
 
     int size() const;
     int center() const;
     int levelsNumber() const;
     int demand(int v) const;
-    const CapacitatedNetwork& network(int i) const;
+    const Network& network(int i) const;
+    int edgeCapacity(int network_i) const;
 
 private:
     int _center;

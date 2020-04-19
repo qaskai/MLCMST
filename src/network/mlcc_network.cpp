@@ -37,9 +37,14 @@ int MLCCNetwork::demand(int v) const
     return _demands[v];
 }
 
-const CapacitatedNetwork& MLCCNetwork::network(int i) const
+const Network& MLCCNetwork::network(int i) const
 {
-    return _networks[i];
+    return _networks[i].network();
+}
+
+int MLCCNetwork::edgeCapacity(int network_i) const
+{
+    return _networks[network_i].edgeCapacity();
 }
 
 }

@@ -30,9 +30,8 @@ void MLCCNetworkSerializer::serialize(const MLCCNetwork& network, std::ostream& 
 
     FixedSizeNetworkSerializer network_serializer(network.size());
     for (int i=0; i< network.levelsNumber(); i++) {
-        const CapacitatedNetwork& cap_net = network.network(i);
-        stream << cap_net.edgeCapacity() << "\n";
-        network_serializer.serialize(cap_net.network(), stream);
+        stream << network.edgeCapacity(i) << "\n";
+        network_serializer.serialize(network.network(i), stream);
     }
 }
 

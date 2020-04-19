@@ -1,7 +1,6 @@
 #include <catch2/catch.hpp>
 
 #include <cmath>
-#include <functional>
 
 #include <network/network.hpp>
 #include <network/generation/euclid_network_generator.hpp>
@@ -35,7 +34,7 @@ TEST_CASE( "Euclidean distance network generation", "[network][generation]" )
     };
 
     double l = 0.0, r = 10.0;
-    double max_cost = sqrt(200.);
+    double max_cost = std::sqrt(200);
     int size = 5;
 
     Network network = generation::EuclidNetworkGenerator(size, l, r).generate();

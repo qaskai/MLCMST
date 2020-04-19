@@ -9,7 +9,7 @@
 using namespace MLCMST::network;
 using namespace MLCMST::network::generation;
 
-TEST_CASE( "Eucliden multi-level capacitated network generation", "[network][generation]" )
+TEST_CASE( "Euclidean multi-level capacitated network generation", "[network][generation]" )
 {
     typedef EuclidMLCCNetworkGenerator::Level Level;
     typedef EuclidMLCCNetworkGenerator::CenterPosition CenterPosition;
@@ -19,12 +19,12 @@ TEST_CASE( "Eucliden multi-level capacitated network generation", "[network][gen
         Level{1, 1.0}, Level{2, 1.5}, Level{5, 4.0}
     };
     double from = 0.0, to = 2.0;
-    double max_cost = sqrt(8.);
     int size = 5;
+    double max_cost = std::sqrt(8);
 
     auto cost_in_range = [] (const MLCCNetwork& n, double max_cost) {
         int size = n.size();
-        const Network& originalNetwork = n.network(0).network();
+        const Network& originalNetwork = n.network(0);
         for (int i=0; i<size; i++) {
             for (int j=0; j<size; j++) {
                 double cost = originalNetwork.edgeCost(i,j);
@@ -36,13 +36,13 @@ TEST_CASE( "Eucliden multi-level capacitated network generation", "[network][gen
 
     auto check_demands = [] (const MLCCNetwork& n) {
         for (int i=0; i< n.size(); i++) {
-            REQUIRE(n.demand(i) == 1 );
+            REQUIRE( n.demand(i) == 1 );
         }
     };
 
     auto check_capacities = [] (const MLCCNetwork& n, const std::vector<Level>& levels) {
         for (int i=0; i< n.levelsNumber(); i++) {
-            REQUIRE(n.network(i).edgeCapacity() == levels[i].capacity );
+            REQUIRE( n.edgeCapacity(i) == levels[i].capacity );
         }
     };
 
@@ -66,8 +66,8 @@ TEST_CASE( "Eucliden multi-level capacitated network generation", "[network][gen
     for (int i=0; i< network.levelsNumber(); i++) {
         check_multiplier( 
             levels[i].cost_multiplier,
-            network.network(0).network(),
-            network.network(i).network()
+            network.network(0),
+            network.network(i)
         );
     }
 }
