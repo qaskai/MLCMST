@@ -6,27 +6,11 @@ VERSION 0.1.0
 LANGUAGES CXX
 )
 
+include("${CMAKE_CURRENT_SOURCE_DIR}/DownloadDependencies.cmake")
 
 if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     include(CTest)
 endif()
-
-include(FetchContent)
-
-FetchContent_Declare(
-or-tools
-GIT_REPOSITORY "https://github.com/google/or-tools.git"
-GIT_TAG master
-)
-FetchContent_MakeAvailable(or-tools)
-
-FetchContent_Declare(
-glog
-GIT_REPOSITORY "https://github.com/google/glog.git"
-GIT_TAG master
-)
-FetchContent_MakeAvailable(glog)
-
 
 include_directories(include)
 
