@@ -25,6 +25,9 @@ public:
     void makeNumVariable(double lb, double ub, std::string name) override;
     void makeNumVariableArray(int size, double lb, double ub, std::string name) override;
 
+    bool isInteger(std::string var_name) override;
+    bool isInteger(std::string var_name, int var_i) override;
+
     void makeConstraint(double lb, double ub, std::string name) override;
     void makeConstraintArray(int size, double lb, double ub, std::string name) override;
     void setConstraintCoefficient(double c, std::string var_name, std::string constraint_name) override;

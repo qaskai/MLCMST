@@ -36,6 +36,9 @@ public:
     virtual void makeNumVariable(double lb, double ub, std::string name) = 0;
     virtual void makeNumVariableArray(int size, double lb, double ub, std::string name) = 0;
 
+    virtual bool isInteger(std::string var_name) = 0;
+    virtual bool isInteger(std::string var_name, int var_i) = 0;
+
     virtual void makeConstraint(double lb, double ub, std::string name) = 0;
     virtual void makeConstraintArray(int size, double lb, double ub, std::string name) = 0;
     virtual void setConstraintCoefficient(double c, std::string var_name, std::string constraint_name) = 0;

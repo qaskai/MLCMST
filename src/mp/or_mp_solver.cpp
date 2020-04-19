@@ -38,6 +38,16 @@ void ORMPSolver::makeNumVariableArray(int size, double lb, double ub, std::strin
     _solver.MakeNumVarArray(size, lb, ub, name, &(_variable_arrays[name]));
 }
 
+bool ORMPSolver::isInteger(std::string var_name)
+{
+    return _variables[var_name]->integer();
+}
+
+bool ORMPSolver::isInteger(std::string var_name, int var_i)
+{
+    return _variable_arrays[var_name][var_i]->integer();
+}
+
 void ORMPSolver::makeConstraint(double lb, double ub, std::string name)
 {
     _constraints[name] = _solver.MakeRowConstraint(lb, ub, name);

@@ -6,6 +6,10 @@
 
 using namespace MLCMST::mp;
 
+struct Solver : public ORMPSolver
+{
+    Solver() : ORMPSolver(operations_research::MPSolver::CBC_MIXED_INTEGER_PROGRAMMING) {}
+};
 
 /**
  * Tested mixed integer program.
@@ -20,12 +24,6 @@ using namespace MLCMST::mp;
  */
 TEST_CASE( "or-tools wrapper | variable and constraint creation, variable access", "[mp][or-tools]" )
 {
-
-    struct Solver : public ORMPSolver
-    {
-        Solver() : ORMPSolver(operations_research::MPSolver::CBC_MIXED_INTEGER_PROGRAMMING) {}
-    };
-
     const double error_epsilon = 0.001;
     double expected_var_value[2] = { 0, 2.5 };
     double expected_objective_value = 25;
@@ -106,5 +104,29 @@ TEST_CASE( "or-tools wrapper | variable and constraint creation, variable access
             REQUIRE( solver.variableValue("int_vars", 0) == expected_var_value[0] );
             REQUIRE( solver.variableValue("num_vars", 0) == Approx(expected_var_value[1]).epsilon(error_epsilon) );
         }
+    }
+}
+
+TEST_CASE( "or-tools wrapper | variable properties", "[mp][or-tools]" )
+{
+    Solver solver;
+
+    SECTION( "individual variable is integer" )
+    {
+        solver.makeIntVariable(0, 1, "x");
+        solver.makeNumVariable(0, 1, "y");
+
+        REQUIRE( solver.isInteger("x") );
+        REQUIRE( !solver.isInteger("y") );
+    }
+    SECTION( "array variable is integer" )
+    {
+        solver.makeIntVariableArray(2, 0, 1, "arr0");
+        solver.makeNumVariableArray(2, 0, 1, "arr1");
+
+        REQUIRE( solver.isInteger("arr0", 0) );
+        REQUIRE( solver.isInteger("arr0", 1) );
+        REQUIRE( !solver.isInteger("arr1", 0) );
+        REQUIRE( !solver.isInteger("arr1", 1) );
     }
 }
