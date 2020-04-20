@@ -10,7 +10,7 @@ Network::Network(const std::vector<std::vector<double>>& costs) : _costs(costs)
 
 Network::~Network() = default;
 
-int Network::size() const
+int Network::vertexCount() const
 {
     return _costs.size();
 }
@@ -33,11 +33,11 @@ const double& Network::edgeCost(int v, int w) const
 
 bool operator==(const Network& n1, const Network& n2)
 {
-    if (n1.size() != n2.size()) {
+    if (n1.vertexCount() != n2.vertexCount()) {
         return false;
     }
 
-    int size = n1.size();
+    int size = n1.vertexCount();
     for (int i=0; i<size; i++) {
         for (int j=0; j<size; j++) {
             if (n1.edgeCost(i,j) != n2.edgeCost(i,j))

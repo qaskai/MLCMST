@@ -12,7 +12,7 @@ namespace serialization {
 
 /**
  * Format:
- * size center level_number
+ * vertexCount center level_number
  * demands vector
  * capacity_level1
  * network_level1

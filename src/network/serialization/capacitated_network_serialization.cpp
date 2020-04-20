@@ -15,8 +15,8 @@ CapacitatedNetworkSerializer::~CapacitatedNetworkSerializer() = default;
 
 void CapacitatedNetworkSerializer::serialize(const CapacitatedNetwork& network, std::ostream& stream)
 {
-    stream << network.size() << " " << network.edgeCapacity() << "\n";
-    FixedSizeNetworkSerializer(network.size()).serialize(network.network(), stream);
+    stream << network.vertexCount() << " " << network.edgeCapacity() << "\n";
+    FixedSizeNetworkSerializer(network.vertexCount()).serialize(network.network(), stream);
 }
 
 

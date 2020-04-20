@@ -13,7 +13,7 @@ public:
     CapacitatedNetwork(int edge_capacity, const Network& network);
     ~CapacitatedNetwork();
 
-    int size() const;
+    int vertexCount() const;
     int edgeCapacity() const;
     const Network& network() const;
 

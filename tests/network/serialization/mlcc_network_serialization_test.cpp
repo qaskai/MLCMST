@@ -53,13 +53,13 @@ TEST_CASE( "Multi-level capacitated network serialization", "[network][serializa
         ss << serialized_mlcc_network;
         MLCCNetwork deserialized_network = serialization::MLCCNetworkDeserializer().deserialize(ss);
 
-        REQUIRE(deserialized_network.size() == network.size() );
+        REQUIRE(deserialized_network.vertexCount() == network.vertexCount() );
         REQUIRE(deserialized_network.levelsNumber() == network.levelsNumber() );
-        for (int i=0; i< network.size(); i++) {
+        for (int i=0; i< network.vertexCount(); i++) {
             REQUIRE(deserialized_network.demand(i) == network.demand(i) );
         }
         for (int i=0; i< deserialized_network.levelsNumber(); i++) {
-            REQUIRE( deserialized_network.network(i).size() == network.size() );
+            REQUIRE(deserialized_network.network(i).vertexCount() == network.vertexCount() );
             REQUIRE( deserialized_network.edgeCapacity(i) == network.edgeCapacity(i) );
             REQUIRE( deserialized_network.network(i) == network.network(i) );
         }

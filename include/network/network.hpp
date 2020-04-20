@@ -11,7 +11,7 @@ public:
     Network(const std::vector<std::vector<double>>& costs);
     ~Network();
 
-    int size() const;
+    int vertexCount() const;
     const std::vector<std::vector<double>>& costs() const;
     double& edgeCost(int v, int w);
     const double& edgeCost(int v, int w) const;

@@ -14,9 +14,9 @@ CapacitatedNetwork::CapacitatedNetwork(int edge_capacity, const Network& network
 CapacitatedNetwork::~CapacitatedNetwork() = default;
 
 
-int CapacitatedNetwork::size() const
+int CapacitatedNetwork::vertexCount() const
 {
-    return _network.size();
+    return _network.vertexCount();
 }
 
 int CapacitatedNetwork::edgeCapacity() const

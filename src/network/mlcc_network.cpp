@@ -17,9 +17,9 @@ MLCCNetwork::MLCCNetwork(
 
 MLCCNetwork::~MLCCNetwork() = default;
 
-int MLCCNetwork::size() const
+int MLCCNetwork::vertexCount() const
 {
-    return _networks[0].size();
+    return _networks[0].vertexCount();
 }
 
 int MLCCNetwork::center() const

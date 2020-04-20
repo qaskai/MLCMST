@@ -18,8 +18,8 @@ public:
     MLCCNetwork(int center, const std::vector<CapacitatedNetwork>& networks, const std::vector<int>& demands);
     ~MLCCNetwork();
 
-    int size() const;
     int center() const;
+    int vertexCount() const;
     int levelsNumber() const;
     int demand(int v) const;
     const Network& network(int i) const;

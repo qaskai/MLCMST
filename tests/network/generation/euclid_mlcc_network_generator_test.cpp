@@ -23,7 +23,7 @@ TEST_CASE( "Euclidean multi-level capacitated network generation", "[network][ge
     double max_cost = std::sqrt(8);
 
     auto cost_in_range = [] (const MLCCNetwork& n, double max_cost) {
-        int size = n.size();
+        int size = n.vertexCount();
         const Network& originalNetwork = n.network(0);
         for (int i=0; i<size; i++) {
             for (int j=0; j<size; j++) {
@@ -35,7 +35,7 @@ TEST_CASE( "Euclidean multi-level capacitated network generation", "[network][ge
     };
 
     auto check_demands = [] (const MLCCNetwork& n) {
-        for (int i=0; i< n.size(); i++) {
+        for (int i=0; i< n.vertexCount(); i++) {
             REQUIRE( n.demand(i) == 1 );
         }
     };
@@ -47,7 +47,7 @@ TEST_CASE( "Euclidean multi-level capacitated network generation", "[network][ge
     };
 
     auto check_multiplier = [] (double scalar, const Network& original, const Network& copy) {
-        int size = original.size();
+        int size = original.vertexCount();
         for (int i=0; i<size; i++) {
             for (int j=0; j<size; j++) {
                 REQUIRE( original.edgeCost(i,j) * scalar == copy.edgeCost(i,j) );
@@ -57,7 +57,7 @@ TEST_CASE( "Euclidean multi-level capacitated network generation", "[network][ge
 
     MLCCNetwork network = EuclidMLCCNetworkGenerator(size, from, to, center_position, levels).generate();
 
-    REQUIRE(network.size() == size );
+    REQUIRE(network.vertexCount() == size );
     REQUIRE(network.center() == 0 );
     REQUIRE(network.levelsNumber() == levels.size() );
     cost_in_range(network, max_cost);

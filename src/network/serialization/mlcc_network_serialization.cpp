@@ -19,16 +19,16 @@ MLCCNetworkSerializer::~MLCCNetworkSerializer() = default;
 
 void MLCCNetworkSerializer::serialize(const MLCCNetwork& network, std::ostream& stream)
 {
-    stream << network.size() << " ";
+    stream << network.vertexCount() << " ";
     stream << network.center() << " ";
     stream << network.levelsNumber() << "\n";
 
-    for (int i=0; i< network.size(); i++) {
+    for (int i=0; i< network.vertexCount(); i++) {
         stream << network.demand(i) << " ";
     }
     stream << "\n";
 
-    FixedSizeNetworkSerializer network_serializer(network.size());
+    FixedSizeNetworkSerializer network_serializer(network.vertexCount());
     for (int i=0; i< network.levelsNumber(); i++) {
         stream << network.edgeCapacity(i) << "\n";
         network_serializer.serialize(network.network(i), stream);

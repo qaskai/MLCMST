@@ -49,7 +49,7 @@ MLCCNetwork EuclidMLCCNetworkGenerator::generate()
 {
     vector<Point<double>> points = _point_set_generator->generate();
     Network network = Network(geometry::util::createDistanceMatrix(points));
-    int N = network.size();
+    int N = network.vertexCount();
     vector<CapacitatedNetwork> network_levels;
     for (Level level : _levels) {
         auto new_costs = break_up(N, multiply(flatten(network.costs()), level.cost_multiplier));

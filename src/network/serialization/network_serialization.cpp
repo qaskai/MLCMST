@@ -16,7 +16,7 @@ NetworkSerializer::~NetworkSerializer() = default;
 
 void NetworkSerializer::serialize(const Network& network, std::ostream& stream)
 {
-    int N = network.size();
+    int N = network.vertexCount();
     stream << N << "\n";
     for (int i=0; i<N; i++) {
         for (int j=0; j<N; j++) {
