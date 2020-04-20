@@ -48,9 +48,19 @@ bool ORMPSolver::isInteger(std::string var_name, int var_i)
     return _variable_arrays[var_name][var_i]->integer();
 }
 
+void ORMPSolver::makeConstraint(std::string name)
+{
+    makeConstraint(-infinity(), infinity(), name);
+}
+
 void ORMPSolver::makeConstraint(double lb, double ub, std::string name)
 {
     _constraints[name] = _solver.MakeRowConstraint(lb, ub, name);
+}
+
+void ORMPSolver::makeConstraintArray(int size, std::string name)
+{
+    makeConstraintArray(size, -infinity(), infinity(), name);
 }
 
 void ORMPSolver::makeConstraintArray(int size, double lb, double ub, std::string name)
@@ -60,6 +70,16 @@ void ORMPSolver::makeConstraintArray(int size, double lb, double ub, std::string
     for (int i=0; i<size; i++) {
         constraint_arr.push_back(_solver.MakeRowConstraint(lb, ub, constraintArrayMemberName(i, name)));
     }
+}
+
+void ORMPSolver::setConstraintBounds(double lb, double ub, std::string name)
+{
+    _constraints[name]->SetBounds(lb, ub);
+}
+
+void ORMPSolver::setConstraintBounds(double lb, double ub, std::string name, int cons_i)
+{
+    _constraint_arrays[name][cons_i]->SetBounds(lb, ub);
 }
 
 void ORMPSolver::setConstraintCoefficient(double c, std::string var_name, std::string constraint_name)

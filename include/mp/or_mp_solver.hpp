@@ -28,8 +28,12 @@ public:
     bool isInteger(std::string var_name) override;
     bool isInteger(std::string var_name, int var_i) override;
 
+    void makeConstraint(std::string name) override;
     void makeConstraint(double lb, double ub, std::string name) override;
+    void makeConstraintArray(int size, std::string name) override;
     void makeConstraintArray(int size, double lb, double ub, std::string name) override;
+    void setConstraintBounds(double lb, double ub, std::string name) override;
+    void setConstraintBounds(double lb, double ub, std::string name, int cons_i) override;
     void setConstraintCoefficient(double c, std::string var_name, std::string constraint_name) override;
     void setConstraintCoefficient(double c, std::string var_name, int var_i, std::string constraint_name) override;
     void setConstraintCoefficient(double c, std::string var_name, std::string constraint_name, int cons_i) override;

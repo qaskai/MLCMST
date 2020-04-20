@@ -41,8 +41,12 @@ public:
     virtual bool isInteger(std::string var_name) = 0;
     virtual bool isInteger(std::string var_name, int var_i) = 0;
 
+    virtual void makeConstraint(std::string name) = 0;
     virtual void makeConstraint(double lb, double ub, std::string name) = 0;
+    virtual void makeConstraintArray(int size, std::string name) = 0;
     virtual void makeConstraintArray(int size, double lb, double ub, std::string name) = 0;
+    virtual void setConstraintBounds(double lb, double ub, std::string name) = 0;
+    virtual void setConstraintBounds(double lb, double ub, std::string name, int cons_i) = 0;
     virtual void setConstraintCoefficient(double c, std::string var_name, std::string constraint_name) = 0;
     virtual void setConstraintCoefficient(double c, std::string var_name, int var_i, std::string constraint_name) = 0;
     virtual void setConstraintCoefficient(double c, std::string var_name, std::string constraint_name, int cons_i) = 0;

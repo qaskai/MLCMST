@@ -132,3 +132,36 @@ TEST_CASE( "or-tools wrapper | variable properties", "[mp][or-tools]" )
         REQUIRE( !solver.isInteger("arr1", 1) );
     }
 }
+
+TEST_CASE(  "or-tools wrapper | constraint properties", "[mp][or-tools]" )
+{
+    Solver solver;
+
+    solver.makeNumVariable(1.0, 5.0, "var");
+    solver.setObjectiveCoefficient(1, "var");
+
+    SECTION( "individual constraint bound modification" ) {
+        solver.makeConstraint("constraint");
+        solver.setConstraintCoefficient(1, "var", "constraint");
+        solver.setConstraintBounds(3, 4, "constraint");
+        solver.setMinimization();
+
+        solver.solve();
+
+        REQUIRE( solver.resultStatus() == Solver::OPTIMAL );
+        REQUIRE( solver.objectiveValue() == Approx(3).margin(0.0001) );
+    }
+    SECTION( "array constraint bound modification" ) {
+        solver.makeConstraintArray(2, "constraint");
+        solver.setConstraintCoefficient(1, "var", "constraint", 0);
+        solver.setConstraintCoefficient(1, "var", "constraint", 1);
+        solver.setConstraintBounds(2, 5, "constraint", 0);
+        solver.setConstraintBounds(3, 4, "constraint", 1);
+        solver.setMaximization();
+
+        solver.solve();
+
+        REQUIRE( solver.resultStatus() == Solver::OPTIMAL );
+        REQUIRE( solver.objectiveValue() == Approx(4).margin(0.0001) );
+    }
+}
