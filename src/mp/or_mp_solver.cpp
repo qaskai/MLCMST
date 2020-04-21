@@ -67,6 +67,7 @@ void ORMPSolver::makeConstraintArray(int size, double lb, double ub, std::string
 {
     std::vector<or_::MPConstraint*>& constraint_arr = _constraint_arrays[name];
     constraint_arr.clear();
+    constraint_arr.reserve(size);
     for (int i=0; i<size; i++) {
         constraint_arr.push_back(_solver.MakeRowConstraint(lb, ub, constraintArrayMemberName(i, name)));
     }

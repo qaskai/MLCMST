@@ -1,17 +1,48 @@
 #include <iostream>
 #include <vector>
 
-#include <geometry/generation/real_point_generator.hpp>
-#include <network/capacitated_network.hpp>
+#include <network/mlcc_network.hpp>
+#include <network/generation/euclid_mlcc_network_generator.hpp>
+
+#include <network/serialization/mlcc_network_serialization.hpp>
+
+#include <solver/mp/scf.hpp>
+
+using namespace std;
+
+using namespace MLCMST;
+using namespace MLCMST::network;
+
+void scfRun(network::MLCCNetwork mlcc_network)
+{
+    solver::mp::SCF scf(true);
+    auto result = scf.solve(mlcc_network);
+
+    cout << result.lower_bound.value() << endl;
+}
+
+network::MLCCNetwork generateNetwork()
+{
+    using Level = generation::EuclidMLCCNetworkGenerator::Level;
+    using CenterPos = generation::EuclidMLCCNetworkGenerator::CenterPosition;
+
+    vector<Level> levels{
+        Level { 1, 1 },
+        Level { 3, 2 },
+        Level { 5, 3.5 }
+    };
+    generation::EuclidMLCCNetworkGenerator generator (9, 0, 10, CenterPos::RANDOM, levels);
+    MLCCNetwork mlccNetwork = generator.generate();
+
+    mlccNetwork = generator.generate();
+
+    serialization::MLCCNetworkSerializer serializer;
+    serializer.serialize(mlccNetwork, cout);
+    return mlccNetwork;
+}
 
 int main(int argc, char const *argv[])
 {
-    std::cout << "Hello world" << std::endl;
-    MLCMST::geometry::generation::RealPointGenerator g(0, 10);
-    auto p = g.generate();
-    std::cout << p.x << " " << p.y << std::endl;
-
-    MLCMST::network::Network qq({ {1.0, 2.3}, {2.3, 1.2}});
-    std::cout << qq.edgeCost(0,1) << std::endl;
+    scfRun(generateNetwork());
     return 0;
 }

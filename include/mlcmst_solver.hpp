@@ -1,5 +1,7 @@
 #pragma once
 
+#include <optional>
+
 #include <network/mlcc_network.hpp>
 #include <network/mlcmst.hpp>
 
@@ -10,7 +12,10 @@ class MLCMSTSolver
 public:
     struct Result
     {
-        network::MLCMST mlcmst;
+        std::optional<network::MLCMST> mlcmst;
+        std::optional<double> lower_bound;
+        long process_time; // in milliseconds
+        bool finished;
     };
 
     virtual ~MLCMSTSolver();
