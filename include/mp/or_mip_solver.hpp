@@ -2,8 +2,7 @@
 
 #include <mp/or_mp_solver.hpp>
 
-namespace MLCMST {
-namespace mp {
+namespace MLCMST::mp {
 
 class ORMIPSolver : public ORMPSolver
 {
@@ -15,5 +14,4 @@ public:
     void makeVariableArray(int size, double lb, double ub, std::string name) override;
 };
 
-}
 }

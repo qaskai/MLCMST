@@ -5,9 +5,7 @@
 #include <generator.hpp>
 #include <geometry/point.hpp>
 
-namespace MLCMST {
-namespace geometry {
-namespace generation {
+namespace MLCMST::geometry::generation {
 
 class RealPointGenerator final : public Generator<Point<double> >
 {
@@ -24,6 +22,4 @@ private:
 
 };
 
-}
-}
 }

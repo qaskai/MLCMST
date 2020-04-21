@@ -5,9 +5,7 @@
 
 #include <geometry/point.hpp>
 
-namespace MLCMST {
-namespace geometry {
-namespace util {
+namespace MLCMST::geometry::util {
 
 template<typename T>
 T euclidDistance(const Point<T>& p, const Point<T>& q);
@@ -25,6 +23,4 @@ T euclidDistance(const Point<T>& p, const Point<T>& q) {
     return sqrt(a*a + b*b);
 }
 
-}
-}
 }

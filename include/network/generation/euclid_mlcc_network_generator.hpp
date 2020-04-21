@@ -8,9 +8,7 @@
 #include <network/mlcc_network.hpp>
 #include <generator.hpp>
 
-namespace MLCMST {
-namespace network {
-namespace generation {
+namespace MLCMST::network::generation {
 
 using geometry::Point;
 
@@ -55,6 +53,4 @@ private:
     vector<vector<double>> break_up(int N, const vector<double>& v);
 };
 
-}
-}
 }

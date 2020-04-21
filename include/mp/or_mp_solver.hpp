@@ -8,8 +8,7 @@
 
 #include <ortools/linear_solver/linear_solver.h>
 
-namespace MLCMST {
-namespace mp {
+namespace MLCMST::mp {
 
 namespace or_ = operations_research;
 
@@ -66,5 +65,4 @@ private:
     std::string constraintArrayMemberName(int i, std::string arr_name);
 };
 
-}
 }

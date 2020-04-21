@@ -5,8 +5,7 @@
 #include <network/capacitated_network.hpp>
 
 
-namespace MLCMST {
-namespace network {
+namespace MLCMST::network {
 
 /**
  * MLCC stands for Multi Level Centralized Capacitated
@@ -32,5 +31,4 @@ private:
 
 };
 
-}
 }

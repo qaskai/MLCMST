@@ -5,9 +5,7 @@
 #include <deserializer.hpp>
 
 
-namespace MLCMST {
-namespace network {
-namespace serialization {
+namespace MLCMST::network::serialization {
 
 class NetworkSerializer final : public Serializer<Network>
 {
@@ -31,6 +29,4 @@ public:
     
 };
 
-}
-}
 }

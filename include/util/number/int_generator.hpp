@@ -5,9 +5,7 @@
 
 #include <generator.hpp>
 
-namespace MLCMST {
-namespace util {
-namespace number {
+namespace MLCMST::util::number {
 
 class IntGenerator final : public Generator<int>
 {
@@ -25,6 +23,4 @@ private:
 
 };
 
-}
-}
 }

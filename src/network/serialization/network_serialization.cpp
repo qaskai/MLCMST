@@ -2,9 +2,7 @@
 
 #include <vector>
 
-namespace MLCMST {
-namespace network {
-namespace serialization {
+namespace MLCMST::network::serialization {
 
 
 // *************** NetworkSerializer *************** //
@@ -49,6 +47,4 @@ Network NetworkDeserializer::deserialize(std::istream& stream)
     return Network(costs);
 }
 
-}
-}
 }

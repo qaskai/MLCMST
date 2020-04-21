@@ -5,9 +5,7 @@
 #include <network/capacitated_network.hpp>
 #include <network/serialization/fixed_size_network_serialization.hpp>
 
-namespace MLCMST {
-namespace network {
-namespace serialization {
+namespace MLCMST::network::serialization {
 
 
 // ************ MLCCNetworkSerializer ************ //
@@ -69,6 +67,4 @@ MLCCNetwork MLCCNetworkDeserializer::deserialize(std::istream& stream)
     return MLCCNetwork(center, networks, demands);
 }
 
-}
-}
 }

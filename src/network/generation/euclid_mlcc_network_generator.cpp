@@ -5,10 +5,7 @@
 #include <geometry/util.hpp>
 #include <network/capacitated_network.hpp>
 
-namespace MLCMST {
-namespace network {
-namespace generation {
-
+namespace MLCMST::network::generation {
 
 EuclidMLCCNetworkGenerator::EuclidMLCCNetworkGenerator(
     int N, double from, double to, CenterPosition center_position, const std::vector<Level>& levels
@@ -93,6 +90,4 @@ vector<vector<double>> EuclidMLCCNetworkGenerator::break_up(int N, const vector<
     return result;
 }
 
-}
-}
 }

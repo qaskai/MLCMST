@@ -6,9 +6,7 @@
 #include <deserializer.hpp>
 
 
-namespace MLCMST {
-namespace network {
-namespace serialization {
+namespace MLCMST::network::serialization {
 
 /**
  * Format:
@@ -40,6 +38,4 @@ public:
     MLCCNetwork deserialize(std::istream& stream) override;
 };
 
-}
-}
 }

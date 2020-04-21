@@ -2,8 +2,7 @@
 
 #include <vector>
 
-namespace MLCMST {
-namespace network {
+namespace MLCMST::network {
 
 class Network final
 {
@@ -23,5 +22,4 @@ private:
 
 };
 
-}
 }

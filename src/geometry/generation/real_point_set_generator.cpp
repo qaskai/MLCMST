@@ -4,9 +4,7 @@
 
 #include <geometry/generation/real_point_generator.hpp>
 
-namespace MLCMST {
-namespace geometry {
-namespace generation {
+namespace MLCMST::geometry::generation {
 
 RealPointSetGenerator::RealPointSetGenerator(int N, double from, double to)
     : RealPointSetGenerator(N, std::make_unique<RealPointGenerator>(from, to))
@@ -42,6 +40,4 @@ std::vector<Point<double>> RealPointSetGenerator::generate()
     return std::vector<Point<double>>(points.begin(), points.end());
 }
 
-}
-}
 }

@@ -4,9 +4,7 @@
 #include <serializer.hpp>
 #include <deserializer.hpp>
 
-namespace MLCMST {
-namespace geometry {
-namespace serialization {
+namespace MLCMST::geometry::serialization {
 
 template<typename T>
 class PointSerializer final : public Serializer<Point<T>>
@@ -50,6 +48,4 @@ Point<T> PointDeserializer<T>::deserialize(std::istream& stream)
     return p;
 }
 
-}
-}
 }

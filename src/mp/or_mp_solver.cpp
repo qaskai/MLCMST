@@ -1,7 +1,6 @@
 #include <mp/or_mp_solver.hpp>
 
-namespace MLCMST {
-namespace mp {
+namespace MLCMST::mp {
 
 ORMPSolver::ORMPSolver(or_::MPSolver::OptimizationProblemType problemType)
     : _solver("wrapped_MPSolver", problemType)
@@ -164,5 +163,4 @@ std::string ORMPSolver::constraintArrayMemberName(int i, std::string arr_name)
 }
 
 
-}
 }

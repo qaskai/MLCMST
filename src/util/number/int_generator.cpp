@@ -2,9 +2,7 @@
 
 #include <cassert>
 
-namespace MLCMST {
-namespace util {
-namespace number {
+namespace MLCMST::util::number {
 
 IntGenerator::IntGenerator(int from, int to)
     : _from(from), _to(to)
@@ -23,6 +21,4 @@ int IntGenerator::generate()
     return _draw_random_number();
 }
 
-}
-}
 }

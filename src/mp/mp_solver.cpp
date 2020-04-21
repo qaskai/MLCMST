@@ -1,9 +1,7 @@
 #include <mp/mp_solver.hpp>
 
-namespace MLCMST {
-namespace mp {
+namespace MLCMST::mp {
 
 MPSolver::~MPSolver() = default;
 
-}
 }

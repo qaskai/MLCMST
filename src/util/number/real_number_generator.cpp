@@ -2,9 +2,7 @@
 
 #include <cassert>
 
-namespace MLCMST {
-namespace util {
-namespace number {
+namespace MLCMST::util::number {
 
 RealNumberGenerator::RealNumberGenerator(double from, int to)
     : _from(from), _to(to)
@@ -24,6 +22,4 @@ double RealNumberGenerator::generate()
     return _draw_random_number();
 }
 
-}
-}
 }

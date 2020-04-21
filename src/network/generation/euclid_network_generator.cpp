@@ -6,9 +6,7 @@
 #include <geometry/generation/real_point_set_generator.hpp>
 #include <geometry/util.hpp>
 
-namespace MLCMST {
-namespace network {
-namespace generation {
+namespace MLCMST::network::generation {
 
 EuclidNetworkGenerator::EuclidNetworkGenerator(int N, double from, double to)
     : EuclidNetworkGenerator(N, std::make_unique<geometry::generation::RealPointGenerator>(from, to))
@@ -42,6 +40,4 @@ Network EuclidNetworkGenerator::generate()
     return Network(distances);
 }
 
-}
-}
 }

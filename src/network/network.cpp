@@ -1,7 +1,6 @@
 #include <network/network.hpp>
 
-namespace MLCMST {
-namespace network {
+namespace MLCMST::network {
 
 Network::Network(const std::vector<std::vector<double>>& costs) : _costs(costs)
 {
@@ -47,5 +46,4 @@ bool operator==(const Network& n1, const Network& n2)
     return true;
 }
 
-}
 }

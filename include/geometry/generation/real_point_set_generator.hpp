@@ -8,9 +8,7 @@
 #include <generator.hpp>
 #include <geometry/point.hpp>
 
-namespace MLCMST {
-namespace geometry {
-namespace generation {
+namespace MLCMST::geometry::generation {
 
 class RealPointSetGenerator final : public Generator<std::vector<Point<double>> >
 {
@@ -28,6 +26,4 @@ private:
 
 };
 
-}
-}
 }

@@ -1,9 +1,7 @@
 #include <network/mlcc_network.hpp>
 
 
-
-namespace MLCMST {
-namespace network {
+namespace MLCMST::network {
 
 MLCCNetwork::MLCCNetwork(
     int center,
@@ -47,5 +45,4 @@ int MLCCNetwork::edgeCapacity(int network_i) const
     return _networks[network_i].edgeCapacity();
 }
 
-}
 }

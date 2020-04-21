@@ -8,9 +8,7 @@
 #include <mlcmst_solver.hpp>
 #include <mp/mp_solver.hpp>
 
-namespace MLCMST {
-namespace solver {
-namespace mp {
+namespace MLCMST::solver::mp {
 
 /**
  * Single Commodity Formulation
@@ -48,6 +46,4 @@ private:
 
 };
 
-}
-}
 }

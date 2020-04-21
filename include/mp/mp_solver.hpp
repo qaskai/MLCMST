@@ -3,8 +3,7 @@
 #include <string>
 #include <unordered_map>
 
-namespace MLCMST {
-namespace mp {
+namespace MLCMST::mp {
 
 class MPSolver
 {
@@ -64,5 +63,4 @@ public:
     virtual double variableValue(std::string name, int var_i) = 0;
 };
 
-}
 }

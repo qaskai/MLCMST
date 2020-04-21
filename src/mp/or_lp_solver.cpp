@@ -4,9 +4,7 @@
 
 #include <ortools/linear_solver/linear_solver.h>
 
-namespace MLCMST {
-namespace mp {
-
+namespace MLCMST::mp {
 
 ORLPSolver::ORLPSolver() : ORMPSolver(operations_research::MPSolver::GLOP_LINEAR_PROGRAMMING)
 {
@@ -35,5 +33,4 @@ void ORLPSolver::makeIntVariableArray(int size, double lb, double ub, std::strin
     throw std::logic_error("Integer variables are not allowed in linear program");
 }
 
-}
 }

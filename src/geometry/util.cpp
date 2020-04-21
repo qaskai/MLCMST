@@ -1,9 +1,7 @@
 #include <geometry/util.hpp>
 
 
-namespace MLCMST {
-namespace geometry {
-namespace util {
+namespace MLCMST::geometry::util {
 
 using std::vector;
 
@@ -19,6 +17,4 @@ vector<vector<double>> createDistanceMatrix(const vector<Point<double>>& points)
     return distances;
 }
 
-}
-}
 }

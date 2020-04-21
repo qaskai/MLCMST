@@ -4,8 +4,7 @@
 
 #include <network/network.hpp>
 
-namespace MLCMST {
-namespace network {
+namespace MLCMST::network {
 
 class CapacitatedNetwork final
 {
@@ -22,5 +21,4 @@ private:
     Network _network;
 };
 
-}
 }

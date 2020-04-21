@@ -2,8 +2,7 @@
 
 #include <ortools/linear_solver/linear_solver.h>
 
-namespace MLCMST {
-namespace mp {
+namespace MLCMST::mp {
 
 ORMIPSolver::ORMIPSolver() : ORMPSolver(operations_research::MPSolver::CBC_MIXED_INTEGER_PROGRAMMING)
 {
@@ -22,5 +21,4 @@ void ORMIPSolver::makeVariableArray(int size, double lb, double ub, std::string 
     makeIntVariableArray(size, lb, ub, name);
 }
 
-}
 }

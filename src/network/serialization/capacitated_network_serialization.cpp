@@ -2,9 +2,7 @@
 
 #include <network/serialization/fixed_size_network_serialization.hpp>
 
-namespace MLCMST {
-namespace network {
-namespace serialization {
+namespace MLCMST::network::serialization {
 
 // ************ CapacitatedNetworkSerializer ************ //
 
@@ -35,6 +33,4 @@ CapacitatedNetwork CapacitatedNetworkDeserializer::deserialize(std::istream& str
 }
 
 
-}
-}
 }

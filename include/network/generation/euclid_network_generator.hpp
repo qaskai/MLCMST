@@ -7,9 +7,7 @@
 #include <geometry/point.hpp>
 #include <generator.hpp>
 
-namespace MLCMST {
-namespace network {
-namespace generation {
+namespace MLCMST::network::generation {
 
 using geometry::Point;
 
@@ -31,6 +29,4 @@ private:
 
 };
 
-}
-}
 }

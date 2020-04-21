@@ -3,10 +3,8 @@
 #include <string>
 #include <istream>
 
-namespace MLCMST {
-namespace util {
+namespace MLCMST::util {
 
 std::string read_stream(std::istream& stream);
 
-}
 }

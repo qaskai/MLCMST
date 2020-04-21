@@ -4,8 +4,7 @@
 
 #include <network/mlcc_network.hpp>
 
-namespace MLCMST {
-namespace network {
+namespace MLCMST::network {
 
 class MLCMST final
 {
@@ -20,5 +19,4 @@ private:
 
 };
 
-}
 }

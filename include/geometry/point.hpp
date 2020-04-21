@@ -1,8 +1,7 @@
 #pragma once
 
 
-namespace MLCMST {
-namespace geometry {
+namespace MLCMST::geometry {
 
 template <typename T>
 struct Point final
@@ -46,5 +45,4 @@ bool operator==(const Point<T>& p, const Point<T>& q)
 }
 
 
-}
 }

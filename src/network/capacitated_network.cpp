@@ -1,9 +1,7 @@
 #include <network/capacitated_network.hpp>
 
 
-
-namespace MLCMST {
-namespace network {
+namespace MLCMST::network {
 
 CapacitatedNetwork::CapacitatedNetwork(int edge_capacity, const Network& network)
     : _edge_capacity(edge_capacity), _network(network)
@@ -29,5 +27,4 @@ const Network& CapacitatedNetwork::network() const
     return _network;
 }
 
-}
 }

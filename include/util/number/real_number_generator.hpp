@@ -5,9 +5,7 @@
 
 #include <generator.hpp>
 
-namespace MLCMST {
-namespace util {
-namespace number {
+namespace MLCMST::util::number {
 
 class RealNumberGenerator final : public Generator<double>
 {
@@ -24,6 +22,4 @@ private:
 
 };
 
-}
-}
 }
