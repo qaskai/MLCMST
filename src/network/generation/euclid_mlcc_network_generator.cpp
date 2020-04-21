@@ -4,6 +4,7 @@
 #include <geometry/generation/real_point_set_generator.hpp>
 #include <geometry/util.hpp>
 #include <network/capacitated_network.hpp>
+#include <utility>
 
 namespace MLCMST::network::generation {
 
@@ -11,8 +12,7 @@ EuclidMLCCNetworkGenerator::EuclidMLCCNetworkGenerator(
     int N, double from, double to, CenterPosition center_position, const std::vector<Level>& levels
 )
     : EuclidMLCCNetworkGenerator(
-        N, center_position, levels,
-        std::make_unique< geometry::generation::RealPointGenerator >(from, to)
+        N, center_position, levels, std::make_unique< geometry::generation::RealPointGenerator >(from, to)
     )
 {
 
@@ -32,10 +32,10 @@ EuclidMLCCNetworkGenerator::EuclidMLCCNetworkGenerator(
 
 EuclidMLCCNetworkGenerator::EuclidMLCCNetworkGenerator(
     CenterPosition center_position,
-    const std::vector<Level>& levels,
+    std::vector<Level> levels,
     std::unique_ptr< Generator<std::vector<Point<double>>> > point_set_generator
 )
-    : _center_position(center_position), _levels(levels), _point_set_generator(std::move(point_set_generator))
+    : _center_position(center_position), _levels(std::move(levels)), _point_set_generator(std::move(point_set_generator))
 {
 
 }
@@ -52,8 +52,10 @@ MLCCNetwork EuclidMLCCNetworkGenerator::generate()
         auto new_costs = break_up(N, multiply(flatten(network.costs()), level.cost_multiplier));
         network_levels.emplace_back(level.capacity, Network(new_costs));
     }
+    const int center = 0;
     vector<int> demands = vector<int>(N, 1);
-    return MLCCNetwork(0, network_levels, demands);
+    demands[center] = 0;
+    return MLCCNetwork(center, network_levels, demands);
 }
 
 vector<double> EuclidMLCCNetworkGenerator::flatten(const vector<vector<double>>& v)

@@ -14,8 +14,9 @@ public:
     {
         std::optional<network::MLCMST> mlcmst;
         std::optional<double> lower_bound;
-        long process_time; // in milliseconds
+        double wall_time; // in milliseconds
         bool finished;
+        Result(std::optional<network::MLCMST> mlcmst, std::optional<double> lower_bound, double wall_time, bool finished);
     };
 
     virtual ~MLCMSTSolver();

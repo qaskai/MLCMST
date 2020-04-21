@@ -44,7 +44,7 @@ private:
 
     EuclidMLCCNetworkGenerator(
         CenterPosition center_position,
-        const std::vector<Level>& levels,
+        std::vector<Level>  levels,
         std::unique_ptr< Generator<std::vector<Point<double>>> > point_set_generator
     );
 

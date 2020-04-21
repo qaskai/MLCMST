@@ -36,7 +36,11 @@ TEST_CASE( "Euclidean multi-level capacitated network generation", "[network][ge
 
     auto check_demands = [] (const MLCCNetwork& n) {
         for (int i=0; i< n.vertexCount(); i++) {
-            REQUIRE( n.demand(i) == 1 );
+            if ( i == n.center() ) {
+                REQUIRE( n.demand(i) == 0 );
+            } else {
+                REQUIRE( n.demand(i) == 1 );
+            }
         }
     };
 
