@@ -1,5 +1,7 @@
 #include <mp/or_mp_solver.hpp>
 
+#include <chrono>
+
 namespace MLCMST::mp {
 
 ORMPSolver::ORMPSolver(or_::MPSolver::OptimizationProblemType problemType)
@@ -137,6 +139,10 @@ MPSolver::ResultStatus ORMPSolver::resultStatus()
     return cast_enum[_result_status];
 }
 
+double ORMPSolver::wallTime() {
+    return _wall_time;
+}
+
 double ORMPSolver::objectiveValue()
 {
     return _objective->Value();
@@ -154,7 +160,10 @@ double ORMPSolver::variableValue(std::string name, int var_i)
 
 void ORMPSolver::solve()
 {
+    auto time_start = std::chrono::high_resolution_clock::now();
     _result_status = _solver.Solve();
+    auto time_end = std::chrono::high_resolution_clock::now();
+    _wall_time = std::chrono::duration<double, std::milli>(time_end - time_start).count();
 }
 
 std::string ORMPSolver::constraintArrayMemberName(int i, std::string arr_name)

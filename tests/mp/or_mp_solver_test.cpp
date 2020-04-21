@@ -165,3 +165,18 @@ TEST_CASE(  "or-tools wrapper | constraint properties", "[mp][or-tools]" )
         REQUIRE( solver.objectiveValue() == Approx(4).margin(0.0001) );
     }
 }
+
+TEST_CASE( "or-tools wrapper | timer", "[mp][or-tools]" )
+{
+    Solver solver;
+
+    solver.makeNumVariable(1.0, 2.0, "var");
+    solver.makeConstraint(1.5, 1.7, "constraint");
+    solver.setConstraintCoefficient(1, "var", "constraint");
+    solver.setObjectiveCoefficient(1, "var");
+    solver.setMaximization();
+
+    solver.solve();
+
+    REQUIRE( solver.wallTime() < 100. );
+}

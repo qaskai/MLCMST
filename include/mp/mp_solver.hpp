@@ -58,6 +58,7 @@ public:
 
     virtual void solve() = 0;
     virtual ResultStatus resultStatus() = 0;
+    virtual double wallTime() = 0;
     virtual double objectiveValue() = 0;
     virtual double variableValue(std::string name) = 0;
     virtual double variableValue(std::string name, int var_i) = 0;

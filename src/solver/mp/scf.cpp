@@ -153,7 +153,7 @@ MLCMSTSolver::Result SCF::createResultStructure() {
     auto result = MLCMSTSolver::Result(
         std::nullopt,
         std::nullopt,
-        0,
+        _mp_solver->wallTime(),
         false
     );
     if (_mp_solver->resultStatus() != MLCMST::mp::MPSolver::OPTIMAL)
@@ -179,6 +179,5 @@ MLCMSTSolver::Result SCF::createResultStructure() {
     }
     return result;
 }
-
 
 }

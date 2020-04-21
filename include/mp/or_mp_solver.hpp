@@ -44,6 +44,7 @@ public:
     void setObjectiveCoefficient(double c, std::string var_name, int var_i) override;
 
     ResultStatus resultStatus() override;
+    double wallTime() override;
     double objectiveValue() override;
     double variableValue(std::string name) override;
     double variableValue(std::string name, int var_i) override;
@@ -61,6 +62,7 @@ private:
     std::unordered_map<std::string, std::vector<or_::MPConstraint*>> _constraint_arrays;
     or_::MPObjective* _objective;
     or_::MPSolver::ResultStatus _result_status;
+    double _wall_time;
 
     std::string constraintArrayMemberName(int i, std::string arr_name);
 };
