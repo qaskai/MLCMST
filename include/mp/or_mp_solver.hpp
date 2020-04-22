@@ -53,6 +53,8 @@ public:
 
     void reset() final;
 
+    bool isMIP() override;
+
 protected:
     ORMPSolver(or_::MPSolver::OptimizationProblemType problemType);
 

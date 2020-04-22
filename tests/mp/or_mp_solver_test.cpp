@@ -8,7 +8,9 @@ using namespace MLCMST::mp;
 
 struct Solver : public ORMPSolver
 {
-    Solver() : ORMPSolver(operations_research::MPSolver::CBC_MIXED_INTEGER_PROGRAMMING) {}
+    Solver(bool mip=true) : ORMPSolver(mip ?
+            operations_research::MPSolver::CBC_MIXED_INTEGER_PROGRAMMING :
+            operations_research::MPSolver::GLOP_LINEAR_PROGRAMMING) {}
     void makeVariable(double, double, std::string) override {}
     void makeVariableArray(int, double, double, std::string) override {}
 };
@@ -196,5 +198,20 @@ TEST_CASE( "or-tools wrapper | utils", "[mp][or-tools]" )
         solver.solve();
 
         REQUIRE( solver.objectiveValue() == Approx(1.8).margin(0.0001) );
+    }
+}
+
+TEST_CASE( "or-tools wrapper | properties", "[mp][or-tools]" )
+{
+
+    SECTION( "isMIP" ) {
+        Solver solver;
+
+        REQUIRE( solver.isMIP() );
+    }
+    SECTION( "not isMIP" ) {
+        Solver solver(false);
+
+        REQUIRE_FALSE( solver.isMIP() );
     }
 }

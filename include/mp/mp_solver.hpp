@@ -64,6 +64,8 @@ public:
     virtual double variableValue(std::string name, int var_i) = 0;
 
     virtual void reset() = 0;
+
+    virtual bool isMIP() = 0;
 };
 
 }

@@ -180,5 +180,10 @@ void ORMPSolver::reset()
     _constraint_arrays.clear();
 }
 
+bool ORMPSolver::isMIP()
+{
+    return _solver->IsMIP();
+}
+
 
 }
