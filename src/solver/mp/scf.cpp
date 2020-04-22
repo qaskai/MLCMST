@@ -7,24 +7,16 @@
 
 namespace MLCMST::solver::mp {
 
-SCF::SCF(bool exact_solution) : _exact_solution(exact_solution)
+SCF::SCF(bool exact_solution) : MP_MLCMSTSolver(exact_solution)
+{
+}
+
+SCF::SCF(std::unique_ptr<MLCMST::mp::MPSolver> mp_solver) : MP_MLCMSTSolver(std::move(mp_solver))
 {
 
 }
 
-MLCMSTSolver::Result SCF::solve(const network::MLCCNetwork& mlcc_network)
-{
-    setupLocalVariables(mlcc_network);
-    auto mp_solver = createMPSolver();
-    _mp_solver = mp_solver.get();
-    createVariables();
-    createObjective();
-    createConstraints();
-
-    _mp_solver->solve();
-
-    return createResultStructure();
-}
+SCF::~SCF() = default;
 
 void SCF::setupLocalVariables(const network::MLCCNetwork &mlcc_network)
 {
@@ -37,15 +29,6 @@ void SCF::setupLocalVariables(const network::MLCCNetwork &mlcc_network)
     }
     _supply[mlcc_network.center()] = 0;
     _supply[mlcc_network.center()] = std::accumulate(_supply.begin(), _supply.end(), 0);
-}
-
-std::unique_ptr<MLCMST::mp::MPSolver> SCF::createMPSolver()
-{
-    if (_exact_solution) {
-        return std::make_unique<MLCMST::mp::ORMIPSolver>();
-    } else {
-        return std::make_unique<MLCMST::mp::ORLPSolver>();
-    }
 }
 
 void SCF::createVariables()
@@ -147,24 +130,6 @@ void SCF::createOneBetweenConstraints()
             }
         }
     }
-}
-
-MLCMSTSolver::Result SCF::createResultStructure() {
-    auto result = MLCMSTSolver::Result(
-        std::nullopt,
-        std::nullopt,
-        _mp_solver->wallTime(),
-        false
-    );
-    if (_mp_solver->resultStatus() != MLCMST::mp::MPSolver::OPTIMAL)
-        return result;
-
-    result.finished = true;
-    result.lower_bound = _mp_solver->objectiveValue();
-    if (_exact_solution) {
-        result.mlcmst = createMLCMST();
-    }
-    return result;
 }
 
 network::MLCMST SCF::createMLCMST()

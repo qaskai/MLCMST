@@ -5,7 +5,7 @@
 #include <network/mlcc_network.hpp>
 #include <network/mlcmst.hpp>
 
-namespace MLCMST {
+namespace MLCMST::solver {
 
 class MLCMSTSolver
 {

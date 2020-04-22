@@ -1,7 +1,7 @@
-#include <mlcmst_solver.hpp>
+#include <solver/mlcmst_solver.hpp>
 #include <utility>
 
-namespace MLCMST {
+namespace MLCMST::solver {
 
 MLCMSTSolver::~MLCMSTSolver() = default;
 
