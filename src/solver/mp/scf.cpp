@@ -162,22 +162,27 @@ MLCMSTSolver::Result SCF::createResultStructure() {
     result.finished = true;
     result.lower_bound = _mp_solver->objectiveValue();
     if (_exact_solution) {
-        std::vector<int> parents(_vertex_count), edge_level(_vertex_count);
-        for (int i=0; i < _vertex_count; i++) {
-            for (int l=0; l < _mlcc_network->levelsNumber(); l++) {
-                for (int j=0; j < _vertex_count; j++) {
-                    if (_mp_solver->variableValue(_arc_var_name, l*_network_size + i*_vertex_count + j) > 0.99) {
-                        parents[i] = j;
-                        edge_level[i] = l;
-                        goto found_parent;
-                    }
-                }
-            }
-            found_parent:;
-        }
-        result.mlcmst = network::MLCMST(*_mlcc_network, parents, edge_level);
+        result.mlcmst = createMLCMST();
     }
     return result;
+}
+
+network::MLCMST SCF::createMLCMST()
+{
+    std::vector<int> parents(_vertex_count), edge_level(_vertex_count);
+    for (int i=0; i < _vertex_count; i++) {
+        for (int l=0; l < _mlcc_network->levelsNumber(); l++) {
+            for (int j=0; j < _vertex_count; j++) {
+                if (_mp_solver->variableValue(_arc_var_name, l*_network_size + i*_vertex_count + j) > 0.99) {
+                    parents[i] = j;
+                    edge_level[i] = l;
+                    goto found_parent;
+                }
+            }
+        }
+        found_parent:;
+    }
+   return network::MLCMST(*_mlcc_network, parents, edge_level);
 }
 
 }

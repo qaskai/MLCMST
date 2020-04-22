@@ -43,6 +43,7 @@ private:
     void createOneBetweenConstraints();
 
     Result createResultStructure();
+    network::MLCMST createMLCMST();
 
 };
 
