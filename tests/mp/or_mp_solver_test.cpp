@@ -166,7 +166,7 @@ TEST_CASE(  "or-tools wrapper | constraint properties", "[mp][or-tools]" )
     }
 }
 
-TEST_CASE( "or-tools wrapper | timer", "[mp][or-tools]" )
+TEST_CASE( "or-tools wrapper | utils", "[mp][or-tools]" )
 {
     Solver solver;
 
@@ -178,5 +178,23 @@ TEST_CASE( "or-tools wrapper | timer", "[mp][or-tools]" )
 
     solver.solve();
 
-    REQUIRE( solver.wallTime() < 100. );
+    SECTION( "timer" ) {
+        REQUIRE( solver.wallTime() < 100. );
+        REQUIRE( solver.objectiveValue() == Approx(1.7).margin(0.0001) );
+    }
+    SECTION( "reset" ) {
+        REQUIRE( solver.objectiveValue() == Approx(1.7).margin(0.0001) );
+
+        solver.reset();
+
+        solver.makeNumVariable(1.0, 2.0, "var2");
+        solver.makeConstraint(1.7, 1.8, "constraint2");
+        solver.setConstraintCoefficient(1, "var2", "constraint2");
+        solver.setObjectiveCoefficient(1, "var2");
+        solver.setMaximization();
+
+        solver.solve();
+
+        REQUIRE( solver.objectiveValue() == Approx(1.8).margin(0.0001) );
+    }
 }

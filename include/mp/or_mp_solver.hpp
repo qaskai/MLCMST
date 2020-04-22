@@ -51,11 +51,14 @@ public:
 
     void solve() override;
 
+    void reset() final;
+
 protected:
     ORMPSolver(or_::MPSolver::OptimizationProblemType problemType);
 
 private:
-    or_::MPSolver _solver;
+    std::unique_ptr< or_::MPSolver> _solver;
+    or_::MPSolver::OptimizationProblemType _problem_type;
     std::unordered_map<std::string, or_::MPVariable*> _variables;
     std::unordered_map<std::string, std::vector<or_::MPVariable*>> _variable_arrays;
     std::unordered_map<std::string, or_::MPConstraint*> _constraints;

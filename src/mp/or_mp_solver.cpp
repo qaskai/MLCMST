@@ -4,39 +4,37 @@
 
 namespace MLCMST::mp {
 
-ORMPSolver::ORMPSolver(or_::MPSolver::OptimizationProblemType problemType)
-    : _solver("wrapped_MPSolver", problemType)
+ORMPSolver::ORMPSolver(or_::MPSolver::OptimizationProblemType problemType) : _problem_type(problemType)
 {
-    _objective = _solver.MutableObjective();
-    _result_status = or_::MPSolver::NOT_SOLVED;
+    this->reset();
 }
 
 ORMPSolver::~ORMPSolver() = default;
 
 double ORMPSolver::infinity() {
-    return _solver.infinity();
+    return _solver->infinity();
 }
 
 void ORMPSolver::makeIntVariable(double lb, double ub, std::string name)
 {
-    _variables[name] = _solver.MakeIntVar(lb, ub, name);
+    _variables[name] = _solver->MakeIntVar(lb, ub, name);
 }
 
 void ORMPSolver::makeIntVariableArray(int size, double lb, double ub, std::string name)
 {
     _variable_arrays[name].clear();
-    _solver.MakeIntVarArray(size, lb, ub, name, &(_variable_arrays[name]));
+    _solver->MakeIntVarArray(size, lb, ub, name, &(_variable_arrays[name]));
 }
 
 void ORMPSolver::makeNumVariable(double lb, double ub, std::string name)
 {
-    _variables[name] = _solver.MakeNumVar(lb, ub, name);
+    _variables[name] = _solver->MakeNumVar(lb, ub, name);
 }
 
 void ORMPSolver::makeNumVariableArray(int size, double lb, double ub, std::string name)
 {
     _variable_arrays[name].clear();
-    _solver.MakeNumVarArray(size, lb, ub, name, &(_variable_arrays[name]));
+    _solver->MakeNumVarArray(size, lb, ub, name, &(_variable_arrays[name]));
 }
 
 bool ORMPSolver::isInteger(std::string var_name)
@@ -56,7 +54,7 @@ void ORMPSolver::makeConstraint(std::string name)
 
 void ORMPSolver::makeConstraint(double lb, double ub, std::string name)
 {
-    _constraints[name] = _solver.MakeRowConstraint(lb, ub, name);
+    _constraints[name] = _solver->MakeRowConstraint(lb, ub, name);
 }
 
 void ORMPSolver::makeConstraintArray(int size, std::string name)
@@ -70,7 +68,7 @@ void ORMPSolver::makeConstraintArray(int size, double lb, double ub, std::string
     constraint_arr.clear();
     constraint_arr.reserve(size);
     for (int i=0; i<size; i++) {
-        constraint_arr.push_back(_solver.MakeRowConstraint(lb, ub, constraintArrayMemberName(i, name)));
+        constraint_arr.push_back(_solver->MakeRowConstraint(lb, ub, constraintArrayMemberName(i, name)));
     }
 }
 
@@ -161,7 +159,7 @@ double ORMPSolver::variableValue(std::string name, int var_i)
 void ORMPSolver::solve()
 {
     auto time_start = std::chrono::high_resolution_clock::now();
-    _result_status = _solver.Solve();
+    _result_status = _solver->Solve();
     auto time_end = std::chrono::high_resolution_clock::now();
     _wall_time = std::chrono::duration<double, std::milli>(time_end - time_start).count();
 }
@@ -169,6 +167,17 @@ void ORMPSolver::solve()
 std::string ORMPSolver::constraintArrayMemberName(int i, std::string arr_name)
 {
     return arr_name + "|||" + std::to_string(i);
+}
+
+void ORMPSolver::reset()
+{
+    _solver = std::make_unique<or_::MPSolver>("wrapped_MPSolver", _problem_type);
+    _objective = _solver->MutableObjective();
+    _result_status = or_::MPSolver::NOT_SOLVED;
+    _variables.clear();
+    _variable_arrays.clear();
+    _constraints.clear();
+    _constraint_arrays.clear();
 }
 
 
