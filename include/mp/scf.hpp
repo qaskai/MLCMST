@@ -5,10 +5,10 @@
 #include <functional>
 #include <vector>
 
-#include <solver/mp_mlcmst_solver.hpp>
+#include <mp/mp_mlcmst_solver.hpp>
 #include <mp/mp_solver_factory.hpp>
 
-namespace MLCMST::solver::mp {
+namespace MLCMST::mp {
 
 /**
  * Single Commodity Formulation

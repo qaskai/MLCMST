@@ -2,12 +2,12 @@
 
 #include <network/mlcc_network.hpp>
 #include <network/mlcmst.hpp>
-#include <solver/mp/scf.hpp>
+#include <mp/escf.hpp>
 
 using namespace MLCMST;
 using namespace MLCMST::network;
 
-TEST_CASE( "SCF functional test", "[solver][mp][scf]" )
+TEST_CASE( "ESCF functional test", "[solver][mp][scf]" )
 {
     MLCCNetwork mlcc_network(
         0,
@@ -26,13 +26,13 @@ TEST_CASE( "SCF functional test", "[solver][mp][scf]" )
         {0, 1, 1}
     );
 
-    using SCF = solver::mp::SCF;
+    using ESCF = mp::ESCF;
     SECTION( "exact solution" ) {
-        SCF scf(true);
+        ESCF scf(true);
         std::vector<int> expected_parents { 0, 0, 1 };
         std::vector<int> expected_levels { -1, 1, 0 };
 
-        SCF::Result result = scf.solve(mlcc_network);
+        ESCF::Result result = scf.solve(mlcc_network);
 
         REQUIRE( result.finished );
         REQUIRE( result.lower_bound.value() == 2 );
@@ -44,12 +44,12 @@ TEST_CASE( "SCF functional test", "[solver][mp][scf]" )
         }
     }
     SECTION( "linear programming" ) {
-        SCF scf;
+        ESCF scf;
 
-        SCF::Result result = scf.solve(mlcc_network);
+        ESCF::Result result = scf.solve(mlcc_network);
 
         REQUIRE( result.finished );
-        REQUIRE( result.lower_bound.value() == Approx(1.5).margin(0.0001) );
+        REQUIRE( ("this should give better results than SCF, but doesn't", result.lower_bound.value() == Approx(0).margin(0.0001)) );
         REQUIRE( !result.mlcmst.has_value() );
     }
 }

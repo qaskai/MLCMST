@@ -1,8 +1,8 @@
 #pragma once
 
-#include <solver/mp/scf.hpp>
+#include <mp/scf.hpp>
 
-namespace MLCMST::solver::mp {
+namespace MLCMST::mp {
 
 /**
  * Enhanced Single Commodity Formulation

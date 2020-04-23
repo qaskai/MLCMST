@@ -1,10 +1,10 @@
-#include <solver/mp/scf.hpp>
+#include <mp/scf.hpp>
 
 #include <numeric>
 
 #include <util/util.hpp>
 
-namespace MLCMST::solver::mp {
+namespace MLCMST::mp {
 
 SCF::SCF(bool exact_solution) : MP_MLCMSTSolver(exact_solution)
 {

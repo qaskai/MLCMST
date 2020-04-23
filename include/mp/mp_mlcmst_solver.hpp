@@ -4,10 +4,10 @@
 
 #include <ortools/linear_solver/linear_solver.h>
 
-#include <solver/mlcmst_solver.hpp>
+#include <mlcmst_solver.hpp>
 #include <mp/mp_solver_factory.hpp>
 
-namespace MLCMST::solver {
+namespace MLCMST::mp {
 
 class MP_MLCMSTSolver : public MLCMSTSolver
 {

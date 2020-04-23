@@ -1,8 +1,8 @@
-#include <solver/mp_mlcmst_solver.hpp>
+#include <mp/mp_mlcmst_solver.hpp>
 
 #include <chrono>
 
-namespace MLCMST::solver {
+namespace MLCMST::mp {
 
 
 MP_MLCMSTSolver::MP_MLCMSTSolver(bool exact_solution) : _mp_solver_factory( mp::MPSolverFactory(exact_solution) )

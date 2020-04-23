@@ -1,6 +1,6 @@
-#include <solver/mp/escf.hpp>
+#include <mp/escf.hpp>
 
-namespace MLCMST::solver::mp {
+namespace MLCMST::mp {
 
 
 ESCF::ESCF(bool exact_solution) : SCF(exact_solution)

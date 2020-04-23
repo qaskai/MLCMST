@@ -6,9 +6,7 @@
 
 #include <network/serialization/mlcc_network_serialization.hpp>
 
-#include <solver/mp/escf.hpp>
-
-#include <ortools/linear_solver/linear_solver.h>
+#include <mp/escf.hpp>
 
 using namespace std;
 
@@ -17,7 +15,7 @@ using namespace MLCMST::network;
 
 void scfRun(network::MLCCNetwork mlcc_network)
 {
-    solver::mp::SCF scf(false);
+    mp::SCF scf(false);
     auto result = scf.solve(mlcc_network);
 
     cout << result.lower_bound.value() << endl;
