@@ -6,7 +6,7 @@
 #include <vector>
 
 #include <solver/mp_mlcmst_solver.hpp>
-#include <mp/mp_solver.hpp>
+#include <mp/mp_solver_factory.hpp>
 
 namespace MLCMST::solver::mp {
 
@@ -19,13 +19,15 @@ class SCF : public MP_MLCMSTSolver
 {
 public:
     explicit SCF(bool exact_solution=false);
-    explicit SCF(std::unique_ptr< MLCMST::mp::MPSolver > mp_solver);
+    explicit SCF(MLCMST::mp::MPSolverFactory mp_solver_factory);
     ~SCF() override;
 
 protected:
+
     const network::MLCCNetwork* _mlcc_network;
     int _vertex_count, _network_size, _levels_number;
-    const std::string _arc_var_name = "arc", _flow_var_name = "flow";
+    std::vector<std::vector<std::vector<LinearExpr>>> _arc_vars;
+    std::vector<std::vector<LinearExpr>> _flow_vars;
     std::vector<int> _supply; // at center index it is a demand
 
     void createConstraints() override;

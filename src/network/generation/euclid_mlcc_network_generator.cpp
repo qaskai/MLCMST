@@ -1,10 +1,12 @@
 #include <network/generation/euclid_mlcc_network_generator.hpp>
 
+#include <utility>
+
 #include <geometry/generation/real_point_generator.hpp>
 #include <geometry/generation/real_point_set_generator.hpp>
 #include <geometry/util.hpp>
 #include <network/capacitated_network.hpp>
-#include <utility>
+#include <util/util.hpp>
 
 namespace MLCMST::network::generation {
 
@@ -49,7 +51,7 @@ MLCCNetwork EuclidMLCCNetworkGenerator::generate()
     int N = network.vertexCount();
     vector<CapacitatedNetwork> network_levels;
     for (Level level : _levels) {
-        auto new_costs = break_up(N, multiply(flatten(network.costs()), level.cost_multiplier));
+        auto new_costs = util::break_up(N, multiply(flatten(network.costs()), level.cost_multiplier));
         network_levels.emplace_back(level.capacity, Network(new_costs));
     }
     const int center = 0;
@@ -75,21 +77,6 @@ vector<double> EuclidMLCCNetworkGenerator::multiply(vector<double> v, double sca
         x *= scalar;
     }
     return v;
-}
-
-vector<vector<double>> EuclidMLCCNetworkGenerator::break_up(int N, const vector<double>& v)
-{
-    vector<vector<double>> result;
-    int idx = 0;
-    while (idx < v.size()) {
-        result.emplace_back();
-        for (int i=0; i<N; i++) {
-            if (idx >= v.size())
-                break;
-            result.back().push_back(v[idx++]);
-        }
-    }
-    return result;
 }
 
 }

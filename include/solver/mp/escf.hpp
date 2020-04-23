@@ -13,7 +13,7 @@ class ESCF : public SCF
 {
 public:
     explicit ESCF(bool exact_solution=false);
-    explicit ESCF(std::unique_ptr< MLCMST::mp::MPSolver > mp_solver);
+    explicit ESCF(MLCMST::mp::MPSolverFactory mp_solver_factory);
     ~ESCF() override;
 
 private:

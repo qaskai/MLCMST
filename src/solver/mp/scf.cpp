@@ -2,15 +2,16 @@
 
 #include <numeric>
 
+#include <util/util.hpp>
+
 namespace MLCMST::solver::mp {
 
 SCF::SCF(bool exact_solution) : MP_MLCMSTSolver(exact_solution)
 {
 }
 
-SCF::SCF(std::unique_ptr<MLCMST::mp::MPSolver> mp_solver) : MP_MLCMSTSolver(std::move(mp_solver))
+SCF::SCF(MLCMST::mp::MPSolverFactory mp_solver_factory) : MP_MLCMSTSolver(mp_solver_factory)
 {
-
 }
 
 SCF::~SCF() = default;
@@ -32,24 +33,45 @@ void SCF::setupLocalVariables(const network::MLCCNetwork &mlcc_network)
 void SCF::createVariables()
 {
     const double infinity = _mp_solver->infinity();
-    _mp_solver->makeVariableArray( _levels_number * _network_size, 0, 1, _arc_var_name);
-    _mp_solver->makeNumVariableArray(_network_size, 0.0, infinity, _flow_var_name);
+
+    {
+        std::vector<MPVariable*> arc_vars;
+        _mp_solver->MakeVarArray(_levels_number*_network_size, 0, 1, _mp_solver->IsMIP(), "arcs", &arc_vars);
+        std::vector<LinearExpr> arc_var_expr;
+        for (MPVariable* var : arc_vars) {
+            arc_var_expr.emplace_back(var);
+        }
+        _arc_vars = util::break_up(_vertex_count, util::break_up(_levels_number, arc_var_expr));
+    }
+
+    {
+        std::vector<MPVariable*> flow_vars;
+        _mp_solver->MakeNumVarArray(_network_size, 0, infinity, "flow", &flow_vars);
+        std::vector<LinearExpr> flow_var_expr;
+        for (MPVariable* var : flow_vars) {
+            flow_var_expr.emplace_back(var);
+        }
+        _flow_vars = util::break_up(_vertex_count, flow_var_expr);
+    }
+
+
 }
 
 void SCF::createObjective()
 {
-    _mp_solver->setMinimization();
+    LinearExpr expr;
     for (int i=0; i < _vertex_count; i++) {
         for (int j=0; j < _vertex_count; j++) {
             if (i == j)
                 continue;
-            int edge_idx = i*_vertex_count + j;
             for (int l=0; l < _levels_number; l++) {
                 double cost = _mlcc_network->network(l).edgeCost(i, j);
-                _mp_solver->setObjectiveCoefficient(cost, _arc_var_name, l*_network_size + edge_idx);
+                expr += cost * _arc_vars[i][j][l];
             }
         }
     }
+    auto objective = _mp_solver->MutableObjective();
+    objective->MinimizeLinearExpr(expr);
 }
 
 void SCF::createConstraints()
@@ -62,70 +84,62 @@ void SCF::createConstraints()
 
 void SCF::createDemandConstraints()
 {
-    const std::string constraint_name = "demands";
-    _mp_solver->makeConstraintArray(_vertex_count, constraint_name);
     for (int i=0; i < _vertex_count; i++) {
-        int W = i == _mlcc_network->center() ? _supply[i] : -_supply[i];
-        _mp_solver->setConstraintBounds(W, W, constraint_name, i);
+        LinearExpr expr;
         for (int j=0; j < _vertex_count; j++) {
-            if (i == j)
+            if (i == j) {
                 continue;
-            _mp_solver->setConstraintCoefficient(1, _flow_var_name, j*_vertex_count + i, constraint_name, i);
+            }
+            expr += _flow_vars[j][i] - _flow_vars[i][j];
         }
-        for (int j=0; j < _vertex_count; j++) {
-            if (i == j)
-                continue;
-            _mp_solver->setConstraintCoefficient(-1, _flow_var_name, i*_vertex_count + j, constraint_name, i);
-        }
+        double W = i == _mlcc_network->center() ? _supply[i] : -_supply[i];
+        _mp_solver->MakeRowConstraint(expr == W);
     }
 }
 
 void SCF::createCapacityConstraints()
 {
-    const std::string constraint_name = "capacity";
-    _mp_solver->makeConstraintArray(_network_size, 0, _mp_solver->infinity(), constraint_name);
     for (int i=0; i < _vertex_count; i++) {
         for (int j=0; j < _vertex_count; j++) {
             if (i == j)
                 continue;
-            int edge_idx = i*_vertex_count + j;
-            _mp_solver->setConstraintCoefficient(-1, _flow_var_name, edge_idx, constraint_name, edge_idx);
+            LinearExpr lhs = _flow_vars[i][j];
+            LinearExpr rhs;
             for (int l=0; l < _levels_number; l++) {
-                _mp_solver->setConstraintCoefficient(
-                        _mlcc_network->edgeCapacity(l),
-                        _arc_var_name, l*_network_size + edge_idx, constraint_name, edge_idx);
+                rhs += _mlcc_network->edgeCapacity(l) * _arc_vars[i][j][l];
             }
+            _mp_solver->MakeRowConstraint(lhs <= rhs);
         }
     }
 }
 
 void SCF::createOneOutgoingConstraints()
 {
-    const std::string constraint_name = "one_outgoing";
-    _mp_solver->makeConstraintArray(_vertex_count, 1, 1, constraint_name);
     for (int i=0; i < _vertex_count; i++) {
+        if (i == _mlcc_network->center())
+            continue;
+        LinearExpr expr;
         for (int j=0; j < _vertex_count; j++) {
-            int edge_idx = i*_vertex_count + j;
-            for (int l =0; l < _levels_number; l++) {
-                _mp_solver->setConstraintCoefficient(1, _arc_var_name, l*_network_size + edge_idx, constraint_name, i);
+            if (i == j)
+                continue;
+
+            for (int l=0; l < _levels_number; l++) {
+                expr += _arc_vars[i][j][l];
             }
         }
+        _mp_solver->MakeRowConstraint(expr == 1.0);
     }
 }
 
 void SCF::createOneBetweenConstraints()
 {
-    const std::string constraint_name = "one_between";
-    _mp_solver->makeConstraintArray(_network_size, -_mp_solver->infinity(), 1, constraint_name);
     for (int i=0; i < _vertex_count; i++) {
         for (int j = i+1; j < _vertex_count; j++) {
-
-            int edge_idx = i*_vertex_count + j;
-            int rev_edge_idx = j*_vertex_count + i;
+            LinearExpr expr;
             for (int l=0; l < _levels_number; l++) {
-                _mp_solver->setConstraintCoefficient(1, _arc_var_name, l*_network_size + edge_idx, constraint_name, edge_idx);
-                _mp_solver->setConstraintCoefficient(1, _arc_var_name, l*_network_size + rev_edge_idx, constraint_name, edge_idx);
+                expr += _arc_vars[i][j][l] + _arc_vars[j][i][l];
             }
+            _mp_solver->MakeRowConstraint(expr <= 1.0);
         }
     }
 }
@@ -136,7 +150,8 @@ network::MLCMST SCF::createMLCMST()
     for (int i=0; i < _vertex_count; i++) {
         for (int l=0; l < _levels_number; l++) {
             for (int j=0; j < _vertex_count; j++) {
-                if (_mp_solver->variableValue(_arc_var_name, l*_network_size + i*_vertex_count + j) > 0.99) {
+                auto var = _arc_vars[i][j][l].terms().begin()->first;
+                if (var->solution_value() > 0.99) {
                     parents[i] = j;
                     edge_level[i] = l;
                     goto found_parent;

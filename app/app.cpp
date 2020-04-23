@@ -8,6 +8,8 @@
 
 #include <solver/mp/escf.hpp>
 
+#include <ortools/linear_solver/linear_solver.h>
+
 using namespace std;
 
 using namespace MLCMST;
@@ -15,7 +17,7 @@ using namespace MLCMST::network;
 
 void scfRun(network::MLCCNetwork mlcc_network)
 {
-    solver::mp::ESCF scf(false);
+    solver::mp::SCF scf(false);
     auto result = scf.solve(mlcc_network);
 
     cout << result.lower_bound.value() << endl;

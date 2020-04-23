@@ -50,7 +50,6 @@ private:
 
     vector<double> flatten(const vector<vector<double>>& v);
     vector<double> multiply(vector<double> v, double scalar);
-    vector<vector<double>> break_up(int N, const vector<double>& v);
 };
 
 }
