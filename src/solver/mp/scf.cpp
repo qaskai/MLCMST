@@ -2,9 +2,6 @@
 
 #include <numeric>
 
-#include <mp/or_lp_solver.hpp>
-#include <mp/or_mip_solver.hpp>
-
 namespace MLCMST::solver::mp {
 
 SCF::SCF(bool exact_solution) : MP_MLCMSTSolver(exact_solution)
@@ -23,6 +20,7 @@ void SCF::setupLocalVariables(const network::MLCCNetwork &mlcc_network)
     _mlcc_network = &mlcc_network;
     _vertex_count = mlcc_network.vertexCount();
     _network_size = _vertex_count * _vertex_count;
+    _levels_number = mlcc_network.levelsNumber();
     _supply = std::vector<int>(_vertex_count);
     for (int i=0; i<_vertex_count; i++) {
         _supply[i] = mlcc_network.demand(i);
@@ -34,7 +32,7 @@ void SCF::setupLocalVariables(const network::MLCCNetwork &mlcc_network)
 void SCF::createVariables()
 {
     const double infinity = _mp_solver->infinity();
-    _mp_solver->makeVariableArray( _mlcc_network->levelsNumber() * _network_size, 0, 1, _arc_var_name);
+    _mp_solver->makeVariableArray( _levels_number * _network_size, 0, 1, _arc_var_name);
     _mp_solver->makeNumVariableArray(_network_size, 0.0, infinity, _flow_var_name);
 }
 
@@ -46,7 +44,7 @@ void SCF::createObjective()
             if (i == j)
                 continue;
             int edge_idx = i*_vertex_count + j;
-            for (int l=0; l < _mlcc_network->levelsNumber(); l++) {
+            for (int l=0; l < _levels_number; l++) {
                 double cost = _mlcc_network->network(l).edgeCost(i, j);
                 _mp_solver->setObjectiveCoefficient(cost, _arc_var_name, l*_network_size + edge_idx);
             }
@@ -92,7 +90,7 @@ void SCF::createCapacityConstraints()
                 continue;
             int edge_idx = i*_vertex_count + j;
             _mp_solver->setConstraintCoefficient(-1, _flow_var_name, edge_idx, constraint_name, edge_idx);
-            for (int l=0; l < _mlcc_network->levelsNumber(); l++) {
+            for (int l=0; l < _levels_number; l++) {
                 _mp_solver->setConstraintCoefficient(
                         _mlcc_network->edgeCapacity(l),
                         _arc_var_name, l*_network_size + edge_idx, constraint_name, edge_idx);
@@ -108,7 +106,7 @@ void SCF::createOneOutgoingConstraints()
     for (int i=0; i < _vertex_count; i++) {
         for (int j=0; j < _vertex_count; j++) {
             int edge_idx = i*_vertex_count + j;
-            for (int l =0; l < _mlcc_network->levelsNumber(); l++) {
+            for (int l =0; l < _levels_number; l++) {
                 _mp_solver->setConstraintCoefficient(1, _arc_var_name, l*_network_size + edge_idx, constraint_name, i);
             }
         }
@@ -124,7 +122,7 @@ void SCF::createOneBetweenConstraints()
 
             int edge_idx = i*_vertex_count + j;
             int rev_edge_idx = j*_vertex_count + i;
-            for (int l=0; l < _mlcc_network->levelsNumber(); l++) {
+            for (int l=0; l < _levels_number; l++) {
                 _mp_solver->setConstraintCoefficient(1, _arc_var_name, l*_network_size + edge_idx, constraint_name, edge_idx);
                 _mp_solver->setConstraintCoefficient(1, _arc_var_name, l*_network_size + rev_edge_idx, constraint_name, edge_idx);
             }
@@ -136,7 +134,7 @@ network::MLCMST SCF::createMLCMST()
 {
     std::vector<int> parents(_vertex_count), edge_level(_vertex_count);
     for (int i=0; i < _vertex_count; i++) {
-        for (int l=0; l < _mlcc_network->levelsNumber(); l++) {
+        for (int l=0; l < _levels_number; l++) {
             for (int j=0; j < _vertex_count; j++) {
                 if (_mp_solver->variableValue(_arc_var_name, l*_network_size + i*_vertex_count + j) > 0.99) {
                     parents[i] = j;

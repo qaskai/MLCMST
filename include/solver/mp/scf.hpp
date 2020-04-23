@@ -22,21 +22,23 @@ public:
     explicit SCF(std::unique_ptr< MLCMST::mp::MPSolver > mp_solver);
     ~SCF() override;
 
-private:
+protected:
     const network::MLCCNetwork* _mlcc_network;
-    int _vertex_count, _network_size;
+    int _vertex_count, _network_size, _levels_number;
     const std::string _arc_var_name = "arc", _flow_var_name = "flow";
     std::vector<int> _supply; // at center index it is a demand
 
-    void setupLocalVariables(const network::MLCCNetwork& mlcc_network) override;
-    void createVariables() override;
-    void createObjective() override;
     void createConstraints() override;
 
     void createDemandConstraints();
     void createCapacityConstraints();
     void createOneOutgoingConstraints();
     void createOneBetweenConstraints();
+
+private:
+    void setupLocalVariables(const network::MLCCNetwork& mlcc_network) override;
+    void createVariables() override;
+    void createObjective() override;
 
     network::MLCMST createMLCMST() override;
 
