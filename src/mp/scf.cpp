@@ -135,6 +135,9 @@ void SCF::createOneBetweenConstraints()
 {
     for (int i=0; i < _vertex_count; i++) {
         for (int j = i+1; j < _vertex_count; j++) {
+            if (i == _mlcc_network->center() || j == _mlcc_network->center())
+                continue;
+
             LinearExpr expr;
             for (int l=0; l < _levels_number; l++) {
                 expr += _arc_vars[i][j][l] + _arc_vars[j][i][l];

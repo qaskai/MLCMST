@@ -32,7 +32,7 @@ network::MLCCNetwork generateNetwork()
         Level { 3, 2 },
         Level { 10, 6 }
     };
-    generation::EuclidMLCCNetworkGenerator generator (10, 0, 20, CenterPos::RANDOM, levels);
+    generation::EuclidMLCCNetworkGenerator generator (20, 0, 20, CenterPos::RANDOM, levels);
     MLCCNetwork mlccNetwork = generator.generate();
 
     mlccNetwork = generator.generate();

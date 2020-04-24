@@ -34,7 +34,7 @@ void ESCF::createEnhancedCapacityConstraints()
             LinearExpr rhs;
             rhs += _arc_vars[i][j][0];
             for (int l=1; l < _levels_number; l++) {
-                rhs += (_mlcc_network->edgeCapacity(l) + 1) * _arc_vars[i][j][l];
+                rhs += (_mlcc_network->edgeCapacity(l-1) + 1) * _arc_vars[i][j][l];
             }
             _mp_solver->MakeRowConstraint(lhs >= rhs);
         }

@@ -9,33 +9,42 @@ using namespace MLCMST::network;
 
 TEST_CASE( "SCF functional test", "[solver][mp][scf]" )
 {
+    auto multiply_vector = [] (double scalar, std::vector<double> v) {
+        for (double& d : v) {
+            d *= scalar;
+        }
+        return v;
+    };
+    std::vector<std::vector<double>> costs {
+        { 0, 4, 5, 5.83 },
+        { 4, 0, 3, 3.16 },
+        { 5, 3, 0, 1 },
+        { 5.83, 3.16, 1, 0 }
+    };
     MLCCNetwork mlcc_network(
         0,
         std::vector<CapacitatedNetwork>{
-            CapacitatedNetwork(1, Network({
-                { 0, 1, 2 },
-                { 1, 0, 1 },
-                { 2, 1, 0 }
-            })),
-            CapacitatedNetwork(2, Network({
-                { 0, 1, 2 },
-                { 1, 0, 2 },
-                { 2, 2, 0 }
+            CapacitatedNetwork(1, Network(costs)),
+            CapacitatedNetwork(3, Network({
+                multiply_vector(2, costs[0]),
+                multiply_vector(2, costs[1]),
+                multiply_vector(2, costs[2]),
+                multiply_vector(2, costs[3])
             })),
         },
-        {0, 1, 1}
+        {0, 1, 1, 1}
     );
 
     using SCF = mp::SCF;
     SECTION( "exact solution" ) {
         SCF scf(true);
-        std::vector<int> expected_parents { 0, 0, 1 };
-        std::vector<int> expected_levels { -1, 1, 0 };
+        std::vector<int> expected_parents { 0, 2, 0, 2 };
+        std::vector<int> expected_levels { -1, 0, 1, 0 };
 
         SCF::Result result = scf.solve(mlcc_network);
 
         REQUIRE( result.finished );
-        REQUIRE( result.lower_bound.value() == 2 );
+        REQUIRE( result.lower_bound.value() == Approx(14).margin(0.0001) );
         for (int i=0; i<mlcc_network.vertexCount(); i++) {
             if (i == mlcc_network.center())
                 continue;
@@ -49,7 +58,7 @@ TEST_CASE( "SCF functional test", "[solver][mp][scf]" )
         SCF::Result result = scf.solve(mlcc_network);
 
         REQUIRE( result.finished );
-        REQUIRE( result.lower_bound.value() == Approx(1.5).margin(0.0001) );
+        REQUIRE( result.lower_bound.value() == Approx(12.5).margin(0.0001) );
         REQUIRE( !result.mlcmst.has_value() );
     }
 }
