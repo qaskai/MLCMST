@@ -16,18 +16,17 @@ SCF::SCF(MLCMST::mp::MPSolverFactory mp_solver_factory) : MP_MLCMSTSolver(mp_sol
 
 SCF::~SCF() = default;
 
-void SCF::setupLocalVariables(const network::MLCCNetwork &mlcc_network)
+void SCF::setupLocalVariables()
 {
-    _mlcc_network = &mlcc_network;
-    _vertex_count = mlcc_network.vertexCount();
+    _vertex_count = _mlcc_network->vertexCount();
     _network_size = _vertex_count * _vertex_count;
-    _levels_number = mlcc_network.levelsNumber();
+    _levels_number = _mlcc_network->levelsNumber();
     _supply = std::vector<int>(_vertex_count);
     for (int i=0; i<_vertex_count; i++) {
-        _supply[i] = mlcc_network.demand(i);
+        _supply[i] = _mlcc_network->demand(i);
     }
-    _supply[mlcc_network.center()] = 0;
-    _supply[mlcc_network.center()] = std::accumulate(_supply.begin(), _supply.end(), 0);
+    _supply[_mlcc_network->center()] = 0;
+    _supply[_mlcc_network->center()] = std::accumulate(_supply.begin(), _supply.end(), 0);
 }
 
 void SCF::createVariables()

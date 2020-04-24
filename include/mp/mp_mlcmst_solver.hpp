@@ -24,11 +24,12 @@ protected:
 
     mp::MPSolverFactory _mp_solver_factory;
     std::unique_ptr< MPSolver > _mp_solver;
+    const network::MLCCNetwork* _mlcc_network;
 
     explicit MP_MLCMSTSolver(bool exact_solution);
     explicit MP_MLCMSTSolver(mp::MPSolverFactory mp_solver_factory);
 
-    virtual void setupLocalVariables(const network::MLCCNetwork& mlcc_network) = 0;
+    virtual void setupLocalVariables() = 0;
     virtual void createVariables() = 0;
     virtual void createConstraints() = 0;
     virtual void createObjective() = 0;

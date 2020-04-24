@@ -18,8 +18,9 @@ MP_MLCMSTSolver::~MP_MLCMSTSolver() = default;
 MLCMSTSolver::Result MP_MLCMSTSolver::solve(const network::MLCCNetwork &mlcc_network)
 {
     _mp_solver = _mp_solver_factory.create();
+    _mlcc_network = &mlcc_network;
 
-    setupLocalVariables(mlcc_network);
+    setupLocalVariables();
     createVariables();
     createConstraints();
     createObjective();

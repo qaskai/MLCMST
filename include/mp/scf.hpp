@@ -24,7 +24,6 @@ public:
 
 protected:
 
-    const network::MLCCNetwork* _mlcc_network;
     int _vertex_count, _network_size, _levels_number;
     std::vector<std::vector<std::vector<LinearExpr>>> _arc_vars;
     std::vector<std::vector<LinearExpr>> _flow_vars;
@@ -38,7 +37,7 @@ protected:
     void createOneBetweenConstraints();
 
 private:
-    void setupLocalVariables(const network::MLCCNetwork& mlcc_network) override;
+    void setupLocalVariables() override;
     void createVariables() override;
     void createObjective() override;
 
