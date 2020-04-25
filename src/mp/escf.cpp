@@ -25,22 +25,17 @@ void ESCF::createConstraints()
 
 void ESCF::createEnhancedCapacityConstraints()
 {
-
-    for (int i=0; i<_vertex_count; i++) {
-        for (int j=0; j<_vertex_count; j++) {
-            if (i == j)
-                continue;
-            LinearExpr lhs = _flow_vars[i][j];
-            LinearExpr rhs;
-            rhs += _arc_vars[i][j][0];
-            for (int l=1; l < _levels_number; l++) {
-                rhs += (_mlcc_network->edgeCapacity(l-1) + 1) * _arc_vars[i][j][l];
-            }
-            _mp_solver->MakeRowConstraint(lhs >= rhs);
+    for (auto [i,j] : _arc_set) {
+        LinearExpr lhs = _flow_vars[i][j];
+        LinearExpr rhs;
+        rhs += _arc_vars[i][j][0];
+        for (int l=1; l < _levels_number; l++) {
+            rhs += (_mlcc_network->edgeCapacity(l-1) + 1) * _arc_vars[i][j][l];
         }
+        _mp_solver->MakeRowConstraint(lhs >= rhs);
     }
 
-    for (int i=0; i < _vertex_count; i++) {
+    for (int i : _vertex_set) {
         if (i == _mlcc_network->center())
             continue;
 
@@ -52,19 +47,17 @@ void ESCF::createEnhancedCapacityConstraints()
         _mp_solver->MakeRowConstraint(lhs <= rhs);
     }
 
-    for (int i=0; i<_vertex_count; i++) {
-        for (int j=0; j <_vertex_count; j++) {
-            if (i==j || j == _mlcc_network->center())
-                continue;
+    for (auto [i,j] : _arc_set) {
+        if (j == _mlcc_network->center())
+            continue;
 
-            LinearExpr lhs = _flow_vars[i][j];
-            LinearExpr rhs =
-                    (_mlcc_network->edgeCapacity(_levels_number-1) - _supply[j]) * _arc_vars[i][j][_levels_number-1];
-            for (int l=0; l < _levels_number-1; l++) {
-                rhs += _mlcc_network->edgeCapacity(l) * _arc_vars[i][j][l];
-            }
-            _mp_solver->MakeRowConstraint(lhs <= rhs);
+        LinearExpr lhs = _flow_vars[i][j];
+        LinearExpr rhs =
+                (_mlcc_network->edgeCapacity(_levels_number-1) - _supply[j]) * _arc_vars[i][j][_levels_number-1];
+        for (int l=0; l < _levels_number-1; l++) {
+            rhs += _mlcc_network->edgeCapacity(l) * _arc_vars[i][j][l];
         }
+        _mp_solver->MakeRowConstraint(lhs <= rhs);
     }
 }
 

@@ -23,11 +23,13 @@ public:
     ~SCF() override;
 
 protected:
+    int _levels_number;
+    std::vector<int> _vertex_set;
+    std::vector<std::tuple<int,int>> _arc_set;
+    std::vector<int> _supply; // at center index it is a demand
 
-    int _vertex_count, _network_size, _levels_number;
     std::vector<std::vector<std::vector<LinearExpr>>> _arc_vars;
     std::vector<std::vector<LinearExpr>> _flow_vars;
-    std::vector<int> _supply; // at center index it is a demand
 
     void createConstraints() override;
 

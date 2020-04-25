@@ -29,18 +29,10 @@ void MCF::setupLocalVariables()
     _supply[_mlcc_network->center()] = 0;
     _supply[_mlcc_network->center()] = std::accumulate(_supply.begin(), _supply.end(), 0);
 
-    _vertex_set.resize(_mlcc_network->vertexCount());
-    std::iota(_vertex_set.begin(), _vertex_set.end(), 0);
+    _vertex_set = MLCMST::util::firstN(_mlcc_network->vertexCount());
+    _arc_set = util::createArcSet(_mlcc_network->vertexCount());
     _commodity_set = _vertex_set;
     _commodity_set.erase(std::find(_commodity_set.begin(), _commodity_set.end(), _mlcc_network->center()));
-
-    _arc_set.clear();
-    for (int v : _vertex_set) {
-        for (int w : _vertex_set) {
-            if (v != w)
-                _arc_set.emplace_back(v,w);
-        }
-    }
 }
 
 void MCF::createVariables()
@@ -170,12 +162,7 @@ void MCF::createOneOutgoingConstraints()
 
 void MCF::createOneBetweenConstraints()
 {
-    std::set<std::tuple<int,int>> undirected_edges;
-    for (auto [i,j] : _arc_set) {
-        if (i < j)
-            std::swap(i,j);
-        undirected_edges.insert(std::make_tuple(i,j));
-    }
+    std::vector<std::tuple<int,int>> undirected_edges = util::createUndirectedEdgeSet(_mlcc_network->vertexCount());
 
     for (auto [i,j] : undirected_edges) {
         if (j == _mlcc_network->center())

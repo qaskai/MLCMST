@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <tuple>
 
 #include <network/mlcc_network.hpp>
 #include <network/mlcmst.hpp>
@@ -18,5 +19,8 @@ network::MLCMST createMLCMST(
     const std::vector<std::vector<std::vector<operations_research::LinearExpr>>>& arc_vars
 );
 std::vector<operations_research::LinearExpr> variablesToExpr(const std::vector<operations_research::MPVariable*>& vars);
+
+std::vector<std::tuple<int, int>> createArcSet(unsigned int N);
+std::vector<std::tuple<int, int>> createUndirectedEdgeSet(unsigned int N);
 
 }

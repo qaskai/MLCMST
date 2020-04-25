@@ -24,6 +24,7 @@ private:
     std::vector<int> _vertex_set, _commodity_set;
     std::vector<std::tuple<int,int>> _arc_set;
     std::vector<int> _supply; // at center index it is a demand
+
     std::vector<std::vector<std::vector<LinearExpr>>> _flow_vars;
     std::vector<std::vector<std::vector<LinearExpr>>> _arc_vars;
     std::vector<std::vector<LinearExpr>> _arc_existence_vars;

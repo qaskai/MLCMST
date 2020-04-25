@@ -19,33 +19,36 @@ SCF::~SCF() = default;
 
 void SCF::setupLocalVariables()
 {
-    _vertex_count = _mlcc_network->vertexCount();
-    _network_size = _vertex_count * _vertex_count;
     _levels_number = _mlcc_network->levelsNumber();
-    _supply = std::vector<int>(_vertex_count);
-    for (int i=0; i<_vertex_count; i++) {
+    _supply = std::vector<int>(_mlcc_network->vertexCount());
+    for (int i=0; i<_mlcc_network->vertexCount(); i++) {
         _supply[i] = _mlcc_network->demand(i);
     }
     _supply[_mlcc_network->center()] = 0;
     _supply[_mlcc_network->center()] = std::accumulate(_supply.begin(), _supply.end(), 0);
+
+    _vertex_set = MLCMST::util::firstN(_mlcc_network->vertexCount());
+    _arc_set = util::createArcSet(_mlcc_network->vertexCount());
 }
 
 void SCF::createVariables()
 {
     const double infinity = _mp_solver->infinity();
+    const int vertex_count = _mlcc_network->vertexCount();
+    const int network_size = vertex_count*vertex_count;
 
     {
         std::vector<MPVariable*> arc_vars;
-        _mp_solver->MakeVarArray(_levels_number*_network_size, 0, 1, _mp_solver->IsMIP(), "arcs", &arc_vars);
+        _mp_solver->MakeVarArray(_levels_number*network_size, 0, 1, _mp_solver->IsMIP(), "arcs", &arc_vars);
         std::vector<LinearExpr> arc_var_expr = util::variablesToExpr(arc_vars);
-        _arc_vars = MLCMST::util::break_up(_vertex_count, MLCMST::util::break_up(_levels_number, arc_var_expr));
+        _arc_vars = MLCMST::util::break_up(vertex_count, MLCMST::util::break_up(_levels_number, arc_var_expr));
     }
 
     {
         std::vector<MPVariable*> flow_vars;
-        _mp_solver->MakeNumVarArray(_network_size, 0, infinity, "flow", &flow_vars);
+        _mp_solver->MakeNumVarArray(network_size, 0, infinity, "flow", &flow_vars);
         std::vector<LinearExpr> flow_var_expr = util::variablesToExpr(flow_vars);
-        _flow_vars = MLCMST::util::break_up(_vertex_count, flow_var_expr);
+        _flow_vars = MLCMST::util::break_up(vertex_count, flow_var_expr);
     }
 
 
@@ -68,9 +71,9 @@ void SCF::createConstraints()
 
 void SCF::createDemandConstraints()
 {
-    for (int i=0; i < _vertex_count; i++) {
+    for (int i : _vertex_set) {
         LinearExpr expr;
-        for (int j=0; j < _vertex_count; j++) {
+        for (int j : _vertex_set) {
             if (i == j) {
                 continue;
             }
@@ -83,27 +86,23 @@ void SCF::createDemandConstraints()
 
 void SCF::createCapacityConstraints()
 {
-    for (int i=0; i < _vertex_count; i++) {
-        for (int j=0; j < _vertex_count; j++) {
-            if (i == j)
-                continue;
-            LinearExpr lhs = _flow_vars[i][j];
-            LinearExpr rhs;
-            for (int l=0; l < _levels_number; l++) {
-                rhs += _mlcc_network->edgeCapacity(l) * _arc_vars[i][j][l];
-            }
-            _mp_solver->MakeRowConstraint(lhs <= rhs);
+    for (auto [i,j] : _arc_set) {
+        LinearExpr lhs = _flow_vars[i][j];
+        LinearExpr rhs;
+        for (int l=0; l < _levels_number; l++) {
+            rhs += _mlcc_network->edgeCapacity(l) * _arc_vars[i][j][l];
         }
+        _mp_solver->MakeRowConstraint(lhs <= rhs);
     }
 }
 
 void SCF::createOneOutgoingConstraints()
 {
-    for (int i=0; i < _vertex_count; i++) {
+    for (int i : _vertex_set) {
         if (i == _mlcc_network->center())
             continue;
         LinearExpr expr;
-        for (int j=0; j < _vertex_count; j++) {
+        for (int j : _vertex_set) {
             if (i == j)
                 continue;
 
@@ -115,19 +114,16 @@ void SCF::createOneOutgoingConstraints()
     }
 }
 
-void SCF::createOneBetweenConstraints()
-{
-    for (int i=0; i < _vertex_count; i++) {
-        for (int j = i+1; j < _vertex_count; j++) {
-            if (i == _mlcc_network->center() || j == _mlcc_network->center())
-                continue;
+void SCF::createOneBetweenConstraints() {
+    for (auto [i,j] : util::createUndirectedEdgeSet(_mlcc_network->vertexCount())) {
+        if (i == _mlcc_network->center() || j == _mlcc_network->center())
+            continue;
 
-            LinearExpr expr;
-            for (int l=0; l < _levels_number; l++) {
-                expr += _arc_vars[i][j][l] + _arc_vars[j][i][l];
-            }
-            _mp_solver->MakeRowConstraint(expr <= 1.0);
+        LinearExpr expr;
+        for (int l = 0; l < _levels_number; l++) {
+            expr += _arc_vars[i][j][l] + _arc_vars[j][i][l];
         }
+        _mp_solver->MakeRowConstraint(expr <= 1.0);
     }
 }
 

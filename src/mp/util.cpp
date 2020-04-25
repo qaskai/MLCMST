@@ -1,5 +1,7 @@
 #include <mp/util.hpp>
 
+#include <util/util.hpp>
+
 namespace MLCMST::mp::util
 {
 
@@ -52,5 +54,29 @@ std::vector<operations_research::LinearExpr> variablesToExpr(const std::vector<o
     }
     return expr_vec;
 }
+
+std::vector<std::tuple<int, int>> createArcSet(unsigned int N)
+{
+    std::vector<std::tuple<int,int>> arc_set;
+    for (int v : MLCMST::util::firstN(N)) {
+        for (int w : MLCMST::util::firstN(N)) {
+            if (v != w)
+                arc_set.emplace_back(v, w);
+        }
+    }
+    return arc_set;
+}
+
+std::vector<std::tuple<int, int>> createUndirectedEdgeSet(unsigned int N)
+{
+    std::vector<std::tuple<int, int>> undirected_edges;
+    for (unsigned int i : MLCMST::util::firstN(N)) {
+        for (unsigned int j =i+1; j < N; j++) {
+            undirected_edges.emplace_back(i,j);
+        }
+    }
+    return undirected_edges;
+}
+
 
 }
