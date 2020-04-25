@@ -7,7 +7,7 @@
 using namespace MLCMST;
 using namespace MLCMST::network;
 
-TEST_CASE( "ESCF functional test", "[solver][mp][scf]" )
+TEST_CASE( "ESCF functional test", "[solver][mp][escf]" )
 {
     auto multiply_vector = [] (double scalar, std::vector<double> v) {
         for (double& d : v) {
@@ -42,8 +42,6 @@ TEST_CASE( "ESCF functional test", "[solver][mp][scf]" )
         std::vector<int> expected_levels { -1, 0, 1, 0 };
 
         ESCF::Result result = scf.solve(mlcc_network);
-
-
 
         REQUIRE( result.finished );
         REQUIRE( result.lower_bound.value() == Approx(14).margin(0.0001) );

@@ -3,6 +3,7 @@
 #include <numeric>
 
 #include <util/util.hpp>
+#include <mp/util.hpp>
 
 namespace MLCMST::mp {
 
@@ -36,21 +37,15 @@ void SCF::createVariables()
     {
         std::vector<MPVariable*> arc_vars;
         _mp_solver->MakeVarArray(_levels_number*_network_size, 0, 1, _mp_solver->IsMIP(), "arcs", &arc_vars);
-        std::vector<LinearExpr> arc_var_expr;
-        for (MPVariable* var : arc_vars) {
-            arc_var_expr.emplace_back(var);
-        }
-        _arc_vars = util::break_up(_vertex_count, util::break_up(_levels_number, arc_var_expr));
+        std::vector<LinearExpr> arc_var_expr = util::variablesToExpr(arc_vars);
+        _arc_vars = MLCMST::util::break_up(_vertex_count, MLCMST::util::break_up(_levels_number, arc_var_expr));
     }
 
     {
         std::vector<MPVariable*> flow_vars;
         _mp_solver->MakeNumVarArray(_network_size, 0, infinity, "flow", &flow_vars);
-        std::vector<LinearExpr> flow_var_expr;
-        for (MPVariable* var : flow_vars) {
-            flow_var_expr.emplace_back(var);
-        }
-        _flow_vars = util::break_up(_vertex_count, flow_var_expr);
+        std::vector<LinearExpr> flow_var_expr = util::variablesToExpr(flow_vars);
+        _flow_vars = MLCMST::util::break_up(_vertex_count, flow_var_expr);
     }
 
 
@@ -58,17 +53,7 @@ void SCF::createVariables()
 
 void SCF::createObjective()
 {
-    LinearExpr expr;
-    for (int i=0; i < _vertex_count; i++) {
-        for (int j=0; j < _vertex_count; j++) {
-            if (i == j)
-                continue;
-            for (int l=0; l < _levels_number; l++) {
-                double cost = _mlcc_network->network(l).edgeCost(i, j);
-                expr += cost * _arc_vars[i][j][l];
-            }
-        }
-    }
+    LinearExpr expr = util::createDefaultObjectiveExpression(*_mlcc_network, _arc_vars);
     auto objective = _mp_solver->MutableObjective();
     objective->MinimizeLinearExpr(expr);
 }
@@ -148,21 +133,7 @@ void SCF::createOneBetweenConstraints()
 
 network::MLCMST SCF::createMLCMST()
 {
-    std::vector<int> parents(_vertex_count), edge_level(_vertex_count);
-    for (int i=0; i < _vertex_count; i++) {
-        for (int l=0; l < _levels_number; l++) {
-            for (int j=0; j < _vertex_count; j++) {
-                auto var = _arc_vars[i][j][l].terms().begin()->first;
-                if (var->solution_value() > 0.99) {
-                    parents[i] = j;
-                    edge_level[i] = l;
-                    goto found_parent;
-                }
-            }
-        }
-        found_parent:;
-    }
-   return network::MLCMST(*_mlcc_network, parents, edge_level);
+    return util::createMLCMST(*_mlcc_network, _arc_vars);
 }
 
 }
