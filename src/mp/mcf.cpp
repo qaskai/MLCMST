@@ -71,12 +71,12 @@ void MCF::createObjective()
 
 void MCF::createConstraints()
 {
-    void createFlowConstraints();
-    void createCapacityConstraints();
-    void createOneOutgoingConstraints();
-    void createOneBetweenConstraints();
-    void createOneEdgeTypeConstraints();
-    void createFacilityUtilizationConstraints();
+    createFlowConstraints();
+    createCapacityConstraints();
+    createOneOutgoingConstraints();
+    createOneBetweenConstraints();
+    createOneEdgeTypeConstraints();
+    createFacilityUtilizationConstraints();
 }
 
 network::MLCMST MCF::createMLCMST()
@@ -152,8 +152,6 @@ void MCF::createOneOutgoingConstraints()
             continue;
         LinearExpr expr;
         for (int j : _vertex_set) {
-            if (i == j)
-                continue;
             expr += _arc_existence_vars[i][j];
         }
         _mp_solver->MakeRowConstraint(expr == 1.0);
@@ -165,7 +163,7 @@ void MCF::createOneBetweenConstraints()
     std::vector<std::tuple<int,int>> undirected_edges = util::createUndirectedEdgeSet(_mlcc_network->vertexCount());
 
     for (auto [i,j] : undirected_edges) {
-        if (j == _mlcc_network->center())
+        if (i == _mlcc_network->center() || j == _mlcc_network->center())
             continue;
         LinearExpr expr;
         expr += _arc_existence_vars[i][j] + _arc_existence_vars[j][i];

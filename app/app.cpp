@@ -6,7 +6,8 @@
 
 #include <network/serialization/mlcc_network_serialization.hpp>
 
-#include <mp/escf.hpp>
+#include <mp/scf.hpp>
+#include <mp/mcf.hpp>
 
 using namespace std;
 
@@ -15,7 +16,8 @@ using namespace MLCMST::network;
 
 void scfRun(network::MLCCNetwork mlcc_network)
 {
-    mp::SCF scf(false);
+    mp::MCF scf(false);
+//    mp::SCF scf(false);
     auto result = scf.solve(mlcc_network);
 
     cout << result.lower_bound.value() << endl;
@@ -32,7 +34,7 @@ network::MLCCNetwork generateNetwork()
         Level { 3, 2 },
         Level { 10, 6 }
     };
-    generation::EuclidMLCCNetworkGenerator generator (20, 0, 20, CenterPos::RANDOM, levels);
+    generation::EuclidMLCCNetworkGenerator generator (10, 0, 20, CenterPos::RANDOM, levels);
     MLCCNetwork mlccNetwork = generator.generate();
 
     mlccNetwork = generator.generate();
