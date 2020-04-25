@@ -17,15 +17,15 @@ class EuclidNetworkGenerator final : public Generator<Network>
 {
 public:
     EuclidNetworkGenerator(int N, double from = -10.0, double to = 10.0);
-    EuclidNetworkGenerator(int N, std::unique_ptr< Generator<Point<double>> > point_generator);
+    EuclidNetworkGenerator(int N, std::unique_ptr< Generator<Point> > point_generator);
     ~EuclidNetworkGenerator() override;
 
     Network generate() override;
 
 private:
-    std::unique_ptr< Generator<vector<Point<double>>> > _point_set_generator;
+    std::unique_ptr< Generator<vector<Point>> > _point_set_generator;
 
-    EuclidNetworkGenerator(std::unique_ptr< Generator<vector<Point<double>>> > point_set_generator);
+    EuclidNetworkGenerator(std::unique_ptr< Generator<vector<Point>> > point_set_generator);
 
 };
 

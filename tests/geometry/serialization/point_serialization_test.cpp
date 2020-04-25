@@ -12,17 +12,17 @@ using namespace MLCMST::geometry;
 
 TEST_CASE( "Point serialization", "[geometry][serialization][point]")
 {
-    Point<int> p(1,2);
+    Point p(1,2);
     std::stringstream ss;
 
     SECTION( "serialize" ) {
-        serialization::PointSerializer<int>().serialize(p, ss);
+        serialization::PointSerializer().serialize(p, ss);
         std::string serialized_p = util::read_stream(ss);
         REQUIRE( serialized_p == "1 2\n" );
     }
     SECTION( "deserialize" ) {
         ss << "1 2";
-        Point<int> q = serialization::PointDeserializer<int>().deserialize(ss);
+        Point q = serialization::PointDeserializer().deserialize(ss);
         REQUIRE( q == p );
     }
 }

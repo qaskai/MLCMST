@@ -10,7 +10,7 @@ using namespace MLCMST::geometry;
 
 TEST_CASE( "Real point set generation", "[geometry][generation][point]" )
 {
-    vector<Point<double>> points;
+    vector<Point> points;
 
     SECTION( "Default constructor arguments" ) {
         double l = -10.0, r = 10.0;

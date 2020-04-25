@@ -7,7 +7,7 @@
 
 namespace MLCMST::geometry::generation {
 
-class RealPointGenerator final : public Generator<Point<double> >
+class RealPointGenerator final : public Generator<Point>
 {
 
 public:
@@ -15,7 +15,7 @@ public:
     RealPointGenerator(std::unique_ptr< Generator<double> > number_generator);
     ~RealPointGenerator() override;
 
-    Point<double> generate() override;
+    Point generate() override;
 
 private:
     std::unique_ptr< Generator<double> > _number_generator;

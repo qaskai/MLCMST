@@ -13,8 +13,8 @@ using namespace MLCMST::geometry;
 
 TEST_CASE( "Point set serialization", "[geometry][serialization][point]" )
 {
-    auto points = std::vector<Point<int> > {
-        Point<int>(1,2), Point<int>(2,3), Point<int>(3,4)
+    auto points = std::vector<Point> {
+        Point(1,2), Point(2,3), Point(3,4)
     };
     std::string serialized_points =
         "3\n"
@@ -25,14 +25,14 @@ TEST_CASE( "Point set serialization", "[geometry][serialization][point]" )
     std::stringstream ss;
 
     SECTION( "serialize" ) {
-        serialization::PointSetSerializer<int>().serialize(points, ss);
+        serialization::PointSetSerializer().serialize(points, ss);
 
         REQUIRE( util::read_stream(ss) == serialized_points );
     }
     SECTION( "deserialize" ) {
         ss << serialized_points;
         auto deserialized_points =
-            serialization::PointSetDeserializer<int>().deserialize(ss);
+            serialization::PointSetDeserializer().deserialize(ss);
 
         REQUIRE( deserialized_points.size() == points.size() );
         for (int i=0; i<points.size(); i++) {

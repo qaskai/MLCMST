@@ -10,9 +10,7 @@ RealPointGenerator::RealPointGenerator(double from, double to)
     
 }
 
-RealPointGenerator::RealPointGenerator(
-    std::unique_ptr< Generator<double> > number_generator
-)
+RealPointGenerator::RealPointGenerator(std::unique_ptr< Generator<double> > number_generator)
     : _number_generator(std::move(number_generator))
 {
 
@@ -20,9 +18,9 @@ RealPointGenerator::RealPointGenerator(
 
 RealPointGenerator::~RealPointGenerator() = default;
 
-Point<double> RealPointGenerator::generate()
+Point RealPointGenerator::generate()
 {
-    return Point<double>(_number_generator->generate(), _number_generator->generate() );
+    return Point(_number_generator->generate(), _number_generator->generate() );
 }
 
 }

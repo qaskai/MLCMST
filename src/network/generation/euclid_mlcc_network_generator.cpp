@@ -22,7 +22,7 @@ EuclidMLCCNetworkGenerator::EuclidMLCCNetworkGenerator(
 
 EuclidMLCCNetworkGenerator::EuclidMLCCNetworkGenerator(
     int N, CenterPosition center_position, const std::vector<Level>& levels,
-    std::unique_ptr< Generator<Point<double>> > point_generator
+    std::unique_ptr< Generator<Point> > point_generator
 )
     : EuclidMLCCNetworkGenerator(
         center_position, levels,
@@ -35,7 +35,7 @@ EuclidMLCCNetworkGenerator::EuclidMLCCNetworkGenerator(
 EuclidMLCCNetworkGenerator::EuclidMLCCNetworkGenerator(
     CenterPosition center_position,
     std::vector<Level> levels,
-    std::unique_ptr< Generator<std::vector<Point<double>>> > point_set_generator
+    std::unique_ptr< Generator<std::vector<Point>> > point_set_generator
 )
     : _center_position(center_position), _levels(std::move(levels)), _point_set_generator(std::move(point_set_generator))
 {
@@ -46,7 +46,7 @@ EuclidMLCCNetworkGenerator::~EuclidMLCCNetworkGenerator() = default;
 
 MLCCNetwork EuclidMLCCNetworkGenerator::generate()
 {
-    vector<Point<double>> points = _point_set_generator->generate();
+    vector<Point> points = _point_set_generator->generate();
     Network network = Network(geometry::util::createDistanceMatrix(points));
     int N = network.vertexCount();
     vector<CapacitatedNetwork> network_levels;

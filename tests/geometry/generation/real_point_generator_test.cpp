@@ -6,7 +6,7 @@ using namespace MLCMST::geometry;
 
 TEST_CASE( "Real point generation", "[geometry][generation][point]" )
 {
-    Point<double> p;
+    Point p;
     SECTION( "Default constructor" ) {
         double l = -10.0, r = 10.0;
         p = generation::RealPointGenerator().generate();

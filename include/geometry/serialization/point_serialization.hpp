@@ -6,46 +6,23 @@
 
 namespace MLCMST::geometry::serialization {
 
-template<typename T>
-class PointSerializer final : public Serializer<Point<T>>
+class PointSerializer final : public Serializer<Point>
 {
 public:
-    PointSerializer() = default;
-    ~PointSerializer() override = default;
+    PointSerializer();
+    ~PointSerializer() override;
 
-    void serialize(const Point<T>& p, std::ostream& stream) override;
+    void serialize(const Point& p, std::ostream& stream) override;
 };
 
 
-template<typename T>
-class PointDeserializer final : public Deserializer<Point<T>>
+class PointDeserializer final : public Deserializer<Point>
 {
 public:
-    PointDeserializer() = default;
-    ~PointDeserializer() override = default;
+    PointDeserializer();
+    ~PointDeserializer() override;
     
-    Point<T> deserialize(std::istream& stream) override;
+    Point deserialize(std::istream& stream) override;
 };
-
-
-// ************* PointSerializer implementation ************* //
-
-template<typename T>
-void PointSerializer<T>::serialize(const Point<T>& p, std::ostream& stream)
-{
-    stream << p.x << " " << p.y << "\n";
-}
-
-
-
-// ************* PointDeserializer implementation ************* //
-
-template<typename T>
-Point<T> PointDeserializer<T>::deserialize(std::istream& stream)
-{
-    Point<T> p;
-    stream >> p.x >> p.y;
-    return p;
-}
 
 }

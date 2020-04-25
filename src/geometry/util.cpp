@@ -5,7 +5,7 @@ namespace MLCMST::geometry::util {
 
 using std::vector;
 
-vector<vector<double>> createDistanceMatrix(const vector<Point<double>>& points)
+vector<vector<double>> createDistanceMatrix(const vector<Point>& points)
 {
     int N = points.size();
     vector<vector<double>> distances(N, vector<double>(N));
@@ -15,6 +15,12 @@ vector<vector<double>> createDistanceMatrix(const vector<Point<double>>& points)
         }
     }
     return distances;
+}
+
+double euclidDistance(const Point& p, const Point& q) {
+    double a = p.x - q.x;
+    double b = p.y - q.y;
+    return sqrt(a*a + b*b);
 }
 
 }

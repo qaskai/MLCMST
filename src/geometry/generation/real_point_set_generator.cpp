@@ -12,9 +12,7 @@ RealPointSetGenerator::RealPointSetGenerator(int N, double from, double to)
 
 }
 
-RealPointSetGenerator::RealPointSetGenerator(
-    int N, std::unique_ptr<Generator<Point<double>>> point_generator
-)
+RealPointSetGenerator::RealPointSetGenerator(int N, std::unique_ptr<Generator<Point>> point_generator)
     : _size(N), _point_generator(std::move(point_generator))
 {
 
@@ -22,22 +20,22 @@ RealPointSetGenerator::RealPointSetGenerator(
 
 RealPointSetGenerator::~RealPointSetGenerator() = default;
 
-std::vector<Point<double>> RealPointSetGenerator::generate()
+std::vector<Point> RealPointSetGenerator::generate()
 {
-    auto cmp = [] (const Point<double>& p, const Point<double>& q) -> bool {
+    auto cmp = [] (const Point& p, const Point& q) -> bool {
         if (p.x == q.x) {
             return p.y < q.y;
         } else {
             return p.x < q.x;
         }
     };
-    std::set<Point<double>, decltype(cmp)> points(cmp);
+    std::set<Point, decltype(cmp)> points(cmp);
 
     while (points.size() < _size) {
         points.insert(_point_generator->generate());
     }
 
-    return std::vector<Point<double>>(points.begin(), points.end());
+    return std::vector<Point>(points.begin(), points.end());
 }
 
 }

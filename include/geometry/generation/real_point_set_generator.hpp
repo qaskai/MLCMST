@@ -10,19 +10,19 @@
 
 namespace MLCMST::geometry::generation {
 
-class RealPointSetGenerator final : public Generator<std::vector<Point<double>> >
+class RealPointSetGenerator final : public Generator<std::vector<Point> >
 {
 
 public:
     RealPointSetGenerator(int N, double from = -10.0, double to = 10.0);
-    RealPointSetGenerator(int N, std::unique_ptr<Generator<Point<double>>> point_generator);
+    RealPointSetGenerator(int N, std::unique_ptr<Generator<Point>> point_generator);
     ~RealPointSetGenerator() override;
 
-    std::vector<Point<double>> generate() override;
+    std::vector<Point> generate() override;
 
 private:
-    int _size;
-    std::unique_ptr<Generator<Point<double>>> _point_generator;
+    std::vector<Point>::size_type _size;
+    std::unique_ptr<Generator<Point>> _point_generator;
 
 };
 
