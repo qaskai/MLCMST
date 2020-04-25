@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <tuple>
 
 #include <mp/mp_mlcmst_solver.hpp>
 
@@ -19,7 +20,9 @@ public:
     ~MCF() override;
 
 private:
-    int _vertex_count, _network_size, _levels_number, _commodity_number;
+    int _levels_number;
+    std::vector<int> _vertex_set, _commodity_set;
+    std::vector<std::tuple<int,int>> _arc_set;
     std::vector<int> _supply; // at center index it is a demand
     std::vector<std::vector<std::vector<LinearExpr>>> _flow_vars;
     std::vector<std::vector<std::vector<LinearExpr>>> _arc_vars;
@@ -31,6 +34,12 @@ private:
     void createConstraints() override;
     network::MLCMST createMLCMST() override;
 
+    void createFlowConstraints();
+    void createCapacityConstraints();
+    void createOneOutgoingConstraints();
+    void createOneBetweenConstraints();
+    void createOneEdgeTypeConstraints();
+    void createFacilityUtilizationConstraints();
 
 };
 
