@@ -33,20 +33,20 @@ void SCF::setupLocalVariables()
 
 void SCF::createVariables()
 {
-    const double infinity = _mp_solver->infinity();
+    const double infinity = _mp_solver.infinity();
     const int vertex_count = _mlcc_network->vertexCount();
     const int network_size = vertex_count*vertex_count;
 
     {
         std::vector<MPVariable*> arc_vars;
-        _mp_solver->MakeVarArray(_levels_number*network_size, 0, 1, _mp_solver->IsMIP(), "arcs", &arc_vars);
+        _mp_solver.MakeVarArray(_levels_number*network_size, 0, 1, _mp_solver.IsMIP(), "arcs", &arc_vars);
         std::vector<LinearExpr> arc_var_expr = util::variablesToExpr(arc_vars);
         _arc_vars = MLCMST::util::break_up(vertex_count, MLCMST::util::break_up(_levels_number, arc_var_expr));
     }
 
     {
         std::vector<MPVariable*> flow_vars;
-        _mp_solver->MakeNumVarArray(network_size, 0, infinity, "flow", &flow_vars);
+        _mp_solver.MakeNumVarArray(network_size, 0, infinity, "flow", &flow_vars);
         std::vector<LinearExpr> flow_var_expr = util::variablesToExpr(flow_vars);
         _flow_vars = MLCMST::util::break_up(vertex_count, flow_var_expr);
     }
@@ -57,7 +57,7 @@ void SCF::createVariables()
 void SCF::createObjective()
 {
     LinearExpr expr = util::createDefaultObjectiveExpression(*_mlcc_network, _arc_vars);
-    auto objective = _mp_solver->MutableObjective();
+    auto objective = _mp_solver.MutableObjective();
     objective->MinimizeLinearExpr(expr);
 }
 
@@ -80,7 +80,7 @@ void SCF::createDemandConstraints()
             expr += _flow_vars[j][i] - _flow_vars[i][j];
         }
         double W = i == _mlcc_network->center() ? _supply[i] : -_supply[i];
-        _mp_solver->MakeRowConstraint(expr == W);
+        _mp_solver.MakeRowConstraint(expr == W);
     }
 }
 
@@ -92,7 +92,7 @@ void SCF::createCapacityConstraints()
         for (int l=0; l < _levels_number; l++) {
             rhs += _mlcc_network->edgeCapacity(l) * _arc_vars[i][j][l];
         }
-        _mp_solver->MakeRowConstraint(lhs <= rhs);
+        _mp_solver.MakeRowConstraint(lhs <= rhs);
     }
 }
 
@@ -110,7 +110,7 @@ void SCF::createOneOutgoingConstraints()
                 expr += _arc_vars[i][j][l];
             }
         }
-        _mp_solver->MakeRowConstraint(expr == 1.0);
+        _mp_solver.MakeRowConstraint(expr == 1.0);
     }
 }
 
@@ -123,7 +123,7 @@ void SCF::createOneBetweenConstraints() {
         for (int l = 0; l < _levels_number; l++) {
             expr += _arc_vars[i][j][l] + _arc_vars[j][i][l];
         }
-        _mp_solver->MakeRowConstraint(expr <= 1.0);
+        _mp_solver.MakeRowConstraint(expr <= 1.0);
     }
 }
 

@@ -20,6 +20,7 @@ public:
     explicit MCF(MLCMST::mp::MPSolverFactory mp_solver_factory);
     ~MCF() override;
 
+    void printVariableSolutionValue(std::ostream& out) override;
 private:
     int _levels_number;
     std::vector<int> _vertex_set, _commodity_set;
@@ -35,9 +36,8 @@ private:
     void createVariables() override;
     void createObjective() override;
     void createConstraints() override;
-    network::MLCMST createMLCMST() override;
 
-    void printVariableSolutionValue(std::ostream& out) override;
+    network::MLCMST createMLCMST() override;
 
     void createFlowConstraints();
     void createCapacityConstraints();

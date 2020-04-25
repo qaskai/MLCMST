@@ -22,6 +22,8 @@ public:
     explicit SCF(MLCMST::mp::MPSolverFactory mp_solver_factory);
     ~SCF() override;
 
+    void printVariableSolutionValue(std::ostream& out) override;
+
 protected:
     int _levels_number;
     std::vector<int> _vertex_set;
@@ -33,13 +35,11 @@ protected:
     std::vector<std::vector<LinearExpr>> _flow_vars;
 
     void createConstraints() override;
-
     void createDemandConstraints();
     void createCapacityConstraints();
     void createOneOutgoingConstraints();
-    void createOneBetweenConstraints();
 
-    void printVariableSolutionValue(std::ostream& out) override;
+    void createOneBetweenConstraints();
 
 private:
     void setupLocalVariables() override;

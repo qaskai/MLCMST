@@ -44,21 +44,21 @@ void MCF::createVariables()
 
     {
         std::vector<MPVariable*> arc_existence_var;
-        _mp_solver->MakeVarArray(network_size, 0, 1, _mp_solver->IsMIP(), ARC_EXISTENCE_VAR_NAME, &arc_existence_var);
+        _mp_solver.MakeVarArray(network_size, 0, 1, _mp_solver.IsMIP(), ARC_EXISTENCE_VAR_NAME, &arc_existence_var);
         std::vector<LinearExpr> arc_existence_expr = util::variablesToExpr(arc_existence_var);
         _arc_existence_vars = break_up(vertex_count, arc_existence_expr);
     }
 
     {
         std::vector<MPVariable*> arc_var;
-        _mp_solver->MakeVarArray(_levels_number*network_size, 0, 1, _mp_solver->IsMIP(), ARC_VAR_NAME, &arc_var);
+        _mp_solver.MakeVarArray(_levels_number*network_size, 0, 1, _mp_solver.IsMIP(), ARC_VAR_NAME, &arc_var);
         std::vector<LinearExpr> arc_expr = util::variablesToExpr(arc_var);
         _arc_vars = break_up(vertex_count, break_up(_levels_number, arc_expr));
     }
 
     {
         std::vector<MPVariable*> flow_var;
-        _mp_solver->MakeNumVarArray(vertex_count*network_size, 0, _mp_solver->infinity(), FLOW_VAR_NAME, &flow_var);
+        _mp_solver.MakeNumVarArray(vertex_count*network_size, 0, _mp_solver.infinity(), FLOW_VAR_NAME, &flow_var);
         std::vector<LinearExpr> flow_expr = util::variablesToExpr(flow_var);
         _flow_vars = break_up(vertex_count, break_up(vertex_count, flow_expr));
     }
@@ -67,7 +67,7 @@ void MCF::createVariables()
 void MCF::createObjective()
 {
     LinearExpr expr = util::createDefaultObjectiveExpression(*_mlcc_network, _arc_vars);
-    auto objective = _mp_solver->MutableObjective();
+    auto objective = _mp_solver.MutableObjective();
     objective->MinimizeLinearExpr(expr);
 }
 
@@ -98,7 +98,7 @@ void MCF::createFlowConstraints()
                 expr += _flow_vars[j][i][k] - _flow_vars[i][j][k];
             }
             double bound = i == _mlcc_network->center() ? 1 : (i==k ? -1 : 0);
-            _mp_solver->MakeRowConstraint(expr == bound);
+            _mp_solver.MakeRowConstraint(expr == bound);
         }
     }
 
@@ -107,7 +107,7 @@ void MCF::createFlowConstraints()
         for (int k : _commodity_set) {
             LinearExpr lhs = _flow_vars[i][j][k];
             LinearExpr rhs = _arc_existence_vars[i][j];
-            _mp_solver->MakeRowConstraint(lhs <= rhs);
+            _mp_solver.MakeRowConstraint(lhs <= rhs);
         }
     }
 }
@@ -126,7 +126,7 @@ void MCF::createCapacityConstraints()
         for (int l=0; l < _levels_number; l++) {
             rhs += _mlcc_network->edgeCapacity(l) * _arc_vars[i][_mlcc_network->center()][l];
         }
-        _mp_solver->MakeRowConstraint(lhs <= rhs);
+        _mp_solver.MakeRowConstraint(lhs <= rhs);
     }
 
     // other edges
@@ -143,7 +143,7 @@ void MCF::createCapacityConstraints()
         for (int l=0; l<_levels_number-1; l++) {
             rhs += _mlcc_network->edgeCapacity(l) * _arc_vars[i][j][l];
         }
-        _mp_solver->MakeRowConstraint(lhs <= rhs);
+        _mp_solver.MakeRowConstraint(lhs <= rhs);
     }
 }
 
@@ -158,7 +158,7 @@ void MCF::createOneOutgoingConstraints()
                 continue;
             expr += _arc_existence_vars[i][j];
         }
-        _mp_solver->MakeRowConstraint(expr == 1.0);
+        _mp_solver.MakeRowConstraint(expr == 1.0);
     }
 }
 
@@ -171,7 +171,7 @@ void MCF::createOneBetweenConstraints()
 //            continue;
         LinearExpr expr;
         expr += _arc_existence_vars[i][j] + _arc_existence_vars[j][i];
-        _mp_solver->MakeRowConstraint(expr <= 1.0);
+        _mp_solver.MakeRowConstraint(expr <= 1.0);
     }
 }
 
@@ -183,7 +183,7 @@ void MCF::createOneEdgeTypeConstraints()
             lhs += _arc_vars[i][j][l];
         }
         LinearExpr rhs = _arc_existence_vars[i][j];
-        _mp_solver->MakeRowConstraint(lhs == rhs);
+        _mp_solver.MakeRowConstraint(lhs == rhs);
     }
 }
 
@@ -199,7 +199,7 @@ void MCF::createFacilityUtilizationConstraints()
         for (int l=1; l<_levels_number; l++) {
             rhs += (_mlcc_network->edgeCapacity(l-1) + 1) * _arc_vars[i][j][l];
         }
-        _mp_solver->MakeRowConstraint(lhs >= rhs);
+        _mp_solver.MakeRowConstraint(lhs >= rhs);
     }
 }
 

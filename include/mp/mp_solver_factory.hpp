@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>
 #include <string>
 
 #include <ortools/linear_solver/linear_solver.h>
@@ -12,11 +11,12 @@ namespace or_ = operations_research;
 class MPSolverFactory
 {
 public:
-    MPSolverFactory(bool mip);
+    explicit MPSolverFactory(bool mip);
 
-    std::unique_ptr< or_::MPSolver > create();
-    std::unique_ptr< or_::MPSolver > create(or_::MPSolver::OptimizationProblemType problem_type);
-    std::unique_ptr< or_::MPSolver > create(std::string name, or_::MPSolver::OptimizationProblemType problem_type);
+    or_::MPSolver create();
+    or_::MPSolver create(bool mip);
+    or_::MPSolver create(or_::MPSolver::OptimizationProblemType problem_type);
+    or_::MPSolver create(std::string name, or_::MPSolver::OptimizationProblemType problem_type);
 
 private:
     bool _mip;

@@ -16,6 +16,8 @@ public:
     ~MP_MLCMSTSolver() override;
     MLCMSTSolver::Result solve(const network::MLCCNetwork& mlcc_network) final;
 
+    virtual void printVariableSolutionValue(std::ostream& out) = 0;
+
 protected:
     using MPSolver = operations_research::MPSolver;
     using MPVariable = operations_research::MPVariable;
@@ -25,8 +27,7 @@ protected:
 
     const unsigned int MAX_VAR_NAME_LEN = 1000;
 
-    mp::MPSolverFactory _mp_solver_factory;
-    std::unique_ptr< MPSolver > _mp_solver;
+    MPSolver _mp_solver;
     const network::MLCCNetwork* _mlcc_network;
 
     explicit MP_MLCMSTSolver(bool exact_solution);
@@ -36,9 +37,8 @@ protected:
     virtual void createVariables() = 0;
     virtual void createConstraints() = 0;
     virtual void createObjective() = 0;
-    virtual network::MLCMST createMLCMST() = 0;
 
-    virtual void printVariableSolutionValue(std::ostream& out) = 0;
+    virtual network::MLCMST createMLCMST() = 0;
 };
 
 }
