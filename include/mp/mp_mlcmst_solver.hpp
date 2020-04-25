@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <ostream>
 
 #include <ortools/linear_solver/linear_solver.h>
 
@@ -22,6 +23,8 @@ protected:
     using LinearExpr = operations_research::LinearExpr;
     using LinearRange = operations_research::LinearRange;
 
+    const unsigned int MAX_VAR_NAME_LEN = 1000;
+
     mp::MPSolverFactory _mp_solver_factory;
     std::unique_ptr< MPSolver > _mp_solver;
     const network::MLCCNetwork* _mlcc_network;
@@ -34,6 +37,8 @@ protected:
     virtual void createConstraints() = 0;
     virtual void createObjective() = 0;
     virtual network::MLCMST createMLCMST() = 0;
+
+    virtual void printVariableSolutionValue(std::ostream& out) = 0;
 };
 
 }

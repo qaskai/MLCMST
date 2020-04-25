@@ -1,7 +1,7 @@
 #include <mp/mcf.hpp>
 
+#include <cstdlib>
 #include <numeric>
-#include <set>
 
 #include <util/util.hpp>
 #include <mp/util.hpp>
@@ -37,26 +37,28 @@ void MCF::setupLocalVariables()
 
 void MCF::createVariables()
 {
-    int vertex_count = _mlcc_network->vertexCount();
-    int network_size = vertex_count*vertex_count;
     using MLCMST::util::break_up;
+
+    const int vertex_count = _mlcc_network->vertexCount();
+    const int network_size = vertex_count*vertex_count;
+
     {
         std::vector<MPVariable*> arc_existence_var;
-        _mp_solver->MakeVarArray(network_size, 0, 1, _mp_solver->IsMIP(), "arc_existence", &arc_existence_var);
+        _mp_solver->MakeVarArray(network_size, 0, 1, _mp_solver->IsMIP(), ARC_EXISTENCE_VAR_NAME, &arc_existence_var);
         std::vector<LinearExpr> arc_existence_expr = util::variablesToExpr(arc_existence_var);
         _arc_existence_vars = break_up(vertex_count, arc_existence_expr);
     }
 
     {
         std::vector<MPVariable*> arc_var;
-        _mp_solver->MakeVarArray(_levels_number*network_size, 0, 1, _mp_solver->IsMIP(), "arc", &arc_var);
+        _mp_solver->MakeVarArray(_levels_number*network_size, 0, 1, _mp_solver->IsMIP(), ARC_VAR_NAME, &arc_var);
         std::vector<LinearExpr> arc_expr = util::variablesToExpr(arc_var);
         _arc_vars = break_up(vertex_count, break_up(_levels_number, arc_expr));
     }
 
     {
         std::vector<MPVariable*> flow_var;
-        _mp_solver->MakeNumVarArray(vertex_count*network_size, 0, _mp_solver->infinity(), "flow", &flow_var);
+        _mp_solver->MakeNumVarArray(vertex_count*network_size, 0, _mp_solver->infinity(), FLOW_VAR_NAME, &flow_var);
         std::vector<LinearExpr> flow_expr = util::variablesToExpr(flow_var);
         _flow_vars = break_up(vertex_count, break_up(vertex_count, flow_expr));
     }
@@ -152,6 +154,8 @@ void MCF::createOneOutgoingConstraints()
             continue;
         LinearExpr expr;
         for (int j : _vertex_set) {
+            if (i == j)
+                continue;
             expr += _arc_existence_vars[i][j];
         }
         _mp_solver->MakeRowConstraint(expr == 1.0);
@@ -163,8 +167,8 @@ void MCF::createOneBetweenConstraints()
     std::vector<std::tuple<int,int>> undirected_edges = util::createUndirectedEdgeSet(_mlcc_network->vertexCount());
 
     for (auto [i,j] : undirected_edges) {
-        if (i == _mlcc_network->center() || j == _mlcc_network->center())
-            continue;
+//        if (i == _mlcc_network->center() || j == _mlcc_network->center())
+//            continue;
         LinearExpr expr;
         expr += _arc_existence_vars[i][j] + _arc_existence_vars[j][i];
         _mp_solver->MakeRowConstraint(expr <= 1.0);
@@ -196,6 +200,39 @@ void MCF::createFacilityUtilizationConstraints()
             rhs += (_mlcc_network->edgeCapacity(l-1) + 1) * _arc_vars[i][j][l];
         }
         _mp_solver->MakeRowConstraint(lhs >= rhs);
+    }
+}
+
+void MCF::printVariableSolutionValue(std::ostream& out)
+{
+    char name_buff[MAX_VAR_NAME_LEN];
+    // arc_existence_var
+    for (int i=0; i<_mlcc_network->vertexCount(); i++) {
+        for (int j=0; j<_mlcc_network->vertexCount(); j++) {
+            std::sprintf(name_buff, "%s[%d][%d]", ARC_EXISTENCE_VAR_NAME.c_str(), i, j);
+            const MPVariable* var = _arc_existence_vars[i][j].terms().begin()->first;
+            out << name_buff << " = " << var->solution_value() << "\n";
+        }
+    }
+    // arc_var
+    for (int i=0; i<_mlcc_network->vertexCount(); i++) {
+        for (int j=0; j<_mlcc_network->vertexCount(); j++) {
+            for (int l=0; l<_mlcc_network->levelsNumber(); l++) {
+                std::sprintf(name_buff, "%s[%d][%d][%d]", ARC_VAR_NAME.c_str(), i, j, l);
+                const MPVariable* var = _arc_vars[i][j][l].terms().begin()->first;
+                out << name_buff << " = " << var->solution_value() << "\n";
+            }
+        }
+    }
+    // flow_var
+    for (int i=0; i<_mlcc_network->vertexCount(); i++) {
+        for (int j=0; j<_mlcc_network->vertexCount(); j++) {
+            for (int k=0; k<_mlcc_network->vertexCount(); k++) {
+                std::sprintf(name_buff, "%s[%d][%d][%d]", FLOW_VAR_NAME.c_str(), i, j, k);
+                const MPVariable* var = _flow_vars[i][j][k].terms().begin()->first;
+                out << name_buff << " = " << var->solution_value() << "\n";
+            }
+        }
     }
 }
 

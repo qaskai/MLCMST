@@ -132,4 +132,28 @@ network::MLCMST SCF::createMLCMST()
     return util::createMLCMST(*_mlcc_network, _arc_vars);
 }
 
+void SCF::printVariableSolutionValue(std::ostream &out)
+{
+    char name_buff[MAX_VAR_NAME_LEN];
+    // arc vars
+    for (int i=0; i < _mlcc_network->vertexCount(); i++) {
+        for (int j=0; j< _mlcc_network->vertexCount(); j++) {
+            for (int l=0; l < _mlcc_network->levelsNumber(); l++) {
+                std::sprintf(name_buff, "%s[%d][%d][%d]", ARC_VAR_NAME.c_str(), i, j, l);
+                const MPVariable* var = _arc_vars[i][j][l].terms().begin()->first;
+                out << name_buff << " = " << var->solution_value() << "\n";
+            }
+        }
+    }
+
+    // flow vars
+    for (int i=0; i < _mlcc_network->vertexCount(); i++) {
+        for (int j = 0; j < _mlcc_network->vertexCount(); j++) {
+            std::sprintf(name_buff, "%s[%d][%d]", FLOW_VAR_NAME.c_str(), i, j);
+            const MPVariable* var = _flow_vars[i][j].terms().begin()->first;
+            out << name_buff << " = " << var->solution_value() << "\n";
+        }
+    }
+}
+
 }

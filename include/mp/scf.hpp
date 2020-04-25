@@ -28,6 +28,7 @@ protected:
     std::vector<std::tuple<int,int>> _arc_set;
     std::vector<int> _supply; // at center index it is a demand
 
+    const std::string FLOW_VAR_NAME = "flow", ARC_VAR_NAME = "arc";
     std::vector<std::vector<std::vector<LinearExpr>>> _arc_vars;
     std::vector<std::vector<LinearExpr>> _flow_vars;
 
@@ -37,6 +38,8 @@ protected:
     void createCapacityConstraints();
     void createOneOutgoingConstraints();
     void createOneBetweenConstraints();
+
+    void printVariableSolutionValue(std::ostream& out) override;
 
 private:
     void setupLocalVariables() override;
