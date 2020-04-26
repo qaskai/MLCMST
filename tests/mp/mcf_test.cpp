@@ -57,7 +57,7 @@ TEST_CASE( "MCF functional test", "[solver][mp][mcf]" ) {
         MCF::Result result = mcf.solve(mlcc_network);
 
         REQUIRE( result.finished );
-        REQUIRE( result.lower_bound.value() == Approx(13.5).margin(0.0001) );
+        REQUIRE( result.lower_bound.value() == Approx(12.5).margin(0.0001) );
         REQUIRE( !result.mlcmst.has_value() );
     }
 
