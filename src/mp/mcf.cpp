@@ -42,25 +42,61 @@ void MCF::createVariables()
     const int vertex_count = _mlcc_network->vertexCount();
     const int network_size = vertex_count*vertex_count;
 
+    // arc existence
     {
         std::vector<MPVariable*> arc_existence_var;
         _mp_solver.MakeVarArray(network_size, 0, 1, _mp_solver.IsMIP(), ARC_EXISTENCE_VAR_NAME, &arc_existence_var);
         std::vector<LinearExpr> arc_existence_expr = util::variablesToExpr(arc_existence_var);
         _arc_existence_vars = break_up(vertex_count, arc_existence_expr);
+        // zero loops
+        for (int i : _vertex_set) {
+            int idx = i*_mlcc_network->vertexCount() + i;
+            arc_existence_var[idx]->SetBounds(0, 0);
+        }
     }
 
+    // arc type
     {
         std::vector<MPVariable*> arc_var;
         _mp_solver.MakeVarArray(_levels_number*network_size, 0, 1, _mp_solver.IsMIP(), ARC_VAR_NAME, &arc_var);
         std::vector<LinearExpr> arc_expr = util::variablesToExpr(arc_var);
         _arc_vars = break_up(vertex_count, break_up(_levels_number, arc_expr));
+        // zero loops
+        for (int i : _vertex_set) {
+            int idx = (i*vertex_count + i) * _levels_number;
+            for (int l=0; l<_levels_number; l++) {
+                arc_var[idx + l]->SetBounds(0, 0);
+            }
+        }
     }
 
+    // commodity flow
     {
         std::vector<MPVariable*> flow_var;
         _mp_solver.MakeNumVarArray(vertex_count*network_size, 0, _mp_solver.infinity(), FLOW_VAR_NAME, &flow_var);
         std::vector<LinearExpr> flow_expr = util::variablesToExpr(flow_var);
         _flow_vars = break_up(vertex_count, break_up(vertex_count, flow_expr));
+        // no flow on loops
+        for (int i : _vertex_set) {
+            int idx = (i*vertex_count + i) * vertex_count;
+            for (int k : _commodity_set) {
+                flow_var[idx+k]->SetBounds(0,0);
+            }
+        }
+        // no flow from center
+        for (int i : _vertex_set) {
+            int idx = (_mlcc_network->center()*vertex_count + i) * vertex_count;
+            for (int k : _commodity_set) {
+                flow_var[idx+k]->SetBounds(0, 0);
+            }
+        }
+        // no flow of nonexistent center commodity
+        for (int i : _vertex_set) {
+            for (int j : _vertex_set) {
+                int idx = (i*vertex_count + j) * vertex_count + _mlcc_network->center();
+                flow_var[idx]->SetBounds(0,0);
+            }
+        }
     }
 }
 
@@ -154,8 +190,6 @@ void MCF::createOneOutgoingConstraints()
             continue;
         LinearExpr expr;
         for (int j : _vertex_set) {
-            if (i == j)
-                continue;
             expr += _arc_existence_vars[i][j];
         }
         _mp_solver.MakeRowConstraint(expr == 1.0);

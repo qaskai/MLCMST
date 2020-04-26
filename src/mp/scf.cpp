@@ -37,18 +37,37 @@ void SCF::createVariables()
     const int vertex_count = _mlcc_network->vertexCount();
     const int network_size = vertex_count*vertex_count;
 
+    // arc type
     {
         std::vector<MPVariable*> arc_vars;
-        _mp_solver.MakeVarArray(_levels_number*network_size, 0, 1, _mp_solver.IsMIP(), "arcs", &arc_vars);
+        _mp_solver.MakeVarArray(_levels_number*network_size, 0, 1, _mp_solver.IsMIP(), ARC_VAR_NAME, &arc_vars);
         std::vector<LinearExpr> arc_var_expr = util::variablesToExpr(arc_vars);
         _arc_vars = MLCMST::util::break_up(vertex_count, MLCMST::util::break_up(_levels_number, arc_var_expr));
+        // zero loops
+        for (int i : _vertex_set) {
+            int idx = (i*vertex_count + i) * _levels_number;
+            for (int l=0; l<_levels_number; l++) {
+                arc_vars[idx + l]->SetBounds(0, 0);
+            }
+        }
     }
 
+    // flow
     {
         std::vector<MPVariable*> flow_vars;
-        _mp_solver.MakeNumVarArray(network_size, 0, infinity, "flow", &flow_vars);
+        _mp_solver.MakeNumVarArray(network_size, 0, infinity, FLOW_VAR_NAME, &flow_vars);
         std::vector<LinearExpr> flow_var_expr = util::variablesToExpr(flow_vars);
         _flow_vars = MLCMST::util::break_up(vertex_count, flow_var_expr);
+        // no loop flow
+        for (int i : _vertex_set) {
+            int idx = i*vertex_count + i;
+            flow_vars[idx]->SetBounds(0, 0);
+        }
+        // no flow from center
+        for (int i : _vertex_set) {
+            int idx = _mlcc_network->center()*vertex_count + i;
+            flow_vars[idx]->SetBounds(0, 0);
+        }
     }
 
 
