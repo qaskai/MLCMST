@@ -29,21 +29,21 @@ network::MLCMST createMLCMST(
     const std::vector<std::vector<std::vector<operations_research::LinearExpr>>>& arc_vars
 )
 {
-    std::vector<int> parents(mlcc_network.vertexCount()), edge_level(mlcc_network.vertexCount());
+    network::MLCMST mlcmst(mlcc_network.vertexCount());
     for (int i=0; i < mlcc_network.vertexCount(); i++) {
         for (int j=0; j < mlcc_network.vertexCount(); j++) {
             for (int l=0; l < mlcc_network.levelsNumber(); l++) {
                 auto var = arc_vars[i][j][l].terms().begin()->first;
                 if (var->solution_value() > 0.99) {
-                    parents[i] = j;
-                    edge_level[i] = l;
+                    mlcmst.parent(i) = j;
+                    mlcmst.edgeLevel(i) = l;
                     goto found_parent;
                 }
             }
         }
         found_parent:;
     }
-    return network::MLCMST(mlcc_network, parents, edge_level);
+    return mlcmst;
 }
 
 std::vector<operations_research::LinearExpr> variablesToExpr(const std::vector<operations_research::MPVariable*>& vars)

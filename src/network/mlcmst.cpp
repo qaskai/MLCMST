@@ -3,23 +3,20 @@
 
 namespace MLCMST::network {
 
-MLCMST::~MLCMST() = default;
-
-MLCMST::MLCMST(const MLCCNetwork &network, std::vector<int> parents, std::vector<int> edge_levels)
-    : _network(network), _parents(std::move(parents)), _edge_levels(std::move(edge_levels))
+MLCMST::MLCMST(unsigned int N) : _parents(N), _edge_levels(N)
 {
-    _cost = calculateCost();
 }
 
-double MLCMST::calculateCost() {
-    double cost = 0;
-    for (int i=0; i < _network.get().vertexCount(); i++) {
-        if (i == _network.get().center())
-            continue;
+MLCMST::MLCMST(std::vector<int> parents, std::vector<int> edge_levels)
+    : _parents(std::move(parents)), _edge_levels(std::move(edge_levels))
+{
+}
 
-        cost += _network.get().network(_edge_levels[i]).edgeCost(i, _parents[i]);
-    }
-    return cost;
+MLCMST::~MLCMST() = default;
+
+int& MLCMST::parent(int v)
+{
+    return _parents[v];
 }
 
 int MLCMST::parent(int v) const
@@ -27,14 +24,26 @@ int MLCMST::parent(int v) const
     return _parents[v];
 }
 
+int& MLCMST::edgeLevel(int v)
+{
+    return _edge_levels[v];
+}
+
 int MLCMST::edgeLevel(int v) const
 {
     return _edge_levels[v];
 }
 
-double MLCMST::cost() const
+double MLCMST::cost(const MLCCNetwork& mlcc_network) const
 {
-    return _cost;
+    double cost = 0;
+    for (int i=0; i < mlcc_network.vertexCount(); i++) {
+        if (i == mlcc_network.center())
+            continue;
+
+        cost += mlcc_network.network(_edge_levels[i]).edgeCost(i, _parents[i]);
+    }
+    return cost;
 }
 
 
