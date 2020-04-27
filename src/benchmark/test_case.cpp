@@ -13,5 +13,15 @@ TestCase::TestCase(const network::MLCCNetwork& mlcc_network, const network::MLCM
 
 }
 
+const network::MLCCNetwork& TestCase::mlccNetwork() const
+{
+    return _mlcc_network;
+}
+
+const std::optional<network::MLCMST>& TestCase::mlcmst() const
+{
+    return _mlcmst;
+}
+
 
 }

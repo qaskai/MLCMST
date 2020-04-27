@@ -1,7 +1,10 @@
 #pragma once
 
+#include <string>
 #include <ostream>
 #include <memory>
+#include <vector>
+#include <unordered_map>
 
 #include <benchmark/test_case.hpp>
 #include <benchmark/reporter.hpp>
@@ -15,12 +18,14 @@ public:
     explicit Benchmark(std::unique_ptr< Reporter > reporter);
     ~Benchmark();
 
-    void addSolver(std::unique_ptr< MLCMSTSolver > solver);
+    void addSolver(std::unique_ptr< MLCMSTSolver > solver, const std::string& name);
     void addTestCase(const TestCase& test_case);
     void run(std::ostream& out);
 
 private:
     std::unique_ptr< Reporter > _reporter;
+    std::vector<TestCase> _test_cases;
+    std::unordered_map<std::string, std::unique_ptr< MLCMSTSolver >> _solvers;
 };
 
 }
