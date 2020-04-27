@@ -4,6 +4,7 @@
 #include <memory>
 
 #include <benchmark/test_case.hpp>
+#include <benchmark/reporter.hpp>
 #include <mlcmst_solver.hpp>
 
 namespace MLCMST::benchmark {
@@ -11,13 +12,15 @@ namespace MLCMST::benchmark {
 class Benchmark
 {
 public:
-    virtual ~Benchmark();
+    explicit Benchmark(std::unique_ptr< Reporter > reporter);
+    ~Benchmark();
 
-    virtual void addSolver(std::unique_ptr< MLCMSTSolver > solver) = 0;
-    virtual void addTestCase(const TestCase& test_case) = 0;
-    virtual void run() = 0;
-    virtual void printReport(std::istream& out) = 0;
+    void addSolver(std::unique_ptr< MLCMSTSolver > solver);
+    void addTestCase(const TestCase& test_case);
+    void run(std::ostream& out);
 
+private:
+    std::unique_ptr< Reporter > _reporter;
 };
 
 }
