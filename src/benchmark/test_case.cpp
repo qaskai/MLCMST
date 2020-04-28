@@ -2,13 +2,8 @@
 
 namespace MLCMST::benchmark {
 
-TestCase::TestCase(const network::MLCCNetwork& mlcc_network) : _mlcc_network(mlcc_network), _mlcmst(std::nullopt)
-{
-
-}
-
-TestCase::TestCase(const network::MLCCNetwork& mlcc_network, const network::MLCMST& mlcmst)
-    : _mlcc_network(mlcc_network), _mlcmst(mlcmst)
+TestCase::TestCase(const network::MLCCNetwork& mlcc_network, double lower_bound)
+    : _mlcc_network(mlcc_network), _lower_bound(lower_bound)
 {
 
 }
@@ -18,10 +13,9 @@ const network::MLCCNetwork& TestCase::mlccNetwork() const
     return _mlcc_network;
 }
 
-const std::optional<network::MLCMST>& TestCase::mlcmst() const
+double TestCase::lowerBound() const
 {
-    return _mlcmst;
+    return _lower_bound;
 }
-
 
 }
