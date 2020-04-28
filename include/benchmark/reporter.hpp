@@ -15,8 +15,8 @@ class Reporter
 public:
     virtual ~Reporter();
 
-    virtual void printReport(std::vector<TestCase>& test_cases,
-        std::unordered_map<std::string, std::vector<MLCMSTSolver::Result>> results, std::ostream& out) = 0;
+    virtual void report(std::vector<TestCase>& test_cases,
+                        std::unordered_map<std::string, std::vector<MLCMSTSolver::Result>> results) = 0;
 };
 
 }

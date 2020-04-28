@@ -5,41 +5,44 @@
 
 namespace MLCMST::benchmark {
 
+GeneralReporter::GeneralReporter(std::ostream &out) : _out(out)
+{
+}
+
 GeneralReporter::~GeneralReporter() = default;
 
-void GeneralReporter::printReport(
+void GeneralReporter::report(
         std::vector<TestCase> &test_cases,
-        std::unordered_map<std::string, std::vector<MLCMSTSolver::Result>> results,
-        std::ostream &out)
+        std::unordered_map<std::string, std::vector<MLCMSTSolver::Result>> results)
 {
     printTestCaseStats(test_cases);
     for (const auto& p : results) {
-        printReport(p.first, test_cases, p.second, out);
+        printReport(p.first, test_cases, p.second);
     }
 }
 
 void GeneralReporter::printReport(const std::string& solver_name, std::vector<TestCase> &test_cases,
-        const std::vector<MLCMSTSolver::Result>& results, std::ostream &out)
+        const std::vector<MLCMSTSolver::Result>& results)
 {
-    out << "****************   " << solver_name << " statistics report" << "    **************\n";
-    printLowerBoundGapStats(test_cases, results, out);
-    printSolutionGapStats(test_cases, results, out);
-    printTimeStats(results, out);
+    _out << "****************   " << solver_name << " statistics report" << "    **************\n";
+    printLowerBoundGapStats(test_cases, results);
+    printSolutionGapStats(test_cases, results);
+    printTimeStats(results);
 }
 
-void GeneralReporter::printTestCaseStats(const std::vector<TestCase> &test_cases, std::ostream &out)
+void GeneralReporter::printTestCaseStats(const std::vector<TestCase> &test_cases)
 {
-    out << "number of test cases: " << test_cases.size() << "\n";
-    out << "graph order\n";
+    _out << "number of test cases: " << test_cases.size() << "\n";
+    _out << "graph order\n";
     std::vector<double> graph_orders;
     for (const TestCase& test_case : test_cases) {
         graph_orders.push_back(test_case.mlccNetwork().vertexCount());
     }
-    printStatistics(graph_orders, out);
+    printStatistics(graph_orders);
 }
 
 void GeneralReporter::printLowerBoundGapStats(const std::vector<TestCase> &test_cases,
-        const std::vector<MLCMSTSolver::Result> &results, std::ostream &out)
+        const std::vector<MLCMSTSolver::Result> &results)
 {
     std::vector<double> lower_bound_gap;
     for (int i=0; i<test_cases.size(); i++) {
@@ -48,12 +51,12 @@ void GeneralReporter::printLowerBoundGapStats(const std::vector<TestCase> &test_
         double lower_bound = results[i].lower_bound.value();
         lower_bound_gap.push_back(1.0 - (lower_bound/test_cases[i].lowerBound()));
     }
-    out << "lower bound gap of " << lower_bound_gap.size() << " qualified solutions\n";
-    printStatistics(lower_bound_gap, out);
+    _out << "lower bound gap of " << lower_bound_gap.size() << " qualified solutions\n";
+    printStatistics(lower_bound_gap);
 }
 
 void GeneralReporter::printSolutionGapStats(const std::vector<TestCase> &test_cases,
-        const std::vector<MLCMSTSolver::Result> &results, std::ostream &out)
+        const std::vector<MLCMSTSolver::Result> &results)
 {
     std::vector<double> lower_bound_gap;
     for (int i=0; i<test_cases.size(); i++) {
@@ -62,26 +65,26 @@ void GeneralReporter::printSolutionGapStats(const std::vector<TestCase> &test_ca
         double mlcmst_cost = results[i].mlcmst.value().cost(test_cases[i].mlccNetwork());
         lower_bound_gap.push_back((mlcmst_cost/test_cases[i].lowerBound() - 1.0));
     }
-    out << "solution gap of " << lower_bound_gap.size() << " qualified solutions\n";
-    printStatistics(lower_bound_gap, out);
+    _out << "solution gap of " << lower_bound_gap.size() << " qualified solutions\n";
+    printStatistics(lower_bound_gap);
 }
 
-void GeneralReporter::printTimeStats(const std::vector<MLCMSTSolver::Result> &results, std::ostream &out)
+void GeneralReporter::printTimeStats(const std::vector<MLCMSTSolver::Result> &results)
 {
     std::vector<double> time_in_seconds;
-    for (const MLCMSTSolver::Result result : results) {
+    for (const MLCMSTSolver::Result& result : results) {
         time_in_seconds.push_back(result.wall_time / 1000.0);
     }
-    out << "runtime in seconds\n";
-    printStatistics(time_in_seconds, out);
+    _out << "runtime in seconds\n";
+    printStatistics(time_in_seconds);
 }
 
-void GeneralReporter::printStatistics(const std::vector<double> &v, std::ostream &out)
+void GeneralReporter::printStatistics(const std::vector<double> &v)
 {
-    out << "avg " << average(v) << " ";
-    out << "min " << *std::min_element(v.begin(), v.end()) << " ";
-    out << "max " << *std::max_element(v.begin(), v.end()) << " ";
-    out << "\n";
+    _out << "avg " << average(v) << " ";
+    _out << "min " << *std::min_element(v.begin(), v.end()) << " ";
+    _out << "max " << *std::max_element(v.begin(), v.end()) << " ";
+    _out << "\n";
 }
 
 double GeneralReporter::average(const std::vector<double> &v)

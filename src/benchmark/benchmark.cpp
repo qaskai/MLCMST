@@ -17,7 +17,7 @@ void Benchmark::addTestCase(const TestCase &test_case)
     _test_cases.push_back(test_case);
 }
 
-void Benchmark::run(std::ostream &out)
+void Benchmark::run()
 {
     std::unordered_map<std::string, std::vector<MLCMSTSolver::Result>> results;
     for (const auto& named_solver : _solvers) {
@@ -28,7 +28,7 @@ void Benchmark::run(std::ostream &out)
             solver_results.push_back(result);
         }
     }
-    _reporter->printReport(_test_cases, results, out);
+    _reporter->report(_test_cases, results);
 }
 
 }

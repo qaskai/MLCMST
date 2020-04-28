@@ -20,7 +20,7 @@ public:
 
     void addSolver(std::unique_ptr< MLCMSTSolver > solver, const std::string& name);
     void addTestCase(const TestCase& test_case);
-    void run(std::ostream& out);
+    void run();
 
 private:
     std::unique_ptr< Reporter > _reporter;
