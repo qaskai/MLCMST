@@ -7,6 +7,7 @@
 #include <network/network.hpp>
 #include <network/mlcc_network.hpp>
 #include <generator.hpp>
+#include <util/number/int_generator.hpp>
 
 namespace MLCMST::network::generation {
 
@@ -24,7 +25,7 @@ public:
     };
     enum CenterPosition
     {
-        RANDOM
+        RANDOM, LEFT_BOTTOM, LEFT_TOP, RIGHT_BOTTOM, RIGHT_TOP, CENTER
     };
 
     EuclidMLCCNetworkGenerator(
@@ -40,13 +41,19 @@ public:
 private:
     CenterPosition _center_position;
     std::vector<Level> _levels;
+
     std::unique_ptr< Generator<vector<Point>> > _point_set_generator;
+    util::number::IntGenerator _int_generator;
+
 
     EuclidMLCCNetworkGenerator(
+        int N,
         CenterPosition center_position,
         std::vector<Level>  levels,
         std::unique_ptr< Generator<std::vector<Point>> > point_set_generator
     );
+
+    int determineCenter(const std::vector<Point>& points);
 
     vector<double> flatten(const vector<vector<double>>& v);
     vector<double> multiply(vector<double> v, double scalar);

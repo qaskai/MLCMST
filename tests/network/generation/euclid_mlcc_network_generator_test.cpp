@@ -62,7 +62,7 @@ TEST_CASE( "Euclidean multi-level capacitated network generation", "[network][ge
     MLCCNetwork network = EuclidMLCCNetworkGenerator(size, from, to, center_position, levels).generate();
 
     REQUIRE(network.vertexCount() == size );
-    REQUIRE(network.center() == 0 );
+    REQUIRE(network.center() < size);
     REQUIRE(network.levelsNumber() == levels.size() );
     cost_in_range(network, max_cost);
     check_demands(network);
