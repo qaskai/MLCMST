@@ -27,4 +27,17 @@ const Network& CapacitatedNetwork::network() const
     return _network;
 }
 
+
+bool operator==(const CapacitatedNetwork& cn1, const CapacitatedNetwork& cn2)
+{
+    if (cn1.edgeCapacity() != cn2.edgeCapacity())
+        return false;
+    return cn1.network() == cn2.network();
+}
+
+bool operator!=(const CapacitatedNetwork& cn1, const CapacitatedNetwork& cn2)
+{
+    return !(cn1 == cn2);
+}
+
 }

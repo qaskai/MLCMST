@@ -31,4 +31,7 @@ private:
 
 };
 
+bool operator==(const MLCCNetwork& n1, const MLCCNetwork n2);
+bool operator!=(const MLCCNetwork& n1, const MLCCNetwork n2);
+
 }

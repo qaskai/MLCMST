@@ -21,4 +21,7 @@ private:
     Network _network;
 };
 
+bool operator==(const CapacitatedNetwork& cn1, const CapacitatedNetwork& cn2);
+bool operator!=(const CapacitatedNetwork& cn1, const CapacitatedNetwork& cn2);
+
 }

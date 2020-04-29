@@ -23,7 +23,7 @@ void Benchmark::run()
     for (const auto& named_solver : _solvers) {
         std::vector<MLCMSTSolver::Result>& solver_results = results[named_solver.first];
         solver_results.clear();
-        for (const TestCase& test_case : _test_cases) {
+        for (const TestCase &test_case : _test_cases) {
             MLCMSTSolver::Result result = named_solver.second->solve(test_case.mlccNetwork());
             solver_results.push_back(result);
         }

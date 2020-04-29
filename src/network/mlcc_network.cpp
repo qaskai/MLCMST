@@ -45,4 +45,29 @@ int MLCCNetwork::edgeCapacity(int network_i) const
     return _networks[network_i].edgeCapacity();
 }
 
+bool operator==(const MLCCNetwork& n1, const MLCCNetwork n2)
+{
+    if (n1.vertexCount() != n2.vertexCount())
+        return false;
+    if (n1.center() != n2.center())
+        return false;
+    if (n1.levelsNumber() != n2.levelsNumber())
+        return false;
+    for (int i=0; i < n1.vertexCount(); i++) {
+        if (n1.demand(i) != n2.demand(i))
+            return false;
+    }
+    for (int l=0; l < n1.levelsNumber(); l++) {
+        if (n1.network(l) != n2.network(l))
+            return false;
+    }
+
+    return true;
+}
+
+bool operator!=(const MLCCNetwork& n1, const MLCCNetwork n2)
+{
+    return !(n1 == n2);
+}
+
 }

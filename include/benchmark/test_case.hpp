@@ -10,7 +10,7 @@ namespace MLCMST::benchmark {
 class TestCase
 {
 public:
-    TestCase(const network::MLCCNetwork& mlcc_network, double lower_bound);
+    TestCase(double lower_bound, const network::MLCCNetwork &mlcc_network);
 
     [[nodiscard]] const network::MLCCNetwork& mlccNetwork() const;
     [[nodiscard]] double lowerBound() const;

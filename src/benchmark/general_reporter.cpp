@@ -35,7 +35,7 @@ void GeneralReporter::printTestCaseStats(const std::vector<TestCase> &test_cases
     _out << "number of test cases: " << test_cases.size() << "\n";
     _out << "graph order\n";
     std::vector<double> graph_orders;
-    for (const TestCase& test_case : test_cases) {
+    for (const TestCase &test_case : test_cases) {
         graph_orders.push_back(test_case.mlccNetwork().vertexCount());
     }
     printStatistics(graph_orders);
@@ -45,7 +45,7 @@ void GeneralReporter::printLowerBoundGapStats(const std::vector<TestCase> &test_
         const std::vector<MLCMSTSolver::Result> &results)
 {
     std::vector<double> lower_bound_gap;
-    for (int i=0; i<test_cases.size(); i++) {
+    for (unsigned i=0; i<test_cases.size(); i++) {
         if (!results[i].lower_bound.has_value())
             continue;
         double lower_bound = results[i].lower_bound.value();
@@ -59,7 +59,7 @@ void GeneralReporter::printSolutionGapStats(const std::vector<TestCase> &test_ca
         const std::vector<MLCMSTSolver::Result> &results)
 {
     std::vector<double> lower_bound_gap;
-    for (int i=0; i<test_cases.size(); i++) {
+    for (unsigned i=0; i<test_cases.size(); i++) {
         if (!results[i].mlcmst.has_value())
             continue;
         double mlcmst_cost = results[i].mlcmst.value().cost(test_cases[i].mlccNetwork());
