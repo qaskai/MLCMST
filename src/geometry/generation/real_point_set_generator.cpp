@@ -22,20 +22,23 @@ RealPointSetGenerator::~RealPointSetGenerator() = default;
 
 std::vector<Point> RealPointSetGenerator::generate()
 {
-    auto cmp = [] (const Point& p, const Point& q) -> bool {
-        if (p.x == q.x) {
-            return p.y < q.y;
-        } else {
-            return p.x < q.x;
-        }
+    auto cmp = [] (const std::pair<Point, int>& first, const std::pair<Point, int>& second) -> bool {
+        Point p = first.first;
+        Point q = second.first;
+        return (p.x != q.x) ? p.x < q.x : p.y < q.y;
     };
-    std::set<Point, decltype(cmp)> points(cmp);
+    std::set<std::pair<Point, int>, decltype(cmp)> points(cmp);
 
     while (points.size() < _size) {
-        points.insert(_point_generator->generate());
+        int idx = points.size();
+        points.insert(std::make_pair(_point_generator->generate(), idx));
     }
 
-    return std::vector<Point>(points.begin(), points.end());
+    std::vector<Point> ordered_points(_size);
+    for (auto [p, id] : points) {
+        ordered_points[id] = p;
+    }
+    return ordered_points;
 }
 
 }

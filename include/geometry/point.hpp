@@ -10,8 +10,8 @@ struct Point final
     Point();
     Point(double x, double y);
     ~Point();
-    
-    friend bool operator==(const Point& p, const Point& q);
 };
+
+bool operator==(const Point& p, const Point& q);
 
 }

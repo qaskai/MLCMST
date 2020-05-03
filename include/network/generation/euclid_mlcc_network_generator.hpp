@@ -25,7 +25,7 @@ public:
     };
     enum CenterPosition
     {
-        RANDOM, LEFT_BOTTOM, LEFT_TOP, RIGHT_BOTTOM, RIGHT_TOP, CENTER
+        RANDOM, CORNER, CENTER
     };
 
     EuclidMLCCNetworkGenerator(

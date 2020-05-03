@@ -1,15 +1,18 @@
 #include <catch2/catch.hpp>
 
 #include <cmath>
+#include <utility>
 #include <vector>
 
+#include <generator.hpp>
 #include <network/mlcc_network.hpp>
 #include <network/generation/euclid_mlcc_network_generator.hpp>
 
+using namespace MLCMST;
 using namespace MLCMST::network;
 using namespace MLCMST::network::generation;
 
-TEST_CASE( "Euclidean multi-level capacitated network generation", "[network][generation]" )
+TEST_CASE( "EuclidMLCCNetworkGenerator general functionality", "[network][generation]" )
 {
     typedef EuclidMLCCNetworkGenerator::Level Level;
     typedef EuclidMLCCNetworkGenerator::CenterPosition CenterPosition;
@@ -74,4 +77,60 @@ TEST_CASE( "Euclidean multi-level capacitated network generation", "[network][ge
             network.network(i)
         );
     }
+}
+
+
+class SetPointGenerator : public Generator<Point>
+{
+public:
+    explicit SetPointGenerator(std::vector<Point>  points) : _points(std::move(points)), _idx(0) {
+    }
+
+    Point generate() override {
+        if (_idx == _points.size())
+            _idx = 0;
+        return _points[_idx++];
+    }
+
+private:
+    int _idx;
+    std::vector<Point> _points;
+};
+
+TEST_CASE( "EuclidMLCCNetworkGenerator center type ", "[network][generation]" )
+{
+    typedef EuclidMLCCNetworkGenerator::Level Level;
+    typedef EuclidMLCCNetworkGenerator::CenterPosition CenterPosition;
+
+    std::vector<Level> levels {
+        Level{1, 1}
+    };
+    std::vector<Point> points {
+        Point(1,3), Point(3,1), Point(5,3), Point(3,5), Point(3,3)
+    };
+    auto point_generator = std::make_unique<SetPointGenerator>(points);
+
+    SECTION( "random" ) {
+        EuclidMLCCNetworkGenerator generator (points.size(), CenterPosition::RANDOM, levels, std::move(point_generator));
+
+        MLCCNetwork network = generator.generate();
+
+        REQUIRE( network.center() < points.size() );
+        REQUIRE( network.center() >= 0 );
+    }
+    SECTION( "center" ) {
+        EuclidMLCCNetworkGenerator generator (points.size(), CenterPosition::CENTER, levels, std::move(point_generator));
+
+        MLCCNetwork network = generator.generate();
+
+        REQUIRE( network.center() == 4 );
+    }
+    SECTION( "corner" ) {
+        EuclidMLCCNetworkGenerator generator (points.size(), CenterPosition::CORNER, levels, std::move(point_generator));
+
+        MLCCNetwork network = generator.generate();
+
+        REQUIRE( network.center() == 1 );
+    }
+
 }

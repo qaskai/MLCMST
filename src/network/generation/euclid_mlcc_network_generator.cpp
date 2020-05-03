@@ -69,43 +69,10 @@ int EuclidMLCCNetworkGenerator::determineCenter(const std::vector<Point>& points
     switch (_center_position) {
         case RANDOM:
             return _int_generator.generate();
-        case LEFT_BOTTOM:
+        case CORNER:
         {
             auto it = std::min_element(points.begin(), points.end(), [] (const Point& p, const Point& q) -> bool {
-                if (p.x == q.x)
-                    return p.y < q.y;
-                else
-                    return p.x < q.x;
-            });
-            return std::distance(points.begin(), it);
-        }
-        case LEFT_TOP:
-        {
-            auto it = std::min_element(points.begin(), points.end(), [] (const Point& p, const Point& q) -> bool {
-                if (p.x == q.x)
-                    return p.y > q.y;
-                else
-                    return p.x < q.x;
-            });
-            return std::distance(points.begin(), it);
-        }
-        case RIGHT_BOTTOM:
-        {
-            auto it = std::max_element(points.begin(), points.end(), [] (const Point& p, const Point& q) -> bool {
-                if (p.x == q.x)
-                    return p.y > q.y;
-                else
-                    return p.x < q.x;
-            });
-            return std::distance(points.begin(), it);
-        }
-        case RIGHT_TOP:
-        {
-            auto it = std::max_element(points.begin(), points.end(), [] (const Point& p, const Point& q) -> bool {
-                if (p.x == q.x)
-                    return p.y < q.y;
-                else
-                    return p.x < q.x;
+                return (p.y != q.y) ? p.y < q.y : p.x < q.x;
             });
             return std::distance(points.begin(), it);
         }
