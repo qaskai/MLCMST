@@ -5,6 +5,7 @@
 #include <vector>
 
 #include <generator.hpp>
+#include <geometry/generation/real_point_generator.hpp>
 #include <network/mlcc_network.hpp>
 #include <network/generation/euclid_mlcc_network_generator.hpp>
 
@@ -16,6 +17,7 @@ TEST_CASE( "EuclidMLCCNetworkGenerator general functionality", "[network][genera
 {
     typedef EuclidMLCCNetworkGenerator::Level Level;
     typedef EuclidMLCCNetworkGenerator::CenterPosition CenterPosition;
+    using MLCMST::geometry::generation::RealPointGenerator;
 
     CenterPosition center_position = CenterPosition::RANDOM;
     std::vector<Level> levels{
@@ -62,7 +64,8 @@ TEST_CASE( "EuclidMLCCNetworkGenerator general functionality", "[network][genera
         }
     };
 
-    MLCCNetwork network = EuclidMLCCNetworkGenerator(size, from, to, center_position, levels).generate();
+    MLCCNetwork network =EuclidMLCCNetworkGenerator(
+            size, center_position, levels, std::make_unique<RealPointGenerator>(from, to)).generate();
 
     REQUIRE(network.vertexCount() == size );
     REQUIRE(network.center() < size);

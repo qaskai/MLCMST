@@ -16,7 +16,6 @@ using std::vector;
 class EuclidNetworkGenerator final : public Generator<Network>
 {
 public:
-    EuclidNetworkGenerator(int N, double from = -10.0, double to = 10.0);
     EuclidNetworkGenerator(int N, std::unique_ptr< Generator<Point> > point_generator);
     ~EuclidNetworkGenerator() override;
 

@@ -6,12 +6,6 @@
 
 namespace MLCMST::network::generation {
 
-EuclidNetworkGenerator::EuclidNetworkGenerator(int N, double from, double to)
-    : EuclidNetworkGenerator(N, std::make_unique<geometry::generation::RealPointGenerator>(from, to))
-{
-
-}
-
 EuclidNetworkGenerator::EuclidNetworkGenerator(
     int N, std::unique_ptr< Generator<Point> > point_generator
 )

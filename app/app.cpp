@@ -4,6 +4,7 @@
 #include <network/mlcc_network.hpp>
 #include <network/generation/euclid_mlcc_network_generator.hpp>
 
+#include <geometry/generation/real_point_generator.hpp>
 #include <network/serialization/mlcc_network_serialization.hpp>
 
 #include <mp/scf.hpp>
@@ -28,13 +29,16 @@ network::MLCCNetwork generateNetwork()
 {
     using Level = generation::EuclidMLCCNetworkGenerator::Level;
     using CenterPos = generation::EuclidMLCCNetworkGenerator::CenterPosition;
+    using geometry::generation::RealPointGenerator;
 
+    double from = 0, to = 10;
     vector<Level> levels{
         Level { 1, 1 },
         Level { 3, 2 },
         Level { 10, 6 }
     };
-    generation::EuclidMLCCNetworkGenerator generator (10, 0, 20, CenterPos::RANDOM, levels);
+    generation::EuclidMLCCNetworkGenerator generator (
+            10, CenterPos::RANDOM, levels, std::make_unique<RealPointGenerator>(from, to));
     MLCCNetwork mlccNetwork = generator.generate();
 
     mlccNetwork = generator.generate();

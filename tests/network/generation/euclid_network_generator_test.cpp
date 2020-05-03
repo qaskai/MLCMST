@@ -3,6 +3,7 @@
 #include <cmath>
 
 #include <network/network.hpp>
+#include <geometry/generation/real_point_generator.hpp>
 #include <network/generation/euclid_network_generator.hpp>
 
 
@@ -11,6 +12,8 @@ using namespace MLCMST::network;
 
 TEST_CASE( "Euclidean distance network generation", "[network][generation]" )
 {
+    using MLCMST::geometry::generation::RealPointGenerator;
+
     auto costs_in_range = [] (const Network& n, double max_cost) -> bool {
         int size = n.vertexCount();
         for (int i=0; i<size; i++) {
@@ -37,7 +40,7 @@ TEST_CASE( "Euclidean distance network generation", "[network][generation]" )
     double max_cost = std::sqrt(200);
     int size = 5;
 
-    Network network = generation::EuclidNetworkGenerator(size, l, r).generate();
+    Network network = generation::EuclidNetworkGenerator(size, std::make_unique<RealPointGenerator>(l ,r)).generate();
 
     REQUIRE(network.vertexCount() == size );
     REQUIRE( costs_in_range(network, max_cost) );

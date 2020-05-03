@@ -27,12 +27,10 @@ public:
     {
         RANDOM, CORNER, CENTER
     };
-
+;
     EuclidMLCCNetworkGenerator(
-            int N, double from, double to, CenterPosition center_position, const std::vector<Level>& levels);
-    EuclidMLCCNetworkGenerator(
-            int N, CenterPosition center_position, const std::vector<Level>& levels,
-            std::unique_ptr< Generator<Point> > point_generator
+        int N, CenterPosition center_position, const std::vector<Level>& levels,
+        std::unique_ptr< Generator<Point> > point_generator
     );
     ~EuclidMLCCNetworkGenerator() override;
 
@@ -49,7 +47,7 @@ private:
     EuclidMLCCNetworkGenerator(
         int N,
         CenterPosition center_position,
-        std::vector<Level>  levels,
+        std::vector<Level> levels,
         std::unique_ptr< Generator<std::vector<Point>> > point_set_generator
     );
 
