@@ -1,4 +1,4 @@
-#include <geometry/generation/real_point_set_generator.hpp>
+#include <geometry/generation/point_set_generator.hpp>
 
 #include <set>
 
@@ -6,21 +6,15 @@
 
 namespace MLCMST::geometry::generation {
 
-RealPointSetGenerator::RealPointSetGenerator(int N, double from, double to)
-    : RealPointSetGenerator(N, std::make_unique<RealPointGenerator>(from, to))
-{
-
-}
-
-RealPointSetGenerator::RealPointSetGenerator(int N, std::unique_ptr<Generator<Point>> point_generator)
+PointSetGenerator::PointSetGenerator(int N, std::unique_ptr<Generator<Point>> point_generator)
     : _size(N), _point_generator(std::move(point_generator))
 {
 
 }
 
-RealPointSetGenerator::~RealPointSetGenerator() = default;
+PointSetGenerator::~PointSetGenerator() = default;
 
-std::vector<Point> RealPointSetGenerator::generate()
+std::vector<Point> PointSetGenerator::generate()
 {
     auto cmp = [] (const std::pair<Point, int>& first, const std::pair<Point, int>& second) -> bool {
         Point p = first.first;

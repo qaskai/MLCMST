@@ -4,7 +4,7 @@
 #include <utility>
 
 #include <geometry/generation/real_point_generator.hpp>
-#include <geometry/generation/real_point_set_generator.hpp>
+#include <geometry/generation/point_set_generator.hpp>
 #include <geometry/util.hpp>
 #include <network/capacitated_network.hpp>
 #include <util/util.hpp>
@@ -27,7 +27,7 @@ EuclidMLCCNetworkGenerator::EuclidMLCCNetworkGenerator(
 )
     : EuclidMLCCNetworkGenerator(
         N, center_position, levels,
-        std::make_unique<geometry::generation::RealPointSetGenerator>(N, std::move(point_generator))
+        std::make_unique<geometry::generation::PointSetGenerator>(N, std::move(point_generator))
     )
 {
 
