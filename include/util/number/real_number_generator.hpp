@@ -10,7 +10,7 @@ namespace MLCMST::util::number {
 class RealNumberGenerator final : public Generator<double>
 {
 public:
-    RealNumberGenerator(double from = 0.0, int to = 1.0);
+    RealNumberGenerator(double from, double to, unsigned seed = 1);
     ~RealNumberGenerator() override;
     double generate() override;
 

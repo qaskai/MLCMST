@@ -11,7 +11,7 @@ class RealPointGenerator final : public Generator<Point>
 {
 
 public:
-    RealPointGenerator(double from = -10.0, double to = 10.0);
+    RealPointGenerator(double from, double to);
     RealPointGenerator(std::unique_ptr< Generator<double> > number_generator);
     ~RealPointGenerator() override;
 

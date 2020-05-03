@@ -24,7 +24,7 @@ public:
 private:
     std::unique_ptr< Generator<vector<Point>> > _point_set_generator;
 
-    EuclidNetworkGenerator(std::unique_ptr< Generator<vector<Point>> > point_set_generator);
+    explicit EuclidNetworkGenerator(std::unique_ptr< Generator<vector<Point>> > point_set_generator);
 
 };
 
