@@ -15,6 +15,13 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(glog)
 
 FetchContent_Declare(
+        cxxopts
+        GIT_REPOSITORY "https://github.com/jarro2783/cxxopts.git"
+        GIT_TAG master
+)
+FetchContent_MakeAvailable(cxxopts)
+
+FetchContent_Declare(
         catch2
         GIT_REPOSITORY "https://github.com/catchorg/Catch2.git"
         GIT_TAG master
