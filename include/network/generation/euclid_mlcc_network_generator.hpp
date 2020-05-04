@@ -20,7 +20,7 @@ class EuclidMLCCNetworkGenerator final : public Generator<MLCCNetwork>
 public:
     struct Level
     {
-        int capacity;
+        unsigned capacity;
         double cost_multiplier;
     };
     enum CenterPosition
@@ -29,7 +29,7 @@ public:
     };
 ;
     EuclidMLCCNetworkGenerator(
-        int N, CenterPosition center_position, const std::vector<Level>& levels,
+        unsigned N, CenterPosition center_position, const std::vector<Level>& levels,
         std::unique_ptr< Generator<Point> > point_generator
     );
     ~EuclidMLCCNetworkGenerator() override;
@@ -45,7 +45,7 @@ private:
 
 
     EuclidMLCCNetworkGenerator(
-        int N,
+        unsigned N,
         CenterPosition center_position,
         std::vector<Level> levels,
         std::unique_ptr< Generator<std::vector<Point>> > point_set_generator

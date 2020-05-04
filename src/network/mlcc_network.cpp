@@ -45,7 +45,7 @@ int MLCCNetwork::edgeCapacity(int network_i) const
     return _networks[network_i].edgeCapacity();
 }
 
-bool operator==(const MLCCNetwork& n1, const MLCCNetwork n2)
+bool operator==(const MLCCNetwork& n1, const MLCCNetwork& n2)
 {
     if (n1.vertexCount() != n2.vertexCount())
         return false;
@@ -65,7 +65,7 @@ bool operator==(const MLCCNetwork& n1, const MLCCNetwork n2)
     return true;
 }
 
-bool operator!=(const MLCCNetwork& n1, const MLCCNetwork n2)
+bool operator!=(const MLCCNetwork& n1, const MLCCNetwork& n2)
 {
     return !(n1 == n2);
 }

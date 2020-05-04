@@ -7,7 +7,7 @@
 
 namespace MLCMST::geometry::generation {
 
-class IntPointGenerator : Generator<Point>
+class IntPointGenerator : public Generator<Point>
 {
 public:
     IntPointGenerator(int from, int to);

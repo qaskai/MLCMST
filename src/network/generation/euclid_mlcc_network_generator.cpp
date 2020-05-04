@@ -12,7 +12,7 @@
 namespace MLCMST::network::generation {
 
 EuclidMLCCNetworkGenerator::EuclidMLCCNetworkGenerator(
-    int N, CenterPosition center_position, const std::vector<Level>& levels,
+    unsigned N, CenterPosition center_position, const std::vector<Level>& levels,
     std::unique_ptr< Generator<Point> > point_generator
 )
     : EuclidMLCCNetworkGenerator(
@@ -24,13 +24,13 @@ EuclidMLCCNetworkGenerator::EuclidMLCCNetworkGenerator(
 }
 
 EuclidMLCCNetworkGenerator::EuclidMLCCNetworkGenerator(
-    int N,
+    unsigned N,
     CenterPosition center_position,
     std::vector<Level> levels,
     std::unique_ptr< Generator<std::vector<Point>> > point_set_generator
 )
     : _center_position(center_position), _levels(std::move(levels)), _point_set_generator(std::move(point_set_generator)),
-        _int_generator(util::number::IntGenerator(0, N))
+        _int_generator(util::number::IntGenerator(0, static_cast<int>(N-1)))
 {
 }
 
