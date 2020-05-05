@@ -14,6 +14,8 @@
 #include <geometry/generation/real_point_generator.hpp>
 #include <geometry/generation/int_point_generator.hpp>
 
+#include "app.hpp"
+
 typedef MLCMST::network::MLCCNetwork MLCCNetwork;
 typedef MLCMST::network::generation::EuclidMLCCNetworkGenerator EuclidMLCCNetworkGenerator;
 typedef EuclidMLCCNetworkGenerator::CenterPosition CenterPosition;
@@ -23,64 +25,107 @@ typedef EuclidMLCCNetworkGenerator::Level Level;
 
 struct GenerationParams
 {
-    unsigned number;
-    unsigned size;
-    double from, to;
-    bool integer;
+    unsigned number{};
+    unsigned size{};
+    double from{}, to{};
+    bool integer{};
     CenterPosition center_position;
-    std::vector<Level> levels;
+    std::vector<Level> levels{};
 };
 
-cxxopts::Options createOptionsObject();
-GenerationParams extractParams(const cxxopts::ParseResult& result);
-void validateParseResult(const cxxopts::ParseResult& result);
-std::vector<MLCCNetwork> generateNetworks(const GenerationParams& params);
-void printNetworks(const std::vector<MLCCNetwork>& networks);
-std::optional<CenterPosition> getCenterPosition(const std::string& id);
-
-int main(int argc, char** argv)
+class GenerationApp : public App<GenerationParams>
 {
-    cxxopts::Options options = createOptionsObject();
-    cxxopts::ParseResult result = options.parse(argc, argv);
-    if (result.count("help")) {
-        std::cout << options.help() << std::endl;
-        return 0;
+public:
+    ~GenerationApp() override;
+
+private:
+    const std::map<std::string, CenterPosition> center_positions {
+        std::make_pair("CENTER", CenterPosition::CENTER),
+        std::make_pair("CORNER", CenterPosition::CORNER),
+        std::make_pair("RANDOM", CenterPosition::RANDOM)
+    };
+
+    cxxopts::Options createOptions() override;
+    void validateParseResult(const cxxopts::ParseResult& result) override;
+    GenerationParams extractParams(const cxxopts::ParseResult& result) override;
+    void run (const GenerationParams& params) override;
+
+    std::vector<MLCCNetwork> generateNetworks(const GenerationParams& params);
+    void printNetworks(const std::vector<MLCCNetwork>& networks);
+};
+
+GenerationApp::~GenerationApp() = default;
+
+cxxopts::Options GenerationApp::createOptions()
+{
+    std::string center_positions_string;
+    for (const auto& p : center_positions) {
+        center_positions_string += p.first + ",";
     }
-    validateParseResult(result);
-    GenerationParams params = extractParams(result);
 
-    auto networks = generateNetworks(params);
-    printNetworks(networks);
-
-    return 0;
-}
-
-cxxopts::Options createOptionsObject()
-{
     cxxopts::Options options("generator", "Random Euclid MLCC Network generator");
 
     options.add_options()
-        ("n,number", "Number of instances generated", cxxopts::value<unsigned>())
-        ("size", "Graph size", cxxopts::value<unsigned>())
-        ("range", "Points in range", cxxopts::value<std::vector<double>>())
+        ("n,number", "Number of instances generated | required", cxxopts::value<unsigned>())
+        ("size", "Graph size | required", cxxopts::value<unsigned>())
+        ("range", "Points in range | required", cxxopts::value<std::vector<double>>())
         ("integer", "Points are on integer grid", cxxopts::value<bool>()->default_value("false"))
-        ("capacity", "Graph levels edge capacity", cxxopts::value<std::vector<unsigned>>())
-        ("cost", "Graph levels cost multiplier", cxxopts::value<std::vector<double>>())
-        ("center", "enum: RANDOM | CORNER | CENTER", cxxopts::value<std::string>())
+        ("capacity", "Graph levels edge capacity | required", cxxopts::value<std::vector<unsigned>>())
+        ("cost", "Graph levels cost multiplier | required", cxxopts::value<std::vector<double>>())
+        ("center", "enum: " + center_positions_string + " | required", cxxopts::value<std::string>())
         ("h,help", "Print usage")
-    ;
+        ;
 
     return options;
 }
 
+void GenerationApp::validateParseResult(const cxxopts::ParseResult &result)
+{
+    const std::string required_arg = " argument is required";
 
-GenerationParams extractParams(const cxxopts::ParseResult& result)
+    if (!result.count("number"))
+        throw std::invalid_argument("number" + required_arg);
+    result["number"].as<unsigned>();
+    if (!result.count("size")) {
+        throw std::invalid_argument("size" + required_arg);
+    }
+    result["size"].as<unsigned>();
+    result["integer"].as<bool>();
+
+    if (!result.count("center"))
+        throw std::invalid_argument("center" + required_arg);
+    std::string center = result["center"].as<std::string>();
+    if (!center_positions.count(center)) {
+        throw std::invalid_argument(center + " is not a valid center enum");
+    }
+
+    if (!result.count("range"))
+        throw std::invalid_argument("range" + required_arg);
+    std::vector<double> range = result["range"].as<std::vector<double>>();
+    if (range.size() != 2) {
+        throw std::invalid_argument("range should contain exactly two numbers");
+    }
+    if (range[0] >= range[1]) {
+        throw std::invalid_argument("first element of range should be smaller then the second");
+    }
+
+    if (!result["capacity"].count() || !result.count("cost"))
+        throw std::invalid_argument("capacity and cost " + required_arg);
+    std::vector<unsigned> level_capacity = result["capacity"].as<std::vector<unsigned>>();
+    std::vector<double> cost_multiplier = result["cost"].as<std::vector<double>>();
+    if (level_capacity.size() != cost_multiplier.size()) {
+        throw std::invalid_argument("capacity and cost should have equal lengths");
+    }
+}
+
+
+GenerationParams GenerationApp::extractParams(const cxxopts::ParseResult &result)
 {
     GenerationParams params;
     params.number = result["number"].as<unsigned>();
     params.size = result["size"].as<unsigned>();
     params.integer = result["integer"].as<bool>();
-    params.center_position = getCenterPosition(result["center"].as<std::string>()).value();
+    params.center_position = center_positions.at(result["center"].as<std::string>());
 
     std::vector<double> range = result["range"].as<std::vector<double>>();
     params.from = range[0];
@@ -95,31 +140,13 @@ GenerationParams extractParams(const cxxopts::ParseResult& result)
     return params;
 }
 
-void validateParseResult(const cxxopts::ParseResult& result)
+void GenerationApp::run(const GenerationParams& params)
 {
-    result["number"].as<unsigned>();
-    result["size"].as<unsigned>();
-    result["integer"].as<bool>();
-    std::string center = result["center"].as<std::string>();
-    if (!getCenterPosition(center).has_value()) {
-        throw std::logic_error(center + " is not a valid center enum");
-    }
-    std::vector<double> range = result["range"].as<std::vector<double>>();
-    if (range.size() != 2) {
-        throw std::logic_error("range should contain exactly two numbers");
-    }
-    if (range[0] >= range[1]) {
-        throw std::logic_error("first element of range should be smaller then the second");
-    }
-
-    std::vector<unsigned> level_capacity = result["capacity"].as<std::vector<unsigned>>();
-    std::vector<double> cost_multiplier = result["cost"].as<std::vector<double>>();
-    if (level_capacity.size() != cost_multiplier.size()) {
-        throw std::logic_error("capacity and cost should have equal lengths");
-    }
+    auto networks = generateNetworks(params);
+    printNetworks(networks);
 }
 
-std::vector<MLCCNetwork> generateNetworks(const GenerationParams& params)
+std::vector<MLCCNetwork> GenerationApp::generateNetworks(const GenerationParams &params)
 {
     using namespace MLCMST::geometry;
     using MLCMST::Generator;
@@ -139,7 +166,7 @@ std::vector<MLCCNetwork> generateNetworks(const GenerationParams& params)
     return networks;
 }
 
-void printNetworks(const std::vector<MLCCNetwork>& networks)
+void GenerationApp::printNetworks(const std::vector<MLCCNetwork> &networks)
 {
     using MLCMST::network::serialization::MLCCNetworkSerializer;
     MLCCNetworkSerializer serializer;
@@ -151,16 +178,10 @@ void printNetworks(const std::vector<MLCCNetwork>& networks)
     }
 }
 
-std::optional<CenterPosition> getCenterPosition(const std::string& id)
-{
-    std::map<std::string, CenterPosition> id_to_enum {
-        std::make_pair("CENTER", CenterPosition::CENTER),
-        std::make_pair("CORNER", CenterPosition::CORNER),
-        std::make_pair("RANDOM", CenterPosition::RANDOM)
-    };
-    if (id_to_enum.count(id))
-        return id_to_enum[id];
-    else
-        return std::nullopt;
-}
 
+int main(int argc, char** argv)
+{
+    GenerationApp app;
+    app.start(argc, argv);
+    return 0;
+}
