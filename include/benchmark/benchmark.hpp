@@ -16,6 +16,7 @@ class Benchmark
 {
 public:
     explicit Benchmark(std::unique_ptr< Reporter > reporter);
+    Benchmark(Benchmark&& benchmark) noexcept;
     ~Benchmark();
 
     void addSolver(std::unique_ptr< MLCMSTSolver > solver, const std::string& name);

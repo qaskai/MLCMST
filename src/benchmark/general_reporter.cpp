@@ -81,6 +81,10 @@ void GeneralReporter::printTimeStats(const std::vector<MLCMSTSolver::Result> &re
 
 void GeneralReporter::printStatistics(const std::vector<double> &v)
 {
+    if (v.empty()) {
+        _out << "no stats...\n";
+        return;
+    }
     _out << "avg " << average(v) << " ";
     _out << "min " << *std::min_element(v.begin(), v.end()) << " ";
     _out << "max " << *std::max_element(v.begin(), v.end()) << " ";

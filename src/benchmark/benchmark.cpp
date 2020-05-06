@@ -6,6 +6,11 @@ Benchmark::Benchmark(std::unique_ptr<Reporter> reporter) : _reporter(std::move(r
 {
 }
 
+Benchmark::Benchmark(Benchmark &&benchmark) noexcept : _reporter(std::move(benchmark._reporter)),
+    _test_cases(std::move(benchmark._test_cases)), _solvers(std::move(benchmark._solvers))
+{
+}
+
 Benchmark::~Benchmark() = default;
 
 void Benchmark::addSolver(std::unique_ptr<MLCMSTSolver> solver, const std::string& name) {
