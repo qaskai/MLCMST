@@ -84,23 +84,23 @@ void GenerationApp::validateParseResult(const cxxopts::ParseResult &result)
     const std::string required_arg = " argument is required";
 
     if (!result.count("number"))
-        throw std::invalid_argument("number" + required_arg);
+        throw std::domain_error("number" + required_arg);
     result["number"].as<unsigned>();
     if (!result.count("size")) {
-        throw std::invalid_argument("size" + required_arg);
+        throw std::domain_error("size" + required_arg);
     }
     result["size"].as<unsigned>();
     result["integer"].as<bool>();
 
     if (!result.count("center"))
-        throw std::invalid_argument("center" + required_arg);
+        throw std::domain_error("center" + required_arg);
     std::string center = result["center"].as<std::string>();
     if (!center_positions.count(center)) {
         throw std::invalid_argument(center + " is not a valid center enum");
     }
 
     if (!result.count("range"))
-        throw std::invalid_argument("range" + required_arg);
+        throw std::domain_error("range" + required_arg);
     std::vector<double> range = result["range"].as<std::vector<double>>();
     if (range.size() != 2) {
         throw std::invalid_argument("range should contain exactly two numbers");
@@ -110,7 +110,7 @@ void GenerationApp::validateParseResult(const cxxopts::ParseResult &result)
     }
 
     if (!result["capacity"].count() || !result.count("cost"))
-        throw std::invalid_argument("capacity and cost " + required_arg);
+        throw std::domain_error("capacity and cost " + required_arg);
     std::vector<unsigned> level_capacity = result["capacity"].as<std::vector<unsigned>>();
     std::vector<double> cost_multiplier = result["cost"].as<std::vector<double>>();
     if (level_capacity.size() != cost_multiplier.size()) {

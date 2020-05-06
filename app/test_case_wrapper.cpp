@@ -78,7 +78,7 @@ cxxopts::Options TestCaseWrapperApp::createOptions()
 void TestCaseWrapperApp::validateParseResult(const cxxopts::ParseResult &result)
 {
     if (!result.count("solver"))
-        throw std::invalid_argument("solver argument is required");
+        throw std::domain_error("solver argument is required");
     std::string solver_id = result["solver"].as<std::string>();
     if (getSolver(solver_id, false) == nullptr) {
         throw std::invalid_argument(solver_id + " is not a supported solver enum value");

@@ -75,7 +75,7 @@ void BenchmarkApp::validateParseResult(const cxxopts::ParseResult &result)
     const std::string argument_required_suffix = " argument is required";
 
     if (!result.count("solvers"))
-        throw std::invalid_argument("solvers" + argument_required_suffix);
+        throw std::domain_error("solvers" + argument_required_suffix);
     std::vector<std::string> solver_ids = result["solvers"].as<std::vector<std::string>>();
     for (const std::string& id : solver_ids) {
         if (!solvers.count(id))
