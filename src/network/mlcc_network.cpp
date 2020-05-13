@@ -1,5 +1,6 @@
 #include <network/mlcc_network.hpp>
 
+#include <util/util.hpp>
 
 namespace MLCMST::network {
 
@@ -44,6 +45,17 @@ int MLCCNetwork::edgeCapacity(int network_i) const
 {
     return _networks[network_i].edgeCapacity();
 }
+
+std::vector<int> MLCCNetwork::vertexSet() const
+{
+    return util::firstN(vertexCount());
+}
+
+double MLCCNetwork::edgeCost(int v, int w, int level) const
+{
+    return network(level).edgeCost(v, w);
+}
+
 
 bool operator==(const MLCCNetwork& n1, const MLCCNetwork& n2)
 {

@@ -29,7 +29,7 @@ network::MLCMST createMLCMST(
     const std::vector<std::vector<std::vector<operations_research::LinearExpr>>>& arc_vars
 )
 {
-    network::MLCMST mlcmst(mlcc_network.vertexCount());
+    network::MLCMST mlcmst(mlcc_network.vertexCount(), mlcc_network.center());
     for (int i=0; i < mlcc_network.vertexCount(); i++) {
         for (int j=0; j < mlcc_network.vertexCount(); j++) {
             for (int l=0; l < mlcc_network.levelsNumber(); l++) {

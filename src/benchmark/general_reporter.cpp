@@ -25,9 +25,13 @@ void GeneralReporter::printReport(const std::string& solver_name, std::vector<Te
         const std::vector<MLCMSTSolver::Result>& results)
 {
     _out << "****************   " << solver_name << " statistics report" << "    **************\n";
+    _out << "------\n";
     printLowerBoundGapStats(test_cases, results);
+    _out << "------\n";
     printSolutionGapStats(test_cases, results);
+    _out << "------\n";
     printTimeStats(results);
+    _out << "------\n";
 }
 
 void GeneralReporter::printTestCaseStats(const std::vector<TestCase> &test_cases)
@@ -45,28 +49,37 @@ void GeneralReporter::printLowerBoundGapStats(const std::vector<TestCase> &test_
         const std::vector<MLCMSTSolver::Result> &results)
 {
     std::vector<double> lower_bound_gap;
+
     for (unsigned i=0; i<test_cases.size(); i++) {
         if (!results[i].lower_bound.has_value())
             continue;
         double lower_bound = results[i].lower_bound.value();
         lower_bound_gap.push_back(1.0 - (lower_bound/test_cases[i].lowerBound()));
     }
-    _out << "lower bound gap of " << lower_bound_gap.size() << " qualified solutions\n";
+    _out << "lower bound gap\n";
+    _out << "of " << lower_bound_gap.size() << " qualified solutions\n";
     printStatistics(lower_bound_gap);
 }
 
 void GeneralReporter::printSolutionGapStats(const std::vector<TestCase> &test_cases,
         const std::vector<MLCMSTSolver::Result> &results)
 {
-    std::vector<double> lower_bound_gap;
+    std::vector<double> gap;
+    unsigned invalid_count = 0;
     for (unsigned i=0; i<test_cases.size(); i++) {
         if (!results[i].mlcmst.has_value())
             continue;
-        double mlcmst_cost = results[i].mlcmst.value().cost(test_cases[i].mlccNetwork());
-        lower_bound_gap.push_back((mlcmst_cost/test_cases[i].lowerBound() - 1.0));
+        const network::MLCMST& mlcmst = results[i].mlcmst.value();
+        if (mlcmst.isValid(test_cases[i].mlccNetwork())) {
+            double mlcmst_cost = mlcmst.cost(test_cases[i].mlccNetwork());
+            gap.push_back(mlcmst_cost / test_cases[i].lowerBound() - 1.0);
+        } else {
+            invalid_count++;
+        }
     }
-    _out << "solution gap of " << lower_bound_gap.size() << " qualified solutions\n";
-    printStatistics(lower_bound_gap);
+    _out << "solution gap stats\n";
+    _out << "of " << gap.size() << " qualified solutions " << invalid_count << " were invalid\n";
+    printStatistics(gap);
 }
 
 void GeneralReporter::printTimeStats(const std::vector<MLCMSTSolver::Result> &results)

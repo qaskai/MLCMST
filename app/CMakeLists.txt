@@ -6,3 +6,7 @@ target_link_libraries(test_case_wrapper cxxopts mlcmst)
 
 add_executable(benchmark benchmark.cpp)
 target_link_libraries(benchmark cxxopts mlcmst)
+
+
+add_executable(playground playground.cpp)
+target_link_libraries(playground mlcmst)

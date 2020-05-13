@@ -19,10 +19,12 @@ public:
 
     int center() const;
     int vertexCount() const;
+    std::vector<int> vertexSet() const;
     int levelsNumber() const;
     int demand(int v) const;
     const Network& network(int i) const;
     int edgeCapacity(int network_i) const;
+    double edgeCost(int v, int w, int level) const;
 
 private:
     int _center;

@@ -10,6 +10,8 @@
 #include <mp/escf.hpp>
 #include <mp/mcf.hpp>
 
+#include <heuristic/link_upgrade_unit_demand.hpp>
+
 #include <benchmark/test_case.hpp>
 #include <benchmark/benchmark.hpp>
 #include <benchmark/general_reporter.hpp>
@@ -22,6 +24,9 @@ typedef MLCMST::benchmark::Benchmark Benchmark;
 typedef MLCMST::benchmark::Reporter Reporter;
 typedef MLCMST::benchmark::GeneralReporter GeneralReporter;
 
+
+using namespace MLCMST;
+
 struct Params
 {
     std::vector<std::string> solvers;
@@ -30,14 +35,15 @@ struct Params
 class BenchmarkApp : public App<Params>
 {
 public:
+    BenchmarkApp();
     ~BenchmarkApp() override;
 
 private:
     const std::map<std::string, std::function<std::unique_ptr< MLCMST::MLCMSTSolver >()> > solvers {
-        std::make_pair("SCF", [] () { return std::make_unique<MLCMST::mp::SCF>(false); } ),
-        std::make_pair("ESCF", [] () { return std::make_unique<MLCMST::mp::ESCF>(false); } ),
-        std::make_pair("MCF", [] () { return std::make_unique<MLCMST::mp::MCF>(false); } )
+
     };
+
+    const static std::map<int, int> m;
 
     cxxopts::Options createOptions() override;
     void validateParseResult(const cxxopts::ParseResult& result) override;
@@ -49,6 +55,15 @@ private:
             const std::vector<TestCase>& test_cases);
     std::unique_ptr< Reporter > createReporter();
 };
+
+BenchmarkApp::BenchmarkApp() : solvers({
+    std::make_pair("SCF", [] () { return std::make_unique<MLCMST::mp::SCF>(false); } ),
+    std::make_pair("ESCF", [] () { return std::make_unique<MLCMST::mp::ESCF>(false); } ),
+    std::make_pair("MCF", [] () { return std::make_unique<MLCMST::mp::MCF>(false); } ),
+    std::make_pair("link_upgrade_UD", [] () { return std::make_unique<heuristic::LinkUpgradeUnitDemand>(); })
+})
+{
+}
 
 BenchmarkApp::~BenchmarkApp() = default;
 
