@@ -15,6 +15,12 @@ MP_MLCMSTSolver::MP_MLCMSTSolver(mp::MPSolverFactory mp_solver_factory) : _mp_so
 
 MP_MLCMSTSolver::~MP_MLCMSTSolver() = default;
 
+bool MP_MLCMSTSolver::setThreadNum(int thread_num)
+{
+    auto status = _mp_solver.SetNumThreads(thread_num);
+    return status == absl::OkStatus();
+}
+
 MLCMSTSolver::Result MP_MLCMSTSolver::solve(const network::MLCCNetwork &mlcc_network)
 {
     _mp_solver.Clear();

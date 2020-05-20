@@ -14,6 +14,8 @@ class MP_MLCMSTSolver : public MLCMSTSolver
 {
 public:
     ~MP_MLCMSTSolver() override;
+
+    bool setThreadNum(int thread_num);
     MLCMSTSolver::Result solve(const network::MLCCNetwork& mlcc_network) final;
 
     virtual void printVariableSolutionValue(std::ostream& out) = 0;
