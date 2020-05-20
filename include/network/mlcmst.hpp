@@ -17,18 +17,20 @@ public:
     MLCMST(unsigned int N, unsigned root);
     ~MLCMST();
 
-    unsigned vertexCount() const;
-    std::vector<int> vertexSet() const;
+    [[nodiscard]] unsigned vertexCount() const;
+    [[nodiscard]] std::vector<int> vertexSet() const;
     int& parent(int v);
-    int parent(int v) const;
+    [[nodiscard]] int parent(int v) const;
+    [[nodiscard]] const std::vector<int>& parents() const;
     int& edgeLevel(int v);
-    int edgeLevel(int v) const;
-    int root() const;
+    [[nodiscard]] int edgeLevel(int v) const;
+    [[nodiscard]] const std::vector<int>& edgeLevels() const;
+    [[nodiscard]] int root() const;
 
-    std::vector<std::vector<int>> getChildrenLists() const;
-    std::vector<int> getLoads(const MLCCNetwork &network) const;
-    double cost(const MLCCNetwork& mlcc_network) const;
-    bool isValid(const MLCCNetwork& network) const;
+    [[nodiscard]] std::vector<std::vector<int>> getChildrenLists() const;
+    [[nodiscard]] std::vector<int> getLoads(const MLCCNetwork &network) const;
+    [[nodiscard]] double cost(const MLCCNetwork& mlcc_network) const;
+    [[nodiscard]] bool checkValidity(const MLCCNetwork& network) const;
 
 private:
     unsigned _root;

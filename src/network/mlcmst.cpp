@@ -34,6 +34,11 @@ int MLCMST::parent(int v) const
     return _parents[v];
 }
 
+const std::vector<int> &MLCMST::parents() const
+{
+    return _parents;
+}
+
 int& MLCMST::edgeLevel(int v)
 {
     return _edge_levels[v];
@@ -42,6 +47,11 @@ int& MLCMST::edgeLevel(int v)
 int MLCMST::edgeLevel(int v) const
 {
     return _edge_levels[v];
+}
+
+const std::vector<int> &MLCMST::edgeLevels() const
+{
+    return _edge_levels;
 }
 
 double MLCMST::cost(const MLCCNetwork& mlcc_network) const
@@ -91,9 +101,12 @@ std::vector<int> MLCMST::getLoads(const MLCCNetwork &network) const
     return load;
 }
 
-bool MLCMST::isValid(const MLCCNetwork &network) const
+bool MLCMST::checkValidity(const MLCCNetwork &network) const
 {
     std::vector<int> loads = getLoads(network);
+    if (_root != network.center()) {
+        return false;
+    }
     for (int i : vertexSet()) {
         if (i != _root && loads[i] > network.edgeCapacity(edgeLevel(i))) {
             return false;
