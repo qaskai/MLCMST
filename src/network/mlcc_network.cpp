@@ -1,17 +1,15 @@
 #include <network/mlcc_network.hpp>
 
+#include <algorithm>
+
 #include <util/util.hpp>
+#include <utility>
 
 namespace MLCMST::network {
 
-MLCCNetwork::MLCCNetwork(
-    int center,
-    const std::vector<CapacitatedNetwork>& networks,
-    const std::vector<int>& demands
-)
-    : _center(center), _networks(networks), _demands(demands)
+MLCCNetwork::MLCCNetwork(int center, std::vector<CapacitatedNetwork> networks, std::vector<int> demands)
+    : _center(center), _networks(std::move(networks)), _demands(std::move(demands))
 {
-
 }
 
 MLCCNetwork::~MLCCNetwork() = default;

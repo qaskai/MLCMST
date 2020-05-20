@@ -14,17 +14,23 @@ namespace MLCMST::network {
 class MLCCNetwork final
 {
 public:
-    MLCCNetwork(int center, const std::vector<CapacitatedNetwork>& networks, const std::vector<int>& demands);
+    /**
+     * MLCCNetwork constructor.
+     * @param center - network center
+     * @param networks - capacitated networks. Should be sorted increasingly by capacity and have unique capacity.
+     * @param demands - vector of units vertices desire to send to the center (ie vertex weights)
+     */
+    MLCCNetwork(int center, std::vector<CapacitatedNetwork> networks, std::vector<int> demands);
     ~MLCCNetwork();
 
-    int center() const;
-    int vertexCount() const;
-    std::vector<int> vertexSet() const;
-    int levelsNumber() const;
-    int demand(int v) const;
-    const Network& network(int i) const;
-    int edgeCapacity(int network_i) const;
-    double edgeCost(int v, int w, int level) const;
+    [[nodiscard]] int center() const;
+    [[nodiscard]] int vertexCount() const;
+    [[nodiscard]] std::vector<int> vertexSet() const;
+    [[nodiscard]] int levelsNumber() const;
+    [[nodiscard]] int demand(int v) const;
+    [[nodiscard]] const Network& network(int i) const;
+    [[nodiscard]] int edgeCapacity(int network_i) const;
+    [[nodiscard]] double edgeCost(int v, int w, int level) const;
 
 private:
     int _center;
