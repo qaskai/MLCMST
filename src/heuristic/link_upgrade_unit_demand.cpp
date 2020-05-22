@@ -116,7 +116,8 @@ bool LinkUpgradeUnitDemand::step(int level, MLCMST &mlcmst)
     double max_saving = 0;
     int max_saving_node = -1;
     for (int i : free_vertices_) {
-        auto [saving, _] = computeSavings(level, i, mlcmst);
+        double saving;
+        std::tie(saving, std::ignore) = computeSavings(level, i, mlcmst);
         if (saving > max_saving) {
             max_saving = saving;
             max_saving_node = i;
@@ -126,7 +127,8 @@ bool LinkUpgradeUnitDemand::step(int level, MLCMST &mlcmst)
     if (max_saving_node == -1) {
         return false;
     } else {
-        auto [_, new_children] = computeSavings(level, max_saving_node, mlcmst);
+        std::vector<int> new_children;
+        std::tie(std::ignore, new_children) = computeSavings(level, max_saving_node, mlcmst);
         mlcmst.edgeLevel(max_saving_node) = level;
         for (int c : new_children) {
             mlcmst.parent(c) = max_saving_node;
