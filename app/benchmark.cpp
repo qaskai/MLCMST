@@ -10,7 +10,7 @@
 #include <mp/escf.hpp>
 #include <mp/mcf.hpp>
 
-#include <heuristic/link_upgrade_unit_demand.hpp>
+#include <heuristic/link_upgrade_ud.hpp>
 
 #include <benchmark/test_case.hpp>
 #include <benchmark/benchmark.hpp>
@@ -60,7 +60,7 @@ BenchmarkApp::BenchmarkApp() : solvers({
     std::make_pair("SCF", [] () { return std::make_unique<MLCMST::mp::SCF>(false); } ),
     std::make_pair("ESCF", [] () { return std::make_unique<MLCMST::mp::ESCF>(false); } ),
     std::make_pair("MCF", [] () { return std::make_unique<MLCMST::mp::MCF>(false); } ),
-    std::make_pair("link_upgrade_UD", [] () { return std::make_unique<heuristic::LinkUpgradeUnitDemand>(); })
+    std::make_pair("link_upgrade_UD", [] () { return std::make_unique<heuristic::LinkUpgradeUD>(); })
 })
 {
 }

@@ -8,7 +8,7 @@
 
 #include <network/serialization/mlcc_network_serialization.hpp>
 
-#include <heuristic/link_upgrade_unit_demand.hpp>
+#include <heuristic/link_upgrade_ud.hpp>
 
 using namespace std;
 
@@ -39,7 +39,7 @@ network::MLCCNetwork generateNetwork()
 
 void run(const MLCCNetwork& network)
 {
-    heuristic::LinkUpgradeUnitDemand solver;
+    heuristic::LinkUpgradeUD solver;
     auto result = solver.solve(network);
     std::cout << result.mlcmst.value().cost(network) << std::endl;
 }

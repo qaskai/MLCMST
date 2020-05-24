@@ -1,4 +1,4 @@
-#include <heuristic/link_upgrade_unit_demand.hpp>
+#include <heuristic/link_upgrade_ud.hpp>
 
 #include <stack>
 #include <queue>
@@ -11,10 +11,10 @@
 
 namespace MLCMST::heuristic {
 
-LinkUpgradeUnitDemand::~LinkUpgradeUnitDemand() = default;
+LinkUpgradeUD::~LinkUpgradeUD() = default;
 
 
-void LinkUpgradeUnitDemand::checkDemands(const MLCCNetwork& mlcc_network)
+void LinkUpgradeUD::checkDemands(const MLCCNetwork& mlcc_network)
 {
     for (int i=0; i < mlcc_network.vertexCount(); i++) {
         if (i != mlcc_network.center() && mlcc_network.demand(i) != 1) {
@@ -23,7 +23,7 @@ void LinkUpgradeUnitDemand::checkDemands(const MLCCNetwork& mlcc_network)
     }
 }
 
-LinkUpgradeUnitDemand::MLCMST LinkUpgradeUnitDemand::createStar(const MLCCNetwork &network)
+LinkUpgradeUD::MLCMST LinkUpgradeUD::createStar(const MLCCNetwork &network)
 {
     MLCMST mlcmst(network.vertexCount(), network.center());
     for (int i : network.vertexSet()) {
@@ -33,7 +33,7 @@ LinkUpgradeUnitDemand::MLCMST LinkUpgradeUnitDemand::createStar(const MLCCNetwor
     return mlcmst;
 }
 
-MLCMSTSolver::Result LinkUpgradeUnitDemand::solve(const network::MLCCNetwork &mlcc_network)
+MLCMSTSolver::Result LinkUpgradeUD::solve(const network::MLCCNetwork &mlcc_network)
 {
     checkDemands(mlcc_network);
 
@@ -60,7 +60,7 @@ MLCMSTSolver::Result LinkUpgradeUnitDemand::solve(const network::MLCCNetwork &ml
     );
 }
 
-bool LinkUpgradeUnitDemand::step(int level, MLCMST &mlcmst)
+bool LinkUpgradeUD::step(int level, MLCMST &mlcmst)
 {
     double max_saving = 0;
     int max_saving_node = -1;
@@ -87,7 +87,7 @@ bool LinkUpgradeUnitDemand::step(int level, MLCMST &mlcmst)
     }
 }
 
-std::pair<double, std::vector<int>> LinkUpgradeUnitDemand::computeSavings(int level, int node, MLCMST mlcmst)
+std::pair<double, std::vector<int>> LinkUpgradeUD::computeSavings(int level, int node, MLCMST mlcmst)
 {
     double saving_amount = 0;
     saving_amount += network_->edgeCost(node, mlcmst.parent(node), mlcmst.edgeLevel(node))
@@ -125,7 +125,7 @@ std::pair<double, std::vector<int>> LinkUpgradeUnitDemand::computeSavings(int le
     return std::make_pair(saving_amount, children);
 }
 
-std::vector<int> LinkUpgradeUnitDemand::getPathToRoot(int node, const MLCMST &mlcmst) {
+std::vector<int> LinkUpgradeUD::getPathToRoot(int node, const MLCMST &mlcmst) {
     std::vector<int> path { node };
     while (path.back() != network_->center()) {
         path.push_back(mlcmst.parent(path.back()));
@@ -134,7 +134,7 @@ std::vector<int> LinkUpgradeUnitDemand::getPathToRoot(int node, const MLCMST &ml
 }
 
 std::pair<std::vector<int>, std::vector<int>>
-LinkUpgradeUnitDemand::shaveCommonSuffix(std::vector<int> v1, std::vector<int> v2)
+LinkUpgradeUD::shaveCommonSuffix(std::vector<int> v1, std::vector<int> v2)
 {
     while (!v1.empty() && !v2.empty() && v1.back() == v2.back()) {
         v1.pop_back();
@@ -144,8 +144,8 @@ LinkUpgradeUnitDemand::shaveCommonSuffix(std::vector<int> v1, std::vector<int> v
 }
 
 bool
-LinkUpgradeUnitDemand::canBeAttached(int node, int potential_child, const MLCMST &mlcmst, const std::vector<int> &res,
-                                     const std::vector<int> &subnet, const std::vector<int> &slack)
+LinkUpgradeUD::canBeAttached(int node, int potential_child, const MLCMST &mlcmst, const std::vector<int> &res,
+                             const std::vector<int> &subnet, const std::vector<int> &slack)
 {
     if (res[node] > 0) {
         return true;
@@ -164,8 +164,8 @@ LinkUpgradeUnitDemand::canBeAttached(int node, int potential_child, const MLCMST
 }
 
 void
-LinkUpgradeUnitDemand::attach(int node, int new_child, MLCMST &mlcmst, std::vector<int> &res, std::vector<int> &subnet,
-                              std::vector<int> &slack)
+LinkUpgradeUD::attach(int node, int new_child, MLCMST &mlcmst, std::vector<int> &res, std::vector<int> &subnet,
+                      std::vector<int> &slack)
 {
     auto change_load_on_path = [&] (const std::vector<int>& path, int c) -> void {
         for (auto it = path.rbegin(); it != path.rend(); it++) {

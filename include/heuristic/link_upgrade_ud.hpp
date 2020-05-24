@@ -7,10 +7,13 @@
 
 namespace MLCMST::heuristic {
 
-class LinkUpgradeUnitDemand : public MLCMSTSolver
+/**
+ * Unit demand link upgrade heuristic.
+ */
+class LinkUpgradeUD : public MLCMSTSolver
 {
 public:
-    ~LinkUpgradeUnitDemand() override;
+    ~LinkUpgradeUD() override;
 
     Result solve(const network::MLCCNetwork &mlcc_network) override;
 
