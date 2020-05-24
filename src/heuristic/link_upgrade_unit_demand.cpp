@@ -6,7 +6,6 @@
 #include <chrono>
 #include <stdexcept>
 #include <numeric>
-#include <functional>
 
 #include <network/mlcmst.hpp>
 
@@ -32,56 +31,6 @@ LinkUpgradeUnitDemand::MLCMST LinkUpgradeUnitDemand::createStar(const MLCCNetwor
         mlcmst.edgeLevel(i) = 0;
     }
     return mlcmst;
-}
-
-std::vector<int> LinkUpgradeUnitDemand::computeSlack(const MLCCNetwork &network, const MLCMST &mlcmst)
-{
-    std::vector<int> slack(network.vertexCount());
-    std::vector<int> load = mlcmst.getLoads(network);
-
-    for (int i : network.vertexSet()) {
-        slack[i] = network.edgeCapacity(mlcmst.edgeLevel(i)) - load[i];
-    }
-    slack[network.center()] = network.vertexCount();
-    return slack;
-}
-
-std::vector<int>
-LinkUpgradeUnitDemand::computeRes(const MLCCNetwork &network, const MLCMST &mlcmst, const std::vector<int> &slack)
-{
-    std::vector<int> res(network.vertexCount());
-    auto children = mlcmst.getChildrenLists();
-    std::function<void(int)> dfs = [&] (int v) {
-        res[v] = std::min(res[mlcmst.parent(v)], slack[v]);
-        for (int c : children[v]) {
-            dfs(c);
-        }
-    };
-
-    res[network.center()] = network.vertexCount();
-    for (int r : children[network.center()]) {
-        dfs(r);
-    }
-    return res;
-}
-
-std::vector<int> LinkUpgradeUnitDemand::computeSubnet(const MLCMST &mlcmst)
-{
-    std::vector<int> subnet(mlcmst.vertexCount());
-    auto children = mlcmst.getChildrenLists();
-    std::function<void(int)> dfs = [&] (int v) {
-        for (int c : children[v]) {
-            subnet[c] = subnet[v];
-            dfs(c);
-        }
-    };
-
-    for (int r : children[mlcmst.root()]) {
-        subnet[r] = r;
-        dfs(r);
-    }
-    subnet[mlcmst.root()] = mlcmst.root();
-    return subnet;
 }
 
 MLCMSTSolver::Result LinkUpgradeUnitDemand::solve(const network::MLCCNetwork &mlcc_network)
@@ -145,9 +94,9 @@ std::pair<double, std::vector<int>> LinkUpgradeUnitDemand::computeSavings(int le
             - network_->edgeCost(node, mlcmst.parent(node), level);
 
     mlcmst.edgeLevel(node) = level;
-    std::vector<int> slack = computeSlack(*network_, mlcmst);
-    std::vector<int> res = computeRes(*network_, mlcmst, slack);
-    std::vector<int> subnet = computeSubnet(mlcmst);
+    std::vector<int> slack = mlcmst.slack(*network_);
+    std::vector<int> res = mlcmst.reserves(*network_);
+    std::vector<int> subnet = mlcmst.subnet();
 
     auto saving = [&] (int potential_child) -> double {
         double old_edge = network_->edgeCost(potential_child, mlcmst.parent(potential_child), 0);

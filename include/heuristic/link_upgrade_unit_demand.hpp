@@ -23,9 +23,6 @@ private:
 
     void checkDemands(const MLCCNetwork& mlcc_network);
     MLCMST createStar(const MLCCNetwork& network);
-    std::vector<int> computeSlack(const MLCCNetwork& network, const MLCMST& mlcmst);
-    std::vector<int> computeRes(const MLCCNetwork &network, const MLCMST &mlcmst, const std::vector<int> &slack);
-    std::vector<int> computeSubnet(const MLCMST& mlcmst);
 
     bool step(int level, MLCMST &mlcmst);
     std::pair<double, std::vector<int>> computeSavings(int level, int node, MLCMST mlcmst);

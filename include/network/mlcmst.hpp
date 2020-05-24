@@ -14,7 +14,7 @@ namespace MLCMST::network {
 class MLCMST final
 {
 public:
-    MLCMST(unsigned int N, unsigned root);
+    MLCMST(int N, int root);
     ~MLCMST();
 
     [[nodiscard]] unsigned vertexCount() const;
@@ -27,13 +27,16 @@ public:
     [[nodiscard]] const std::vector<int>& edgeLevels() const;
     [[nodiscard]] int root() const;
 
-    [[nodiscard]] std::vector<std::vector<int>> getChildrenLists() const;
-    [[nodiscard]] std::vector<int> getLoads(const MLCCNetwork &network) const;
+    [[nodiscard]] std::vector<std::vector<int>> childrenLists() const;
     [[nodiscard]] double cost(const MLCCNetwork& mlcc_network) const;
     [[nodiscard]] bool checkValidity(const MLCCNetwork& network) const;
+    [[nodiscard]] std::vector<int> loads(const MLCCNetwork &network) const;
+    [[nodiscard]] std::vector<int> slack(const MLCCNetwork& network) const;
+    [[nodiscard]] std::vector<int> reserves(const MLCCNetwork &network) const;
+    [[nodiscard]] std::vector<int> subnet() const;
 
 private:
-    unsigned _root;
+    int _root;
     std::vector<int> _parents;
     std::vector<int> _edge_levels;
 };

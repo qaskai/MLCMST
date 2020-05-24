@@ -8,7 +8,7 @@
 
 namespace MLCMST::network {
 
-MLCMST::MLCMST(unsigned int N, unsigned root) : _root(root), _parents(N, root), _edge_levels(N, 0)
+MLCMST::MLCMST(int N, int root) : _root(root), _parents(N, root), _edge_levels(N, 0)
 {
 }
 
@@ -70,7 +70,7 @@ int MLCMST::root() const
     return _root;
 }
 
-std::vector<std::vector<int>> MLCMST::getChildrenLists() const
+std::vector<std::vector<int>> MLCMST::childrenLists() const
 {
     std::vector<std::vector<int>> children(vertexCount());
     for (int v : vertexSet()) {
@@ -81,10 +81,10 @@ std::vector<std::vector<int>> MLCMST::getChildrenLists() const
     return children;
 }
 
-std::vector<int> MLCMST::getLoads(const MLCCNetwork &network) const
+std::vector<int> MLCMST::loads(const MLCCNetwork &network) const
 {
     std::vector<int> load(vertexCount());
-    auto children = getChildrenLists();
+    auto children = childrenLists();
     std::function<int(int)> dfs = [&] (int v) -> int {
         int acc = network.demand(v);
         for (int c : children[v]) {
@@ -103,16 +103,66 @@ std::vector<int> MLCMST::getLoads(const MLCCNetwork &network) const
 
 bool MLCMST::checkValidity(const MLCCNetwork &network) const
 {
-    std::vector<int> loads = getLoads(network);
+    std::vector<int> load = loads(network);
     if (_root != network.center()) {
         return false;
     }
     for (int i : vertexSet()) {
-        if (i != _root && loads[i] > network.edgeCapacity(edgeLevel(i))) {
+        if (i != _root && load[i] > network.edgeCapacity(edgeLevel(i))) {
             return false;
         }
     }
     return true;
+}
+
+std::vector<int> MLCMST::slack(const MLCCNetwork &network) const
+{
+    std::vector<int> slack(network.vertexCount());
+    std::vector<int> load = loads(network);
+
+    for (int i : network.vertexSet()) {
+        slack[i] = network.edgeCapacity(edgeLevel(i)) - load[i];
+    }
+    slack[network.center()] = network.vertexCount();
+    return slack;
+}
+
+std::vector<int> MLCMST::reserves(const MLCCNetwork &network) const
+{
+    std::vector<int> res(network.vertexCount());
+    auto slack = this->slack(network);
+    auto children = childrenLists();
+    std::function<void(int)> dfs = [&] (int v) {
+        res[v] = std::min(res[parent(v)], slack[v]);
+        for (int c : children[v]) {
+            dfs(c);
+        }
+    };
+
+    res[_root] = network.vertexCount();
+    for (int r : children[_root]) {
+        dfs(r);
+    }
+    return res;
+}
+
+std::vector<int> MLCMST::subnet() const
+{
+    std::vector<int> subnet(vertexCount());
+    auto children = childrenLists();
+    std::function<void(int)> dfs = [&] (int v) {
+        for (int c : children[v]) {
+            subnet[c] = subnet[v];
+            dfs(c);
+        }
+    };
+
+    for (int r : children[_root]) {
+        subnet[r] = r;
+        dfs(r);
+    }
+    subnet[_root] = _root;
+    return subnet;
 }
 
 
