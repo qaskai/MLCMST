@@ -1,10 +1,11 @@
 #include <network/network.hpp>
 
 #include <cmath>
+#include <utility>
 
 namespace MLCMST::network {
 
-Network::Network(const std::vector<std::vector<double>>& costs) : _costs(costs)
+Network::Network(std::vector<std::vector<double>>  costs) : _costs(std::move(costs))
 {
 
 }
@@ -31,6 +32,31 @@ const double& Network::edgeCost(int v, int w) const
     return _costs[v][w];
 }
 
+std::vector<int> Network::neighbourhood(int v) const
+{
+    std::vector<int> neighbours;
+    for (int i = 0; i < vertexCount(); i++) {
+        if (i != v && edgeCost(v,i) != infinity())
+            neighbours.push_back(i);
+    }
+    return neighbours;
+}
+
+std::vector<std::vector<int>> Network::neighbourhoodList() const
+{
+    std::vector<std::vector<int>> neighbourhoodLists(vertexCount());
+    for (int i=0; i<vertexCount(); i++) {
+        neighbourhoodLists[i] = neighbourhood(i);
+    }
+    return neighbourhoodLists;
+}
+
+double Network::infinity()
+{
+    return INFINITY_;
+}
+
+double Network::INFINITY_ = std::numeric_limits<double>::infinity();
 
 bool operator==(const Network& n1, const Network& n2)
 {

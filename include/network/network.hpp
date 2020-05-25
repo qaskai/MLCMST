@@ -1,5 +1,6 @@
 #pragma once
 
+#include <limits>
 #include <vector>
 
 namespace MLCMST::network {
@@ -7,16 +8,23 @@ namespace MLCMST::network {
 class Network final
 {
 public:
-    Network(const std::vector<std::vector<double>>& costs);
+    explicit Network(std::vector<std::vector<double>>  costs);
     ~Network();
 
-    int vertexCount() const;
-    const std::vector<std::vector<double>>& costs() const;
+    [[nodiscard]] int vertexCount() const;
+    [[nodiscard]] const std::vector<std::vector<double>>& costs() const;
     double& edgeCost(int v, int w);
-    const double& edgeCost(int v, int w) const;
+    [[nodiscard]] const double& edgeCost(int v, int w) const;
+
+    [[nodiscard]] std::vector<int> neighbourhood(int v) const;
+    [[nodiscard]] std::vector<std::vector<int>> neighbourhoodList() const;
+
+    [[nodiscard]] static double infinity();
 
 private:
     std::vector<std::vector<double>> _costs;
+
+    static double INFINITY_;
 
 };
 
