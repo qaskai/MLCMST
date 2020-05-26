@@ -23,7 +23,7 @@ int MLCCNetwork::center() const
 {
     return _center;
 }
-    
+
 int MLCCNetwork::levelsNumber() const
 {
     return _networks.size();
@@ -49,11 +49,40 @@ std::vector<int> MLCCNetwork::vertexSet() const
     return util::firstN(vertexCount());
 }
 
+std::vector<int> MLCCNetwork::regularVertexSet() const
+{
+    std::vector<int> vs = vertexSet();
+    vs.erase(std::find(vs.begin(), vs.end(), center()));
+    return vs;
+}
+
 double MLCCNetwork::edgeCost(int v, int w, int level) const
 {
     return network(level).edgeCost(v, w);
 }
 
+std::pair<MLCCNetwork, std::vector<int>> MLCCNetwork::subNetwork(std::vector<int> vertices) const
+{
+    if (std::find(vertices.begin(), vertices.end(), _center) == vertices.end()) {
+        vertices.push_back(_center);
+    }
+    std::vector<CapacitatedNetwork> sub_networks;
+    std::vector<int> mapping = _networks[0].subNetwork(vertices).second;
+    for (const CapacitatedNetwork& n : _networks) {
+        sub_networks.push_back(n.subNetwork(vertices).first);
+    }
+    std::vector<int> sub_demands;
+    sub_demands.reserve(mapping.size());
+    for (int x : mapping) {
+        sub_demands.push_back(_demands[x]);
+    }
+    return std::make_pair(MLCCNetwork(_center, sub_networks, sub_demands), mapping);
+}
+
+double MLCCNetwork::infinity()
+{
+    return Network::infinity();
+}
 
 bool operator==(const MLCCNetwork& n1, const MLCCNetwork& n2)
 {

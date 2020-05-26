@@ -26,11 +26,15 @@ public:
     [[nodiscard]] int center() const;
     [[nodiscard]] int vertexCount() const;
     [[nodiscard]] std::vector<int> vertexSet() const;
+    [[nodiscard]] std::vector<int> regularVertexSet() const;
     [[nodiscard]] int levelsNumber() const;
     [[nodiscard]] int demand(int v) const;
     [[nodiscard]] const Network& network(int i) const;
     [[nodiscard]] int edgeCapacity(int network_i) const;
     [[nodiscard]] double edgeCost(int v, int w, int level) const;
+
+    static double infinity();
+    [[nodiscard]] std::pair<MLCCNetwork, std::vector<int>> subNetwork(std::vector<int> vertices) const;
 
 private:
     int _center;

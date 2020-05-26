@@ -35,6 +35,8 @@ public:
     [[nodiscard]] std::vector<int> reserves(const MLCCNetwork &network) const;
     [[nodiscard]] std::vector<int> subnet() const;
 
+    static MLCMST star(int N, int root);
+
 private:
     int _root;
     std::vector<int> _parents;

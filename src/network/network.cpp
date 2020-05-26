@@ -2,12 +2,21 @@
 
 #include <cmath>
 #include <utility>
+#include <unordered_map>
 
 namespace MLCMST::network {
+
+Network::Network(int N) : _costs(N, std::vector<double>(N, infinity()))
+{
+}
 
 Network::Network(std::vector<std::vector<double>>  costs) : _costs(std::move(costs))
 {
 
+}
+
+Network::Network(std::initializer_list<std::vector<double>> costs) : _costs(costs)
+{
 }
 
 Network::~Network() = default;
@@ -49,6 +58,24 @@ std::vector<std::vector<int>> Network::neighbourhoodList() const
         neighbourhoodLists[i] = neighbourhood(i);
     }
     return neighbourhoodLists;
+}
+
+std::pair<Network, std::vector<int>> Network::subNetwork(const std::vector<int> &vertices) const
+{
+    std::unordered_map<int,int> rev_mapping;
+    std::vector<int> mapping;
+    for (int v : vertices) {
+        int id = rev_mapping.size();
+        rev_mapping[v] = id;
+        mapping.push_back(v);
+    }
+    Network subNet(vertices.size());
+    for (int v : vertices) {
+        for (int w : vertices) {
+            subNet.edgeCost(rev_mapping[v], rev_mapping[w]) = edgeCost(v, w);
+        }
+    }
+    return std::make_pair(subNet, vertices);
 }
 
 double Network::infinity()

@@ -165,5 +165,14 @@ std::vector<int> MLCMST::subnet() const
     return subnet;
 }
 
+MLCMST MLCMST::star(int N, int root)
+{
+    MLCMST mlcmst(N, root);
+    for (int i=0; i<N; i++) {
+        mlcmst.parent(i) = root;
+        mlcmst.edgeLevel(i) = 0;
+    }
+    return mlcmst;
+}
 
 }

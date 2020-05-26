@@ -12,9 +12,12 @@ public:
     CapacitatedNetwork(int edge_capacity, const Network& network);
     ~CapacitatedNetwork();
 
-    int vertexCount() const;
-    int edgeCapacity() const;
-    const Network& network() const;
+    [[nodiscard]] int vertexCount() const;
+    [[nodiscard]] int edgeCapacity() const;
+    [[nodiscard]] const Network& network() const;
+
+    static double infinity();
+    [[nodiscard]] std::pair<CapacitatedNetwork, std::vector<int>> subNetwork(const std::vector<int>& vertices) const;
 
 private:
     int _edge_capacity;

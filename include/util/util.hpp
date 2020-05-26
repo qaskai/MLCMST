@@ -3,6 +3,7 @@
 #include <string>
 #include <istream>
 #include <vector>
+#include <unordered_map>
 
 namespace MLCMST::util {
 
@@ -26,6 +27,16 @@ std::vector<std::vector<T>> break_up(unsigned int N, std::vector<T> vec)
         }
     }
     return out;
+}
+
+template <typename T>
+std::unordered_map<T, int> valueToIndex(const std::vector<T>& v)
+{
+    std::unordered_map<T, int> mapping;
+    for (int i=0; i<v.size(); i++) {
+        mapping[v[i]] = i;
+    }
+    return mapping;
 }
 
 }

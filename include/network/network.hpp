@@ -2,13 +2,16 @@
 
 #include <limits>
 #include <vector>
+#include <utility>
 
 namespace MLCMST::network {
 
 class Network final
 {
 public:
+    explicit Network(int N);
     explicit Network(std::vector<std::vector<double>>  costs);
+    Network(std::initializer_list<std::vector<double>> costs);
     ~Network();
 
     [[nodiscard]] int vertexCount() const;
@@ -18,6 +21,7 @@ public:
 
     [[nodiscard]] std::vector<int> neighbourhood(int v) const;
     [[nodiscard]] std::vector<std::vector<int>> neighbourhoodList() const;
+    [[nodiscard]] std::pair<Network, std::vector<int>> subNetwork(const std::vector<int>& vertices) const;
 
     [[nodiscard]] static double infinity();
 

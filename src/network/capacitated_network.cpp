@@ -27,6 +27,17 @@ const Network& CapacitatedNetwork::network() const
     return _network;
 }
 
+std::pair<CapacitatedNetwork, std::vector<int>> CapacitatedNetwork::subNetwork(const std::vector<int> &vertices) const
+{
+    auto [ subNet, mapping ] = _network.subNetwork(vertices);
+    return std::make_pair(CapacitatedNetwork(_edge_capacity, subNet), mapping);
+}
+
+double CapacitatedNetwork::infinity()
+{
+    return Network::infinity();
+}
+
 
 bool operator==(const CapacitatedNetwork& cn1, const CapacitatedNetwork& cn2)
 {

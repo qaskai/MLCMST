@@ -23,3 +23,14 @@ TEST_CASE( "break up vector", "[util]" )
         }
     }
 }
+
+TEST_CASE( "valueToIndex", "[util]" )
+{
+    std::vector<int> v{ 3,2,6 };
+
+    std::unordered_map<int,int> mapping = MLCMST::util::valueToIndex(v);
+
+    REQUIRE( mapping == std::unordered_map<int,int>{
+        std::make_pair(3, 0), std::make_pair(2, 1), std::make_pair(6, 2)
+    });
+}
