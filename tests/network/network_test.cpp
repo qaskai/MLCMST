@@ -14,7 +14,7 @@ TEST_CASE( "network neighbourhoods", "[network]" )
     });
 
     SECTION( "neighbourhood list" ) {
-        auto neighbourhoods = network.neighbourhoodList();
+        auto neighbourhoods = network.neighbourhoods();
         REQUIRE( neighbourhoods[0] == std::vector<int>{ 1,2 } );
         REQUIRE( neighbourhoods[1] == std::vector<int>{ 0 } );
         REQUIRE( neighbourhoods[2] == std::vector<int>{ 0 } );

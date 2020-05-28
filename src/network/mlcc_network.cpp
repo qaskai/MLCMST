@@ -71,12 +71,13 @@ std::pair<MLCCNetwork, std::vector<int>> MLCCNetwork::subNetwork(std::vector<int
     for (const CapacitatedNetwork& n : _networks) {
         sub_networks.push_back(n.subNetwork(vertices).first);
     }
+    const int sub_center = std::distance(mapping.begin(), std::find(mapping.begin(), mapping.end(), _center));
     std::vector<int> sub_demands;
     sub_demands.reserve(mapping.size());
     for (int x : mapping) {
         sub_demands.push_back(_demands[x]);
     }
-    return std::make_pair(MLCCNetwork(_center, sub_networks, sub_demands), mapping);
+    return std::make_pair(MLCCNetwork(sub_center, sub_networks, sub_demands), mapping);
 }
 
 double MLCCNetwork::infinity()

@@ -20,7 +20,7 @@ public:
     [[nodiscard]] const double& edgeCost(int v, int w) const;
 
     [[nodiscard]] std::vector<int> neighbourhood(int v) const;
-    [[nodiscard]] std::vector<std::vector<int>> neighbourhoodList() const;
+    [[nodiscard]] std::vector<std::vector<int>> neighbourhoods() const;
     [[nodiscard]] std::pair<Network, std::vector<int>> subNetwork(const std::vector<int>& vertices) const;
 
     [[nodiscard]] static double infinity();

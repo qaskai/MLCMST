@@ -51,7 +51,7 @@ std::vector<int> Network::neighbourhood(int v) const
     return neighbours;
 }
 
-std::vector<std::vector<int>> Network::neighbourhoodList() const
+std::vector<std::vector<int>> Network::neighbourhoods() const
 {
     std::vector<std::vector<int>> neighbourhoodLists(vertexCount());
     for (int i=0; i<vertexCount(); i++) {
