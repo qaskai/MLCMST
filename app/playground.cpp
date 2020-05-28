@@ -8,7 +8,7 @@
 
 #include <network/serialization/mlcc_network_serialization.hpp>
 
-#include <heuristic/link_upgrade_ud.hpp>
+#include <heuristic/local_search_2006.hpp>
 
 using namespace std;
 
@@ -24,9 +24,8 @@ network::MLCCNetwork generateNetwork()
     vector<Level> levels{
             Level { 1, 1 },
             Level { 3, 2 },
-            Level { 10, 6 }
     };
-    generation::EuclidMLCCNetworkGenerator generator (10, CenterPos::RANDOM, levels,
+    generation::EuclidMLCCNetworkGenerator generator (20, CenterPos::RANDOM, levels,
             std::make_unique<geometry::generation::IntPointGenerator>(0 ,20));
     MLCCNetwork mlccNetwork = generator.generate();
 
@@ -39,7 +38,7 @@ network::MLCCNetwork generateNetwork()
 
 void run(const MLCCNetwork& network)
 {
-    heuristic::LinkUpgradeUD solver;
+    heuristic::LocalSearch2006 solver;
     auto result = solver.solve(network);
     std::cout << result.mlcmst.value().cost(network) << std::endl;
 }

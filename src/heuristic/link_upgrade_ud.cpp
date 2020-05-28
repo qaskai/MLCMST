@@ -23,23 +23,13 @@ void LinkUpgradeUD::checkDemands(const MLCCNetwork& mlcc_network)
     }
 }
 
-LinkUpgradeUD::MLCMST LinkUpgradeUD::createStar(const MLCCNetwork &network)
-{
-    MLCMST mlcmst(network.vertexCount(), network.center());
-    for (int i : network.vertexSet()) {
-        mlcmst.parent(i) = network.center();
-        mlcmst.edgeLevel(i) = 0;
-    }
-    return mlcmst;
-}
-
 MLCMSTSolver::Result LinkUpgradeUD::solve(const network::MLCCNetwork &mlcc_network)
 {
     checkDemands(mlcc_network);
 
     auto time_start = std::chrono::high_resolution_clock::now();
     network_ = &mlcc_network;
-    MLCMST mlcmst = createStar(mlcc_network);
+    MLCMST mlcmst = MLCMST::star(mlcc_network.vertexCount(), mlcc_network.center());
 
     free_vertices_.resize(network_->vertexCount());
     std::iota(free_vertices_.begin(), free_vertices_.end(), 0);

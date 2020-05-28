@@ -25,7 +25,6 @@ private:
     std::vector<int> free_vertices_;
 
     void checkDemands(const MLCCNetwork& mlcc_network);
-    MLCMST createStar(const MLCCNetwork& network);
 
     bool step(int level, MLCMST &mlcmst);
     std::pair<double, std::vector<int>> computeSavings(int level, int node, MLCMST mlcmst);
