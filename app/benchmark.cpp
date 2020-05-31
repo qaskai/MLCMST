@@ -11,6 +11,7 @@
 #include <mp/mcf.hpp>
 
 #include <heuristic/link_upgrade_ud.hpp>
+#include <heuristic/local_search_2006.hpp>
 
 #include <benchmark/test_case.hpp>
 #include <benchmark/benchmark.hpp>
@@ -39,11 +40,7 @@ public:
     ~BenchmarkApp() override;
 
 private:
-    const std::map<std::string, std::function<std::unique_ptr< MLCMST::MLCMSTSolver >()> > solvers {
-
-    };
-
-    const static std::map<int, int> m;
+    const std::map<std::string, std::function<std::unique_ptr< MLCMST::MLCMSTSolver >()> > solvers;
 
     cxxopts::Options createOptions() override;
     void validateParseResult(const cxxopts::ParseResult& result) override;
@@ -57,10 +54,11 @@ private:
 };
 
 BenchmarkApp::BenchmarkApp() : solvers({
-    std::make_pair("SCF", [] () { return std::make_unique<MLCMST::mp::SCF>(false); } ),
-    std::make_pair("ESCF", [] () { return std::make_unique<MLCMST::mp::ESCF>(false); } ),
-    std::make_pair("MCF", [] () { return std::make_unique<MLCMST::mp::MCF>(false); } ),
-    std::make_pair("link_upgrade_UD", [] () { return std::make_unique<heuristic::LinkUpgradeUD>(); })
+    std::make_pair("SCF", [] () { return std::make_unique<mp::SCF>(false); } ),
+    std::make_pair("ESCF", [] () { return std::make_unique<mp::ESCF>(false); } ),
+    std::make_pair("MCF", [] () { return std::make_unique<mp::MCF>(false); } ),
+    std::make_pair("link_upgrade_UD", [] () { return std::make_unique<heuristic::LinkUpgradeUD>(); }),
+    std::make_pair("local_search_2006", [] () { return std::make_unique<heuristic::LocalSearch2006>(); })
 })
 {
 }

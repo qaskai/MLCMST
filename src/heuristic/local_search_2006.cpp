@@ -7,6 +7,8 @@
 
 #include <heuristic/link_upgrade_ud.hpp>
 
+#include <glog/logging.h>
+
 namespace MLCMST::heuristic {
 
 double LocalSearch2006::EPS_ = 1e-9;
@@ -26,11 +28,10 @@ LocalSearch2006::~LocalSearch2006() = default;
 
 MLCMSTSolver::Result LocalSearch2006::solve(const network::MLCCNetwork &network)
 {
+    google::FlushLogFiles(google::INFO);
     auto time_start = std::chrono::high_resolution_clock::now();
     network_ = &network;
-    std::vector<int> group_id(network.vertexCount());
-    std::iota(group_id.begin(), group_id.end(), 0);
-//    subnet = inner_mlcmst_solver_->solve(network).mlcmst->subnet();
+    std::vector<int> group_id = inner_mlcmst_solver_->solve(network).mlcmst->subnet();
 
     while ( step(group_id) );
 
@@ -60,18 +61,18 @@ bool LocalSearch2006::step(std::vector<int>& group_id)
 void LocalSearch2006::implementExchange(std::vector<int> exchange, std::vector<int> &group_id)
 {
     const int N = group_id.size();
-    std::optional<std::pair<int,int>> close_cycle;
-    if (exchange.back() > N) { // cycle
+    std::optional<std::pair<int,int>> close;
+    if (exchange.back() >= N) {
         int g_id = exchange.back()-N;
         exchange.pop_back();
-        close_cycle = std::make_pair(exchange.back(), g_id);
+        close= std::make_pair(exchange.back(), g_id);
     }
     for (int i=0; i < exchange.size()-1; i++) {
         int v = exchange[i], w = exchange[i+1];
         group_id[v] = group_id[w];
     }
-    if (close_cycle.has_value()) {
-        auto [ v, g ] = close_cycle.value();
+    if (close.has_value()) {
+        auto [ v, g ] = close.value();
         group_id[v] = g;
     }
 }
@@ -130,7 +131,7 @@ LocalSearch2006::MLCMST LocalSearch2006::buildMLCMST(const std::vector<int> &gro
     for (const auto& group : groups(group_id)) {
         auto [ inner_mlcmst, mapping, _ ] = solveSubnet(group.second);
         for (int i=0; i<mapping.size(); i++) {
-            mlcmst.parent(mapping[i]) = inner_mlcmst.parent(i);
+            mlcmst.parent(mapping[i]) = mapping[inner_mlcmst.parent(i)];
             mlcmst.edgeLevel(mapping[i]) = inner_mlcmst.edgeLevel(i);
         }
     }
@@ -142,14 +143,14 @@ std::optional<std::vector<int>> LocalSearch2006::findBestProfitableExchange(cons
     Network graph = buildNeighbourhoodGraph(group_id);
     std::pair<std::vector<int>, double> best_exchange = std::make_pair(std::vector<int>{}, 0);
 
-    for (int i : network_->vertexSet()) {
+    for (int i : network_->regularVertexSet()) {
         auto maybe_exchange = findBestProfitableExchange(i, graph, group_id);
         if (maybe_exchange.has_value() && maybe_exchange.value().second < best_exchange.second) {
             best_exchange = maybe_exchange.value();
         }
     }
 
-    return best_exchange.second < 0 ? std::optional(best_exchange.first) : std::nullopt;
+    return best_exchange.second < -EPS_ ? std::optional(best_exchange.first) : std::nullopt;
 }
 
 std::optional<std::pair<std::vector<int>, double>>
@@ -158,7 +159,6 @@ LocalSearch2006::findBestProfitableExchange(int s, const LocalSearch2006::Networ
     const int N = group_id.size();
     const int origin = 2*N;
     const std::vector<std::vector<int>> graph = net.neighbourhoods();
-    const std::unordered_map<int, std::vector<int>> groups_map = groups(group_id);
 
     double cost = 0;
     std::vector<int> exchange;
@@ -181,8 +181,25 @@ LocalSearch2006::findBestProfitableExchange(int s, const LocalSearch2006::Networ
         return path;
     };
 
+    auto checkUnique = [&] (std::vector<int> v) -> bool {
+        std::sort(v.begin(), v.end());
+        for (int i=0; i<v.size()-1; i++) {
+            if (v[i] == v[i+1])
+                return false;
+        }
+        return true;
+    };
+
+    auto getCost = [&] (std::vector<int> path) -> double {
+        double c = 0;
+        for (int i=0; i<path.size()-1; i++) {
+            c += net.edgeCost(path[i], path[i+1]);
+        }
+        return c;
+    };
+
     auto update = [&] (const std::vector<int>& maybe_exchange, double c) {
-        if (cost > c) {
+        if (cost > c + EPS_) {
             exchange = maybe_exchange;
             cost = c;
         }
@@ -199,10 +216,10 @@ LocalSearch2006::findBestProfitableExchange(int s, const LocalSearch2006::Networ
         if (j < N) { // regular
             if (std::find(path.begin(), path.end(), j) != path.end()) { // found cycle {j - path.back()}
                 path.erase(path.begin(), std::find(path.begin(), path.end(), j));
+                double cost = getCost(path) + net.edgeCost(i,j);
                 path.push_back(N+group_id[j]);
-                update(path, d[i] - d[j] + net.edgeCost(i, j));
-            } else if (std::find(groups.begin(), groups.end(), group_id[j]) == groups.end()) { // found path {path[0] - j}
-                path.push_back(j);
+                update(path, cost);
+            } else if (std::find(groups.begin(), groups.end(), group_id[j]) == groups.end()) { // found path {s - j}
                 d[j] = d[i] + net.edgeCost(i, j);
                 pred[j] = i;
                 fifo.push(j);
@@ -210,8 +227,8 @@ LocalSearch2006::findBestProfitableExchange(int s, const LocalSearch2006::Networ
         } else { // pseudo node
             const int g_id = j-N;
             if (std::find(groups.begin(), groups.end(), g_id) == groups.end()) { // found disjoint path
-                path.push_back(j); // add subnet id as last
-                update(path, d[i] + net.edgeCost(i,j) + net.edgeCost(origin, s));
+                path.push_back(j);
+                update(path, getCost(path) + net.edgeCost(origin, s));
             }
         }
     };
@@ -219,13 +236,19 @@ LocalSearch2006::findBestProfitableExchange(int s, const LocalSearch2006::Networ
     while (!fifo.empty()) {
         int i = fifo.front();
         fifo.pop();
+        std::vector<int> path = getPath(i);
+        std::vector<int> groups;
+        std::transform(path.begin(), path.end(), std::back_inserter(groups), [&](int v) { return group_id[v]; });
+        if (!checkUnique(groups))
+            continue;
+        d[i] = getCost(path);
 
         for (int j : graph[i]) {
             process_arc(i, j);
         }
     }
 
-    return cost < 0 ? std::optional(std::make_pair(exchange, cost)) : std::nullopt;
+    return cost < -EPS_ ? std::optional(std::make_pair(exchange, cost)) : std::nullopt;
 }
 
 std::unordered_map<int, std::vector<int>> LocalSearch2006::groups(const std::vector<int> &group_id)
@@ -234,7 +257,13 @@ std::unordered_map<int, std::vector<int>> LocalSearch2006::groups(const std::vec
     for (int i = 0; i < group_id.size(); i++) {
         groups[group_id[i]].push_back(i);
     }
-    groups.erase(network_->center());
+    if (groups.size() < group_id.size()) {
+        int x = 0;
+        while (groups.count(x))
+            x++;
+        groups[x] = {};
+    }
+    groups.erase(group_id[network_->center()]);
     return groups;
 }
 
@@ -263,10 +292,13 @@ std::tuple<network::MLCMST, std::vector<int>, double> LocalSearch2006::solveSubn
 
 std::unordered_map<int, int> LocalSearch2006::groupDemands(const std::vector<int>& group_id) {
     std::unordered_map<int, int> demands;
-    for (int i=0; i<group_id.size(); i++) {
-        demands[group_id[i]] += network_->demand(i);
+    for (const auto& g : groups(group_id)) {
+        const int g_id = g.first;
+        demands[g_id] = 0;
+        for (int v : g.second) {
+            demands[g_id] += network_->demand(v);
+        }
     }
-    demands.erase(network_->center());
     return demands;
 }
 

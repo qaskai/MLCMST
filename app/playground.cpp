@@ -25,7 +25,7 @@ network::MLCCNetwork generateNetwork()
             Level { 1, 1 },
             Level { 3, 2 },
     };
-    generation::EuclidMLCCNetworkGenerator generator (20, CenterPos::RANDOM, levels,
+    generation::EuclidMLCCNetworkGenerator generator (30, CenterPos::RANDOM, levels,
             std::make_unique<geometry::generation::IntPointGenerator>(0 ,20));
     MLCCNetwork mlccNetwork = generator.generate();
 
