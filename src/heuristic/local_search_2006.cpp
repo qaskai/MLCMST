@@ -87,6 +87,7 @@ LocalSearch2006::Network LocalSearch2006::buildNeighbourhoodGraph(const std::vec
     const auto subnetGroups = this->groups(group_id);
     const std::unordered_map<int, int> group_demands = groupDemands(group_id);
 
+    // TODO: add checks for feasibility in non-unit demand case
     // regular node edges
     for (int i : network_->regularVertexSet()) {
         for (int j : network_->regularVertexSet()) {
@@ -205,6 +206,7 @@ LocalSearch2006::findBestProfitableExchange(int s, const LocalSearch2006::Networ
         }
     };
 
+    // TODO : add checks for feasibility in non-unit demand case
     auto process_arc = [&] (int i, int j) {
         if (d[j] <= d[i] + net.edgeCost(i, j) + EPS_) {
             return;
