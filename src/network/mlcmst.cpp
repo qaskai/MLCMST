@@ -81,6 +81,18 @@ std::vector<std::vector<int>> MLCMST::childrenLists() const
     return children;
 }
 
+std::vector<int> MLCMST::leafs() const
+{
+    std::vector<std::vector<int>> children = childrenLists();
+    std::vector<int> leafs;
+    for (int i : vertexSet()) {
+        if (children[i].empty()) {
+            leafs.push_back(i);
+        }
+    }
+    return leafs;
+}
+
 std::vector<int> MLCMST::loads(const MLCCNetwork &network) const
 {
     std::vector<int> load(vertexCount());

@@ -94,7 +94,7 @@ std::pair<double, std::vector<int>> LinkUpgradeUD::computeSavings(int level, int
         return old_edge - potential_edge;
     };
 
-    std::vector<int> candidates = free_vertices_;
+    std::vector<int> candidates = mlcmst.leafs();
     candidates.erase(std::find(candidates.begin(), candidates.end(), node));
     std::sort(candidates.begin(), candidates.end(), [&] (int c1, int c2) {
         return saving(c1) > saving(c2);

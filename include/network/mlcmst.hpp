@@ -28,6 +28,7 @@ public:
     [[nodiscard]] int root() const;
 
     [[nodiscard]] std::vector<std::vector<int>> childrenLists() const;
+    [[nodiscard]] std::vector<int> leafs() const;
     [[nodiscard]] double cost(const MLCCNetwork& mlcc_network) const;
     [[nodiscard]] bool checkValidity(const MLCCNetwork& network) const;
     [[nodiscard]] std::vector<int> loads(const MLCCNetwork &network) const;
