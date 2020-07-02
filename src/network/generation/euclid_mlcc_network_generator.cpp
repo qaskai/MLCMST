@@ -38,7 +38,7 @@ EuclidMLCCNetworkGenerator::~EuclidMLCCNetworkGenerator() = default;
 
 MLCCNetwork EuclidMLCCNetworkGenerator::generate()
 {
-    vector<Point> points = _point_set_generator->generate();
+    vector<Point> points = _last_point_set = _point_set_generator->generate();
     Network network = Network(geometry::util::createDistanceMatrix(points));
     int N = network.vertexCount();
     vector<CapacitatedNetwork> network_levels;
@@ -95,6 +95,11 @@ vector<double> EuclidMLCCNetworkGenerator::multiply(vector<double> v, double sca
         x *= scalar;
     }
     return v;
+}
+
+std::vector<Point> EuclidMLCCNetworkGenerator::lastPointSet() const
+{
+    return _last_point_set;
 }
 
 }

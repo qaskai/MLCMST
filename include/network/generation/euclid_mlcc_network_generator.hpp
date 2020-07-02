@@ -36,12 +36,16 @@ public:
 
     MLCCNetwork generate() override;
 
+    std::vector<Point> lastPointSet() const;
+
 private:
     CenterPosition _center_position;
     std::vector<Level> _levels;
 
     std::unique_ptr< Generator<vector<Point>> > _point_set_generator;
     util::number::IntGenerator _int_generator;
+
+    std::vector<Point> _last_point_set;
 
 
     EuclidMLCCNetworkGenerator(
