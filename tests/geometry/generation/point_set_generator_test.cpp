@@ -4,6 +4,7 @@
 
 #include <geometry/generation/real_point_generator.hpp>
 #include <geometry/generation/point_set_generator.hpp>
+#include <geometry/generation/cyclic_point_generator.hpp>
 
 using std::vector;
 using namespace MLCMST::geometry;
@@ -24,33 +25,13 @@ TEST_CASE( "Real point set generation", "[geometry][generation][point]" )
 
 TEST_CASE( "Real point set generation uniqueness", "[geometry][generation][point]" )
 {
-    class DuplicateGenerator : public MLCMST::Generator<Point>
-    {
-    public:
-        DuplicateGenerator(const std::vector<Point>& points) : _idx(0) {
-            for (const Point& p : points) {
-                _points.push_back(p);
-                _points.push_back(p);
-            }
-        }
-
-        Point generate() override {
-            if (_idx == _points.size())
-                _idx = 0;
-            return _points[_idx++];
-        }
-
-    private:
-        std::vector<Point> _points;
-        int _idx;
-    };
-
     std::vector<Point> expected_points {
         Point(2,2), Point(1,1), Point(3,3)
     };
+    using MLCMST::geometry::generation::CyclicPointGenerator;
 
-    auto generated_points =
-            PointSetGenerator(expected_points.size(), std::make_unique<DuplicateGenerator>(expected_points)).generate();
+    auto generated_points = PointSetGenerator(
+            expected_points.size(), std::make_unique<CyclicPointGenerator>(expected_points)).generate();
 
     REQUIRE( generated_points.size() == expected_points.size() );
     for (int i=0; i<generated_points.size(); i++) {
