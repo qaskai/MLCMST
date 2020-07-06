@@ -6,6 +6,7 @@
 
 #include <generator.hpp>
 #include <geometry/generation/real_point_generator.hpp>
+#include <geometry/generation/cyclic_point_generator.hpp>
 #include <network/mlcc_network.hpp>
 #include <network/generation/euclid_mlcc_network_generator.hpp>
 
@@ -15,8 +16,9 @@ using namespace MLCMST::network::generation;
 
 TEST_CASE( "EuclidMLCCNetworkGenerator general functionality", "[network][generation]" )
 {
-    typedef EuclidMLCCNetworkGenerator::Level Level;
-    typedef EuclidMLCCNetworkGenerator::CenterPosition CenterPosition;
+    using Level = EuclidMLCCNetworkGenerator::Level;
+    using CenterPosition = EuclidMLCCNetworkGenerator::CenterPosition;
+    using DemandType = EuclidMLCCNetworkGenerator::DemandType;
     using MLCMST::geometry::generation::RealPointGenerator;
 
     CenterPosition center_position = CenterPosition::RANDOM;
@@ -65,7 +67,7 @@ TEST_CASE( "EuclidMLCCNetworkGenerator general functionality", "[network][genera
     };
 
     MLCCNetwork network =EuclidMLCCNetworkGenerator(
-            size, center_position, levels, std::make_unique<RealPointGenerator>(from, to)).generate();
+            size, center_position, DemandType::UNIT, levels, std::make_unique<RealPointGenerator>(from, to)).generate();
 
     REQUIRE(network.vertexCount() == size );
     REQUIRE(network.center() < size);
@@ -82,28 +84,12 @@ TEST_CASE( "EuclidMLCCNetworkGenerator general functionality", "[network][genera
     }
 }
 
-
-class SetPointGenerator : public Generator<Point>
-{
-public:
-    explicit SetPointGenerator(std::vector<Point>  points) : _points(std::move(points)), _idx(0) {
-    }
-
-    Point generate() override {
-        if (_idx == _points.size())
-            _idx = 0;
-        return _points[_idx++];
-    }
-
-private:
-    int _idx;
-    std::vector<Point> _points;
-};
-
 TEST_CASE( "EuclidMLCCNetworkGenerator center type ", "[network][generation]" )
 {
-    typedef EuclidMLCCNetworkGenerator::Level Level;
-    typedef EuclidMLCCNetworkGenerator::CenterPosition CenterPosition;
+    using Level = EuclidMLCCNetworkGenerator::Level;
+    using CenterPosition = EuclidMLCCNetworkGenerator::CenterPosition;
+    using DemandType = EuclidMLCCNetworkGenerator::DemandType;
+
 
     std::vector<Level> levels {
         Level{1, 1}
@@ -111,10 +97,11 @@ TEST_CASE( "EuclidMLCCNetworkGenerator center type ", "[network][generation]" )
     std::vector<Point> points {
         Point(1,3), Point(3,1), Point(5,3), Point(3,5), Point(3,3)
     };
-    auto point_generator = std::make_unique<SetPointGenerator>(points);
+    auto point_generator = std::make_unique<geometry::generation::CyclicPointGenerator>(points);
 
     SECTION( "random" ) {
-        EuclidMLCCNetworkGenerator generator (points.size(), CenterPosition::RANDOM, levels, std::move(point_generator));
+        EuclidMLCCNetworkGenerator generator (
+                points.size(), CenterPosition::RANDOM, DemandType::UNIT, levels, std::move(point_generator));
 
         MLCCNetwork network = generator.generate();
 
@@ -122,14 +109,16 @@ TEST_CASE( "EuclidMLCCNetworkGenerator center type ", "[network][generation]" )
         REQUIRE( network.center() >= 0 );
     }
     SECTION( "center" ) {
-        EuclidMLCCNetworkGenerator generator (points.size(), CenterPosition::CENTER, levels, std::move(point_generator));
+        EuclidMLCCNetworkGenerator generator (
+                points.size(), CenterPosition::CENTER, DemandType::UNIT, levels, std::move(point_generator));
 
         MLCCNetwork network = generator.generate();
 
         REQUIRE( network.center() == 4 );
     }
     SECTION( "corner" ) {
-        EuclidMLCCNetworkGenerator generator (points.size(), CenterPosition::CORNER, levels, std::move(point_generator));
+        EuclidMLCCNetworkGenerator generator (
+                points.size(), CenterPosition::CORNER, DemandType::UNIT, levels, std::move(point_generator));
 
         MLCCNetwork network = generator.generate();
 
@@ -137,3 +126,64 @@ TEST_CASE( "EuclidMLCCNetworkGenerator center type ", "[network][generation]" )
     }
 
 }
+
+TEST_CASE( "EuclidMLCCNetworkGenerator demand type", "[network][generation]" )
+{
+    using Level = EuclidMLCCNetworkGenerator::Level;
+    using CenterPosition = EuclidMLCCNetworkGenerator::CenterPosition;
+    using DemandType = EuclidMLCCNetworkGenerator::DemandType;
+    using MLCMST::geometry::generation::RealPointGenerator;
+
+    const int size = 10;
+    std::vector<Level> levels {
+            Level{1, 1}, Level{3, 2}, Level{5, 3}
+    };
+    const int max_capacity = levels.back().capacity;
+    CenterPosition center_position = CenterPosition::RANDOM;
+    DemandType demandType;
+    auto point_gen = std::make_unique<RealPointGenerator>(0, 10);
+
+    SECTION( "unit" ) {
+        demandType = DemandType::UNIT;
+        EuclidMLCCNetworkGenerator generator(
+                size, center_position, demandType, levels, std::move(point_gen));
+        std::vector<int> expected_demand(size, 1);
+
+        MLCCNetwork mlcc_network = generator.generate();
+        expected_demand[mlcc_network.center()] = 0;
+
+        REQUIRE( mlcc_network.demands() == expected_demand );
+    }
+    SECTION( "random" ) {
+        demandType = DemandType::RANDOM;
+        EuclidMLCCNetworkGenerator generator(
+                size, center_position, demandType, levels, std::move(point_gen));
+
+        MLCCNetwork mlcc_network = generator.generate();
+
+        for (int i=0; i<size; i++) {
+            if (i == mlcc_network.center()) {
+                REQUIRE( mlcc_network.demand(i) == 0 );
+            } else {
+                REQUIRE( mlcc_network.demand(i) >= 1 );
+                REQUIRE( mlcc_network.demand(i) <= max_capacity );
+            }
+        }
+
+    }
+    SECTION( "set" ) {
+        demandType = DemandType::SET;
+        EuclidMLCCNetworkGenerator generator(
+                size, center_position, demandType, levels, std::move(point_gen));
+        std::vector<int> demands(10, 0);
+        std::iota(demands.begin(), demands.end(), 1);
+        generator.setDemands(demands);
+
+        MLCCNetwork mlcc_network = generator.generate();
+        demands[mlcc_network.center()] = 0;
+
+        REQUIRE( mlcc_network.demands() == demands );
+    }
+
+}
+

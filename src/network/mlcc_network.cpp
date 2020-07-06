@@ -34,6 +34,11 @@ int MLCCNetwork::demand(int v) const
     return _demands[v];
 }
 
+std::vector<int> MLCCNetwork::demands() const
+{
+    return _demands;
+}
+
 const Network& MLCCNetwork::network(int i) const
 {
     return _networks[i].network();

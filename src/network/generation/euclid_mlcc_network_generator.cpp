@@ -12,11 +12,11 @@
 namespace MLCMST::network::generation {
 
 EuclidMLCCNetworkGenerator::EuclidMLCCNetworkGenerator(
-    unsigned N, CenterPosition center_position, const std::vector<Level>& levels,
+    int N, CenterPosition center_position, DemandType demand_type, const std::vector<Level>& levels,
     std::unique_ptr< Generator<Point> > point_generator
 )
     : EuclidMLCCNetworkGenerator(
-        N, center_position, levels,
+        N, center_position, demand_type, levels,
         std::make_unique<geometry::generation::PointSetGenerator>(N, std::move(point_generator))
     )
 {
@@ -24,14 +24,17 @@ EuclidMLCCNetworkGenerator::EuclidMLCCNetworkGenerator(
 }
 
 EuclidMLCCNetworkGenerator::EuclidMLCCNetworkGenerator(
-    unsigned N,
+    int N,
     CenterPosition center_position,
+    DemandType demand_type,
     std::vector<Level> levels,
     std::unique_ptr< Generator<std::vector<Point>> > point_set_generator
 )
-    : _center_position(center_position), _levels(std::move(levels)), _point_set_generator(std::move(point_set_generator)),
+    : _size(N), _center_position(center_position), _demand_type(demand_type), _levels(std::move(levels)),
+        _point_set_generator(std::move(point_set_generator)),
         _int_generator(util::number::IntGenerator(0, static_cast<int>(N-1)))
 {
+    _demands = std::vector<int>(_size, 1);
 }
 
 EuclidMLCCNetworkGenerator::~EuclidMLCCNetworkGenerator() = default;
@@ -47,7 +50,7 @@ MLCCNetwork EuclidMLCCNetworkGenerator::generate()
         network_levels.emplace_back(level.capacity, Network(new_costs));
     }
     const int center = determineCenter(points);
-    vector<int> demands = vector<int>(N, 1);
+    vector<int> demands = generateDemands(network_levels.back().edgeCapacity());
     demands[center] = 0;
     return MLCCNetwork(center, network_levels, demands);
 }
@@ -57,16 +60,16 @@ int EuclidMLCCNetworkGenerator::determineCenter(const std::vector<Point>& points
     auto distance_matrix = geometry::util::createDistanceMatrix(points);
 
     switch (_center_position) {
-        case RANDOM:
+        case CenterPosition::RANDOM:
             return _int_generator.generate();
-        case CORNER:
+        case CenterPosition::CORNER:
         {
             auto it = std::min_element(points.begin(), points.end(), [] (const Point& p, const Point& q) -> bool {
                 return (p.y != q.y) ? p.y < q.y : p.x < q.x;
             });
             return std::distance(points.begin(), it);
         }
-        case CENTER:
+        case CenterPosition::CENTER:
         {
             std::vector<double> max_distances;
             std::transform(distance_matrix.begin(), distance_matrix.end(), std::back_inserter(max_distances),
@@ -76,6 +79,24 @@ int EuclidMLCCNetworkGenerator::determineCenter(const std::vector<Point>& points
         }
     }
     return 0;
+}
+
+std::vector<int> EuclidMLCCNetworkGenerator::generateDemands(int max_capacity)
+{
+    switch (_demand_type) {
+        case DemandType::UNIT:
+            return std::vector<int>(_size, 1);
+        case DemandType::RANDOM:
+        {
+            std::vector<int> dem(_size, 0);
+            for (int& x : dem) {
+                x = (_int_generator.generate() % max_capacity) + 1;
+            }
+            return dem;
+        }
+        case DemandType::SET:
+            return _demands;
+    }
 }
 
 vector<double> EuclidMLCCNetworkGenerator::flatten(const vector<vector<double>>& v)
@@ -100,6 +121,13 @@ vector<double> EuclidMLCCNetworkGenerator::multiply(vector<double> v, double sca
 std::vector<Point> EuclidMLCCNetworkGenerator::lastPointSet() const
 {
     return _last_point_set;
+}
+
+void EuclidMLCCNetworkGenerator::setDemands(const std::vector<int>& demands)
+{
+    if (_size == demands.size()) {
+        _demands = demands;
+    }
 }
 
 }

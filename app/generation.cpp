@@ -157,7 +157,9 @@ std::vector<MLCCNetwork> GenerationApp::generateNetworks(const GenerationParams 
     else
         point_generator = std::make_unique<generation::RealPointGenerator>(params.from, params.to);
 
-    EuclidMLCCNetworkGenerator generator(params.size, params.center_position, params.levels, std::move(point_generator));
+    EuclidMLCCNetworkGenerator generator(
+        params.size, params.center_position, EuclidMLCCNetworkGenerator::DemandType::UNIT,
+        params.levels, std::move(point_generator));
 
     std::vector<MLCCNetwork> networks;
     while (networks.size() < params.number) {

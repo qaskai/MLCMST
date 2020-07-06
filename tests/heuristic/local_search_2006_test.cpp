@@ -13,14 +13,15 @@ TEST_CASE( "Gavmros local search 2006 heuristic random", "[heuristic][local_sear
     using MLCMST::network::MLCCNetwork;
     using Level = generation::EuclidMLCCNetworkGenerator::Level;
     using CenterPos = generation::EuclidMLCCNetworkGenerator::CenterPosition;
+    using DemandType = generation::EuclidMLCCNetworkGenerator::DemandType;
 
     std::vector<Level> levels{
             Level { 1, 1 },
             Level { 3, 2 },
             Level { 5, 3.5 }
     };
-    generation::EuclidMLCCNetworkGenerator generator (30, CenterPos::RANDOM, levels,
-            std::make_unique<MLCMST::geometry::generation::IntPointGenerator>(0 ,20));
+    generation::EuclidMLCCNetworkGenerator generator (30, CenterPos::RANDOM, DemandType::UNIT,
+            levels, std::make_unique<MLCMST::geometry::generation::IntPointGenerator>(0 ,20));
     MLCCNetwork mlccNetwork = generator.generate();
 
     MLCMST::heuristic::LocalSearch2006 solver;

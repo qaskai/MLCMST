@@ -23,23 +23,32 @@ public:
         unsigned capacity;
         double cost_multiplier;
     };
-    enum CenterPosition
+    enum class CenterPosition
     {
         RANDOM, CORNER, CENTER
     };
+    enum class DemandType
+    {
+        UNIT, RANDOM, SET
+    };
 ;
     EuclidMLCCNetworkGenerator(
-        unsigned N, CenterPosition center_position, const std::vector<Level>& levels,
+        int N, CenterPosition center_position, DemandType demand_type, const std::vector<Level>& levels,
         std::unique_ptr< Generator<Point> > point_generator
     );
     ~EuclidMLCCNetworkGenerator() override;
 
     MLCCNetwork generate() override;
 
-    std::vector<Point> lastPointSet() const;
+    void setDemands(const std::vector<int>& demands);
+
+    [[nodiscard]] std::vector<Point> lastPointSet() const;
 
 private:
+    int _size;
     CenterPosition _center_position;
+    DemandType _demand_type;
+    std::vector<int> _demands;
     std::vector<Level> _levels;
 
     std::unique_ptr< Generator<vector<Point>> > _point_set_generator;
@@ -49,13 +58,15 @@ private:
 
 
     EuclidMLCCNetworkGenerator(
-        unsigned N,
+        int N,
         CenterPosition center_position,
+        DemandType demand_type,
         std::vector<Level> levels,
         std::unique_ptr< Generator<std::vector<Point>> > point_set_generator
     );
 
     int determineCenter(const std::vector<Point>& points);
+    std::vector<int> generateDemands(int max_capacity);
 
     vector<double> flatten(const vector<vector<double>>& v);
     vector<double> multiply(vector<double> v, double scalar);

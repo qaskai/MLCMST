@@ -20,12 +20,13 @@ network::MLCCNetwork generateNetwork()
 {
     using Level = generation::EuclidMLCCNetworkGenerator::Level;
     using CenterPos = generation::EuclidMLCCNetworkGenerator::CenterPosition;
+    using DemandType = generation::EuclidMLCCNetworkGenerator::DemandType;
 
     vector<Level> levels{
             Level { 1, 1 },
             Level { 3, 2 },
     };
-    generation::EuclidMLCCNetworkGenerator generator (30, CenterPos::RANDOM, levels,
+    generation::EuclidMLCCNetworkGenerator generator (30, CenterPos::RANDOM, DemandType::UNIT, levels,
             std::make_unique<geometry::generation::IntPointGenerator>(0 ,20));
     MLCCNetwork mlccNetwork = generator.generate();
 

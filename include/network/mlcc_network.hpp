@@ -29,6 +29,7 @@ public:
     [[nodiscard]] std::vector<int> regularVertexSet() const;
     [[nodiscard]] int levelsNumber() const;
     [[nodiscard]] int demand(int v) const;
+    [[nodiscard]] std::vector<int> demands() const;
     [[nodiscard]] const Network& network(int i) const;
     [[nodiscard]] int edgeCapacity(int network_i) const;
     [[nodiscard]] double edgeCost(int v, int w, int level) const;
