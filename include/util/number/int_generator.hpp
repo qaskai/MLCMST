@@ -10,7 +10,8 @@ namespace MLCMST::util::number {
 class IntGenerator final : public Generator<int>
 {
 public:
-    IntGenerator(int from, int to, unsigned seed = 1);
+    IntGenerator(int from, int to);
+    IntGenerator(int from, int to, long seed);
     ~IntGenerator() override;
 
     int generate() override;
