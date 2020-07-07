@@ -11,6 +11,7 @@ class IntPointGenerator : public Generator<Point>
 {
 public:
     IntPointGenerator(int from, int to);
+    IntPointGenerator(int from, int to, long seed);
     explicit IntPointGenerator(std::unique_ptr< Generator<int> > int_generator);
 
     Point generate() override;

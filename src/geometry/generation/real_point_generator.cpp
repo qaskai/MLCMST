@@ -16,6 +16,12 @@ RealPointGenerator::RealPointGenerator(std::unique_ptr< Generator<double> > numb
 
 }
 
+RealPointGenerator::RealPointGenerator(double from, double to, long seed)
+    : RealPointGenerator(std::make_unique<util::number::RealNumberGenerator>(from, to, seed))
+{
+
+}
+
 RealPointGenerator::~RealPointGenerator() = default;
 
 Point RealPointGenerator::generate()

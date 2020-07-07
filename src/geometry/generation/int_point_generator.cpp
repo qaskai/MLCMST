@@ -15,6 +15,12 @@ IntPointGenerator::IntPointGenerator(std::unique_ptr<Generator<int>> int_generat
 
 }
 
+IntPointGenerator::IntPointGenerator(int from, int to, long seed)
+    : IntPointGenerator(std::make_unique<util::number::IntGenerator>(from, to, seed))
+{
+
+}
+
 Point IntPointGenerator::generate()
 {
     return Point( _int_generator->generate(), _int_generator->generate() );
