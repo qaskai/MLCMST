@@ -7,8 +7,6 @@
 
 #include <heuristic/link_upgrade_ud.hpp>
 
-#include <glog/logging.h>
-
 namespace MLCMST::heuristic {
 
 double LocalSearch2006::EPS_ = 1e-9;
@@ -28,7 +26,6 @@ LocalSearch2006::~LocalSearch2006() = default;
 
 MLCMSTSolver::Result LocalSearch2006::solve(const network::MLCCNetwork &network)
 {
-    google::FlushLogFiles(google::INFO);
     auto time_start = std::chrono::high_resolution_clock::now();
     network_ = &network;
     std::vector<int> group_id = inner_mlcmst_solver_->solve(network).mlcmst->subnet();
@@ -87,11 +84,12 @@ LocalSearch2006::Network LocalSearch2006::buildNeighbourhoodGraph(const std::vec
     const auto subnetGroups = this->groups(group_id);
     const std::unordered_map<int, int> group_demands = groupDemands(group_id);
 
-    // TODO: add checks for feasibility in non-unit demand case
     // regular node edges
     for (int i : network_->regularVertexSet()) {
         for (int j : network_->regularVertexSet()) {
             if (i==j || group_id[i] == group_id[j])
+                continue;
+            if (group_demands.at(group_id[j]) + network_->demand(i) - network_->demand(j) > max_edge_capacity)
                 continue;
             std::vector<int> new_group = subnetGroups.at(group_id[j]);
             new_group.erase(std::find(new_group.begin(), new_group.end(), j));
@@ -104,7 +102,9 @@ LocalSearch2006::Network LocalSearch2006::buildNeighbourhoodGraph(const std::vec
     for (int i : network_->regularVertexSet()) {
         for (const auto& group : subnetGroups) {
             int g_id = group.first;
-            if (group_id[i] == g_id || group_demands.at(g_id) + network_->demand(i) > max_edge_capacity)
+            if (group_id[i] == g_id)
+                continue;
+            if (group_demands.at(g_id) + network_->demand(i) > max_edge_capacity)
                 continue;
             std::vector<int> new_group = group.second;
             new_group.push_back(i);
@@ -206,7 +206,6 @@ LocalSearch2006::findBestProfitableExchange(int s, const LocalSearch2006::Networ
         }
     };
 
-    // TODO : add checks for feasibility in non-unit demand case
     auto process_arc = [&] (int i, int j) {
         if (d[j] <= d[i] + net.edgeCost(i, j) + EPS_) {
             return;
