@@ -9,6 +9,7 @@ namespace MLCMST::util {
 
 std::string read_stream(std::istream& stream);
 std::vector<int> firstN(unsigned int N);
+long clockMilliseconds();
 
 template <typename T>
 std::vector<std::vector<T>> break_up(unsigned int N, std::vector<T> vec);

@@ -1,12 +1,12 @@
 #include <util/number/real_number_generator.hpp>
 
 #include <cassert>
-#include <chrono>
+
+#include <util/util.hpp>
 
 namespace MLCMST::util::number {
 
-RealNumberGenerator::RealNumberGenerator(double from, double to) : RealNumberGenerator(from, to,
-        std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::system_clock::now()).time_since_epoch().count())
+RealNumberGenerator::RealNumberGenerator(double from, double to) : RealNumberGenerator(from, to, clockMilliseconds())
 {
 }
 

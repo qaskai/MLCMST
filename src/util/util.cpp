@@ -1,5 +1,6 @@
 #include <util/util.hpp>
 
+#include <chrono>
 #include <numeric>
 
 namespace MLCMST::util {
@@ -13,6 +14,13 @@ std::vector<int> firstN(unsigned int N) {
     std::vector<int> v(N);
     std::iota(v.begin(), v.end(), 0);
     return v;
+}
+
+long clockMilliseconds()
+{
+    auto now = std::chrono::system_clock::now();
+    auto time_point = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
+    return time_point.time_since_epoch().count();
 }
 
 }
