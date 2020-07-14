@@ -52,7 +52,6 @@ private:
     bool step(std::vector<int>& group_id);
     std::optional<std::vector<int>> findBestProfitableExchange(const std::vector<int>& group_id);
     void implementExchange(std::vector<int> exchange, std::vector<int>& group_id);
-    MLCMST buildMLCMST(const std::vector<int>& group_id);
 
 };
 

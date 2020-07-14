@@ -107,5 +107,25 @@ MLCMST_SubnetSolver::createGroups(int center, const std::vector<int> &vertex_sub
     return groups;
 }
 
+network::MLCMST MLCMST_SubnetSolver::solveMLCMST(
+        const network::MLCCNetwork &network, const std::vector<int> &vertex_subnet)
+{
+    return solveMLCMST(network, createGroups(network.center(), vertex_subnet));
+}
+
+network::MLCMST MLCMST_SubnetSolver::solveMLCMST(
+        const network::MLCCNetwork &network, const std::unordered_map<int, std::vector<int>> &groups)
+{
+    network::MLCMST mlcmst(network.vertexCount(), network.center());
+    for (const auto& group : groups) {
+        auto [ inner_mlcmst, mapping ] = subnetTree(network, group.second);
+        for (int i=0; i<mapping.size(); i++) {
+            mlcmst.parent(mapping[i]) = mapping[inner_mlcmst.parent(i)];
+            mlcmst.edgeLevel(mapping[i]) = inner_mlcmst.edgeLevel(i);
+        }
+    }
+    return mlcmst;
+}
+
 
 }

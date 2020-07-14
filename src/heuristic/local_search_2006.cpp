@@ -37,7 +37,7 @@ MLCMSTSolver::Result LocalSearch2006::solve(const network::MLCCNetwork &network)
     double wall_time = std::chrono::duration<double, std::milli>(time_end - time_start).count();
 
     return Result {
-        buildMLCMST(group_id),
+        subnet_solver_.solveMLCMST(*network_, group_id),
         std::nullopt,
         wall_time,
         true
@@ -125,19 +125,6 @@ LocalSearch2006::Network LocalSearch2006::buildNeighbourhoodGraph(const std::vec
     }
 
     return network;
-}
-
-LocalSearch2006::MLCMST LocalSearch2006::buildMLCMST(const std::vector<int> &group_id)
-{
-    MLCMST mlcmst(network_->vertexCount(), network_->center());
-    for (const auto& group : groups(group_id)) {
-        auto [ inner_mlcmst, mapping ] = subnet_solver_.subnetTree(*network_, group.second);
-        for (int i=0; i<mapping.size(); i++) {
-            mlcmst.parent(mapping[i]) = mapping[inner_mlcmst.parent(i)];
-            mlcmst.edgeLevel(mapping[i]) = inner_mlcmst.edgeLevel(i);
-        }
-    }
-    return mlcmst;
 }
 
 std::optional<std::vector<int>> LocalSearch2006::findBestProfitableExchange(const std::vector<int> &group_id)

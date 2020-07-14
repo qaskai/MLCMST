@@ -43,6 +43,11 @@ public:
 
     Result solveSubnet(const network::MLCCNetwork& network, std::vector<int> subnet_vertices);
 
+    network::MLCMST solveMLCMST(const network::MLCCNetwork& network, const std::vector<int>& vertex_subnet);
+    network::MLCMST solveMLCMST(
+            const network::MLCCNetwork& network, const std::unordered_map<int, std::vector<int>>& groups);
+
+
 
 private:
     std::unique_ptr< MLCMSTSolver > solver_;
