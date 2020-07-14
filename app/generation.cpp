@@ -25,12 +25,13 @@ typedef EuclidMLCCNetworkGenerator::Level Level;
 
 struct GenerationParams
 {
-    unsigned number{};
-    unsigned size{};
-    double from{}, to{};
-    bool integer{};
+    unsigned number;
+    unsigned size;
+    double from, to;
+    bool integer;
+    std::optional<long> seed;
     CenterPosition center_position;
-    std::vector<Level> levels{};
+    std::vector<Level> levels;
 };
 
 class GenerationApp : public App<GenerationParams>
@@ -73,6 +74,7 @@ cxxopts::Options GenerationApp::createOptions()
         ("capacity", "Graph levels edge capacity | required", cxxopts::value<std::vector<unsigned>>())
         ("cost", "Graph levels cost multiplier | required", cxxopts::value<std::vector<double>>())
         ("center", "enum: " + center_positions_string + " | required", cxxopts::value<std::string>())
+        ("seed", "seed used in random points generator", cxxopts::value<long>())
         ("h,help", "Print usage")
         ;
 
@@ -125,6 +127,11 @@ GenerationParams GenerationApp::extractParams(const cxxopts::ParseResult &result
     params.number = result["number"].as<unsigned>();
     params.size = result["size"].as<unsigned>();
     params.integer = result["integer"].as<bool>();
+    if (result.count("seed")) {
+        params.seed = result["seed"].as<long>();
+    } else {
+        params.seed = std::nullopt;
+    }
     params.center_position = center_positions.at(result["center"].as<std::string>());
 
     std::vector<double> range = result["range"].as<std::vector<double>>();
@@ -153,9 +160,13 @@ std::vector<MLCCNetwork> GenerationApp::generateNetworks(const GenerationParams 
 
     std::unique_ptr< Generator<Point> > point_generator;
     if (params.integer)
-        point_generator = std::make_unique<generation::IntPointGenerator>(params.from, params.to);
+        point_generator = params.seed.has_value() ?
+                std::make_unique<generation::IntPointGenerator>(params.from, params.to, params.seed.value())
+                : std::make_unique<generation::IntPointGenerator>(params.from, params.to);
     else
-        point_generator = std::make_unique<generation::RealPointGenerator>(params.from, params.to);
+        point_generator = params.seed.has_value() ?
+                          std::make_unique<generation::RealPointGenerator>(params.from, params.to, params.seed.value())
+                          : std::make_unique<generation::RealPointGenerator>(params.from, params.to);
 
     EuclidMLCCNetworkGenerator generator(
         params.size, params.center_position, EuclidMLCCNetworkGenerator::DemandType::UNIT,
