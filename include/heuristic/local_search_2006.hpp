@@ -6,6 +6,7 @@
 #include <unordered_map>
 
 #include <mlcmst_solver.hpp>
+#include <mlcmst_subnet_solver.hpp>
 
 #include <network/network.hpp>
 #include <network/mlcc_network.hpp>
@@ -17,7 +18,7 @@ class LocalSearch2006 : public MLCMSTSolver
 {
 public:
     LocalSearch2006();
-    explicit LocalSearch2006(std::unique_ptr< MLCMSTSolver > inner_mlcmst_solver);
+    LocalSearch2006(std::unique_ptr< MLCMSTSolver > init_solver, std::unique_ptr< MLCMSTSolver > inner_mlcmst_solver);
     ~LocalSearch2006() override;
 
     Result solve(const network::MLCCNetwork& network) override;
@@ -29,7 +30,8 @@ private:
 
     static double EPS_;
 
-    std::unique_ptr< MLCMSTSolver > inner_mlcmst_solver_;
+    std::unique_ptr< MLCMSTSolver > init_solver_;
+    MLCMST_SubnetSolver subnet_solver_;
 
     const MLCCNetwork* network_;
 
@@ -41,16 +43,8 @@ private:
      * @return Neighbourhood graph
      */
     Network buildNeighbourhoodGraph(const std::vector<int>& group_id);
-    /**
-     * Solve sub problem.
-     * @param vertices - vertices on which problem will be solved (without center, which will be added).
-     * @return (mlcmst, vertex id mapping, mlcmst cost)
-     */
-    std::tuple<MLCMST, std::vector<int>, double> solveSubnet(const std::vector<int>& vertices);
-    double subnetCost(const std::vector<int>& vertices);
-    std::unordered_map<int, int> groupDemands(const std::vector<int>& group_id);
 
-    std::unordered_map<int, double> allSubnetCosts(const std::vector<int>& group_id);
+    std::unordered_map<int, int> groupDemands(const std::vector<int>& group_id);
     std::unordered_map<int, std::vector<int>> groups(const std::vector<int>& group_id);
     std::optional<std::pair<std::vector<int>, double>> findBestProfitableExchange(int s, const Network& net,
             const std::vector<int>& group_id);

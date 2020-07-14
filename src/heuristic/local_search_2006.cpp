@@ -11,13 +11,14 @@ namespace MLCMST::heuristic {
 
 double LocalSearch2006::EPS_ = 1e-9;
 
-LocalSearch2006::LocalSearch2006() : LocalSearch2006(std::make_unique<LinkUpgradeUD>())
+LocalSearch2006::LocalSearch2006() : LocalSearch2006(std::make_unique<LinkUpgradeUD>(), std::make_unique<LinkUpgradeUD>())
 {
 
 }
 
-LocalSearch2006::LocalSearch2006(std::unique_ptr<MLCMSTSolver> inner_mlcmst_solver)
-    : inner_mlcmst_solver_(std::move(inner_mlcmst_solver))
+LocalSearch2006::LocalSearch2006(std::unique_ptr< MLCMSTSolver > init_solver,
+                                 std::unique_ptr< MLCMSTSolver > inner_mlcmst_solver)
+    : init_solver_(std::move(init_solver)), subnet_solver_(std::move(inner_mlcmst_solver))
 {
 
 }
@@ -28,7 +29,7 @@ MLCMSTSolver::Result LocalSearch2006::solve(const network::MLCCNetwork &network)
 {
     auto time_start = std::chrono::high_resolution_clock::now();
     network_ = &network;
-    std::vector<int> group_id = inner_mlcmst_solver_->solve(network).mlcmst->subnet();
+    std::vector<int> group_id = init_solver_->solve(network).mlcmst->subnet();
 
     while ( step(group_id) );
 
@@ -80,8 +81,8 @@ LocalSearch2006::Network LocalSearch2006::buildNeighbourhoodGraph(const std::vec
     const int N = network_->vertexCount();
     const int origin = 2*N;
     const int max_edge_capacity = network_->edgeCapacity(network_->levelsNumber()-1);
-    const auto subnetCosts = this->allSubnetCosts(group_id);
     const auto subnetGroups = this->groups(group_id);
+    const auto subnetCosts = subnet_solver_.allSubnetTreeCosts(*network_, subnetGroups);
     const std::unordered_map<int, int> group_demands = groupDemands(group_id);
 
     // regular node edges
@@ -94,7 +95,7 @@ LocalSearch2006::Network LocalSearch2006::buildNeighbourhoodGraph(const std::vec
             std::vector<int> new_group = subnetGroups.at(group_id[j]);
             new_group.erase(std::find(new_group.begin(), new_group.end(), j));
             new_group.push_back(i);
-            network.edgeCost(i, j) = subnetCost(new_group) - subnetCosts.at(group_id[j]);
+            network.edgeCost(i, j) = subnet_solver_.subnetTreeCost(*network_, new_group) - subnetCosts.at(group_id[j]);
         }
     }
 
@@ -108,7 +109,7 @@ LocalSearch2006::Network LocalSearch2006::buildNeighbourhoodGraph(const std::vec
                 continue;
             std::vector<int> new_group = group.second;
             new_group.push_back(i);
-            network.edgeCost(i, N + g_id) = subnetCost(new_group) - subnetCosts.at(g_id);
+            network.edgeCost(i, N + g_id) = subnet_solver_.subnetTreeCost(*network_, new_group) - subnetCosts.at(g_id);
         }
     }
 
@@ -120,7 +121,7 @@ LocalSearch2006::Network LocalSearch2006::buildNeighbourhoodGraph(const std::vec
     for (int i : network_->regularVertexSet()) {
         std::vector<int> new_group = subnetGroups.at(group_id[i]);
         new_group.erase(std::find(new_group.begin(), new_group.end(), i));
-        network.edgeCost(origin, i) = subnetCost(new_group) - subnetCosts.at(group_id[i]);
+        network.edgeCost(origin, i) = subnet_solver_.subnetTreeCost(*network_, new_group) - subnetCosts.at(group_id[i]);
     }
 
     return network;
@@ -130,7 +131,7 @@ LocalSearch2006::MLCMST LocalSearch2006::buildMLCMST(const std::vector<int> &gro
 {
     MLCMST mlcmst(network_->vertexCount(), network_->center());
     for (const auto& group : groups(group_id)) {
-        auto [ inner_mlcmst, mapping, _ ] = solveSubnet(group.second);
+        auto [ inner_mlcmst, mapping ] = subnet_solver_.subnetTree(*network_, group.second);
         for (int i=0; i<mapping.size(); i++) {
             mlcmst.parent(mapping[i]) = mapping[inner_mlcmst.parent(i)];
             mlcmst.edgeLevel(mapping[i]) = inner_mlcmst.edgeLevel(i);
@@ -266,29 +267,6 @@ std::unordered_map<int, std::vector<int>> LocalSearch2006::groups(const std::vec
     }
     groups.erase(group_id[network_->center()]);
     return groups;
-}
-
-std::unordered_map<int, double> LocalSearch2006::allSubnetCosts(const std::vector<int> &group_id)
-{
-    std::unordered_map<int, double> costs;
-    for (const auto& group : groups(group_id)) {
-        costs[group.first] = subnetCost(group.second);
-    }
-    return costs;
-}
-
-double LocalSearch2006::subnetCost(const std::vector<int> &vertices)
-{
-    double cost;
-    std::tie(std::ignore, std::ignore, cost) = solveSubnet(vertices);
-    return cost;
-}
-
-std::tuple<network::MLCMST, std::vector<int>, double> LocalSearch2006::solveSubnet(const std::vector<int>& vertices)
-{
-    auto [ sub_net, mapping ] = network_->subNetwork(vertices);
-    MLCMST sub_net_mlcmst = inner_mlcmst_solver_->solve(sub_net).mlcmst.value();
-    return std::make_tuple(sub_net_mlcmst, mapping, sub_net_mlcmst.cost(sub_net));
 }
 
 std::unordered_map<int, int> LocalSearch2006::groupDemands(const std::vector<int>& group_id) {
