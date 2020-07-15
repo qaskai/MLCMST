@@ -47,3 +47,40 @@ TEST_CASE( "network subNet", "[network]" )
     });
 
 }
+
+TEST_CASE( "network operators", "[network]" )
+{
+    using MLCMST::network::Network;
+
+    Network network ({
+        { 1.3, 2.0, 1.3 },
+        { 3.1, 0.0, 1.2 },
+        { 5.4, 1.2, 3.2 }
+    });
+
+    SECTION( "euqality" ) {
+        Network net = network;
+        REQUIRE( net == network );
+        REQUIRE( network == net );
+    }
+    SECTION( "inequality" ) {
+        Network net = network;
+        net.edgeCost(0,2) = 0.5;
+        REQUIRE( net != network );
+        REQUIRE( network != net );
+    }
+    SECTION( "multiplication" ) {
+        double scalar = 2.5;
+        Network net1 = scalar * network;
+        Network net2 = network * scalar;
+
+        REQUIRE( net1 == net2 );
+        REQUIRE( net1.vertexCount() == network.vertexCount() );
+        for (int i=0; i < network.vertexCount(); i++) {
+            for (int j=0; j < network.vertexCount(); j++) {
+                REQUIRE( net1.edgeCost(i,j) == scalar*network.edgeCost(i,j) );
+            }
+        }
+    }
+
+}

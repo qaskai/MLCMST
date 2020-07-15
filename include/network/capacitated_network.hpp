@@ -14,6 +14,8 @@ public:
 
     [[nodiscard]] int vertexCount() const;
     [[nodiscard]] int edgeCapacity() const;
+    double& edgeCost(int i, int j);
+    [[nodiscard]] double edgeCost(int i, int j) const;
     [[nodiscard]] const Network& network() const;
 
     static double infinity();
@@ -26,5 +28,7 @@ private:
 
 bool operator==(const CapacitatedNetwork& cn1, const CapacitatedNetwork& cn2);
 bool operator!=(const CapacitatedNetwork& cn1, const CapacitatedNetwork& cn2);
+CapacitatedNetwork operator*(const CapacitatedNetwork& n, double scalar);
+CapacitatedNetwork operator*(double scalar, const CapacitatedNetwork& n);
 
 }

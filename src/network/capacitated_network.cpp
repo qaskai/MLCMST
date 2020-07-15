@@ -22,6 +22,16 @@ int CapacitatedNetwork::edgeCapacity() const
     return _edge_capacity;
 }
 
+double& CapacitatedNetwork::edgeCost(int i, int j)
+{
+    return _network.edgeCost(i,j);
+}
+
+double CapacitatedNetwork::edgeCost(int i, int j) const
+{
+    return _network.edgeCost(i,j);
+}
+
 const Network& CapacitatedNetwork::network() const
 {
     return _network;
@@ -49,6 +59,16 @@ bool operator==(const CapacitatedNetwork& cn1, const CapacitatedNetwork& cn2)
 bool operator!=(const CapacitatedNetwork& cn1, const CapacitatedNetwork& cn2)
 {
     return !(cn1 == cn2);
+}
+
+CapacitatedNetwork operator*(const CapacitatedNetwork& n, double scalar)
+{
+    return CapacitatedNetwork(n.edgeCapacity(), scalar * n.network());
+}
+
+CapacitatedNetwork operator*(double scalar, const CapacitatedNetwork& n)
+{
+    return n*scalar;
 }
 
 }

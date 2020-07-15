@@ -29,10 +29,13 @@ public:
     [[nodiscard]] std::vector<int> regularVertexSet() const;
     [[nodiscard]] int levelsNumber() const;
     [[nodiscard]] int demand(int v) const;
-    [[nodiscard]] std::vector<int> demands() const;
+    [[nodiscard]] const std::vector<int>& demands() const;
     [[nodiscard]] const Network& network(int i) const;
+    [[nodiscard]] const std::vector<CapacitatedNetwork>& networks() const;
     [[nodiscard]] int edgeCapacity(int network_i) const;
     [[nodiscard]] double edgeCost(int v, int w, int level) const;
+
+    [[nodiscard]] MLCCNetwork multiplyEdgeCosts(double scalar) const;
 
     static double infinity();
     [[nodiscard]] std::pair<MLCCNetwork, std::vector<int>> subNetwork(std::vector<int> vertices) const;

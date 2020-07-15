@@ -1,5 +1,6 @@
 #include <network/network.hpp>
 
+#include <algorithm>
 #include <cmath>
 #include <utility>
 #include <unordered_map>
@@ -106,5 +107,25 @@ bool operator!=(const Network& n1, const Network& n2)
 {
     return !(n1 == n2);
 }
+
+Network operator*(const Network& n, double scalar)
+{
+    std::vector<std::vector<double>> costs;
+    costs.reserve(n.vertexCount());
+    std::transform(n.costs().begin(), n.costs().end(), std::back_inserter(costs),
+        [scalar] (std::vector<double> v) {
+            for (double& x : v) {
+                x*= scalar;
+            }
+            return v;
+        });
+    return Network(costs);
+}
+
+Network operator*(double scalar, const Network& n)
+{
+    return n*scalar;
+}
+
 
 }

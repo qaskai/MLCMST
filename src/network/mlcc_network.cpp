@@ -34,7 +34,7 @@ int MLCCNetwork::demand(int v) const
     return _demands[v];
 }
 
-std::vector<int> MLCCNetwork::demands() const
+const std::vector<int>& MLCCNetwork::demands() const
 {
     return _demands;
 }
@@ -42,6 +42,11 @@ std::vector<int> MLCCNetwork::demands() const
 const Network& MLCCNetwork::network(int i) const
 {
     return _networks[i].network();
+}
+
+const std::vector<CapacitatedNetwork>& MLCCNetwork::networks() const
+{
+    return _networks;
 }
 
 int MLCCNetwork::edgeCapacity(int network_i) const
@@ -83,6 +88,16 @@ std::pair<MLCCNetwork, std::vector<int>> MLCCNetwork::subNetwork(std::vector<int
         sub_demands.push_back(_demands[x]);
     }
     return std::make_pair(MLCCNetwork(sub_center, sub_networks, sub_demands), mapping);
+}
+
+MLCCNetwork MLCCNetwork::multiplyEdgeCosts(double scalar) const
+{
+    std::vector<CapacitatedNetwork> networks = _networks;
+    std::transform(networks.begin(), networks.end(), networks.begin(),
+        [scalar] (const CapacitatedNetwork& cap_net) {
+            return cap_net * scalar;
+        });
+    return MLCCNetwork(_center, networks, _demands);
 }
 
 double MLCCNetwork::infinity()

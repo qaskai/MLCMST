@@ -34,5 +34,7 @@ private:
 
 bool operator==(const Network& n1, const Network& n2);
 bool operator!=(const Network& n1, const Network& n2);
+Network operator*(const Network& n, double scalar);
+Network operator*(double scalar, const Network& n);
 
 }
