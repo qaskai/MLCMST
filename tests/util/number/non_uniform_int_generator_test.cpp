@@ -23,3 +23,17 @@ TEST_CASE( "Non-uniform Int generator", "[generation][number]" )
         REQUIRE( Approx(percentage).margin(0.02) == probabilities[i] );
     }
 }
+
+TEST_CASE( "Non-uniform integer generator - invalid probabilities", "[generation][number]")
+{
+    using MLCMST::util::number::NonUniformIntGenerator;
+    SECTION( "does not add up to 1" ) {
+        REQUIRE_THROWS_AS(NonUniformIntGenerator(1, {0.5,0.3}), std::invalid_argument);
+    }
+    SECTION( "probability lower than 0" ) {
+        REQUIRE_THROWS_AS(NonUniformIntGenerator(1, {0.5, -0.5, 1.0}), std::invalid_argument);
+    }
+    SECTION( "probability hier then 1" ) {
+        REQUIRE_THROWS_AS(NonUniformIntGenerator(1, {1.5}), std::invalid_argument);
+    }
+}
