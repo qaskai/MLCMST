@@ -22,6 +22,7 @@ public:
     ~LocalSearch2006() override;
 
     Result solve(const network::MLCCNetwork& network) override;
+    std::vector<int> improvementStep(const network::MLCCNetwork& network, std::vector<int> group_ids);
 
 private:
     using MLCMST = network::MLCMST;
@@ -49,7 +50,6 @@ private:
     std::optional<std::pair<std::vector<int>, double>> findBestProfitableExchange(int s, const Network& net,
             const std::vector<int>& group_id);
 
-    bool step(std::vector<int>& group_id);
     std::optional<std::vector<int>> findBestProfitableExchange(const std::vector<int>& group_id);
     void implementExchange(std::vector<int> exchange, std::vector<int>& group_id);
 

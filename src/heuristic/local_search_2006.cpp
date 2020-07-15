@@ -29,31 +29,35 @@ MLCMSTSolver::Result LocalSearch2006::solve(const network::MLCCNetwork &network)
 {
     auto time_start = std::chrono::high_resolution_clock::now();
     network_ = &network;
-    std::vector<int> group_id = init_solver_->solve(network).mlcmst->subnet();
+    std::vector<int> group_ids = init_solver_->solve(network).mlcmst->subnet();
 
-    while ( step(group_id) );
+    bool done = false;
+    while (!done) {
+        std::vector<int> new_group_ids = improvementStep(network, group_ids);
+        done = std::equal(group_ids.begin(), group_ids.end(), new_group_ids.begin());
+        group_ids = new_group_ids;
+    };
 
     auto time_end = std::chrono::high_resolution_clock::now();
     double wall_time = std::chrono::duration<double, std::milli>(time_end - time_start).count();
 
     return Result {
-        subnet_solver_.solveMLCMST(*network_, group_id),
+        subnet_solver_.solveMLCMST(*network_, group_ids),
         std::nullopt,
         wall_time,
         true
     };
 }
 
-bool LocalSearch2006::step(std::vector<int>& group_id)
+std::vector<int>
+LocalSearch2006::improvementStep(const network::MLCCNetwork &network, std::vector<int> group_ids)
 {
-    std::optional< std::vector<int> > exchange = findBestProfitableExchange(group_id);
+    network_ = &network;
+    std::optional< std::vector<int> > exchange = findBestProfitableExchange(group_ids);
     if (exchange.has_value()) {
-        implementExchange(exchange.value(), group_id);
-        return true;
+        implementExchange(exchange.value(), group_ids);
     }
-    else {
-        return false;
-    }
+    return group_ids;
 }
 
 void LocalSearch2006::implementExchange(std::vector<int> exchange, std::vector<int> &group_id)
