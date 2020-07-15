@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <string>
 #include <istream>
 #include <vector>
@@ -10,9 +11,20 @@ namespace MLCMST::util {
 std::string read_stream(std::istream& stream);
 std::vector<int> firstN(unsigned int N);
 long clockMilliseconds();
+double mean(const std::vector<double> &v);
+double stdev(const std::vector<double>& v);
+
+
 
 template <typename T>
 std::vector<std::vector<T>> break_up(unsigned int N, std::vector<T> vec);
+
+template <typename T>
+std::unordered_map<T, int> valueToIndex(const std::vector<T>& v);
+template <typename V>
+std::unordered_map<V, std::vector<int> > groupIndexesByValue(const std::vector<V>& v);
+
+
 
 
 // template function implementation
@@ -38,6 +50,16 @@ std::unordered_map<T, int> valueToIndex(const std::vector<T>& v)
         mapping[v[i]] = i;
     }
     return mapping;
+}
+
+template <typename V>
+std::unordered_map<V, std::vector<int> > groupIndexesByValue(const std::vector<V>& v)
+{
+    std::unordered_map<V, std::vector<int> > groups;
+    for (int i=0; i < v.size(); i++) {
+        groups[v[i]].push_back(i);
+    }
+    return groups;
 }
 
 }

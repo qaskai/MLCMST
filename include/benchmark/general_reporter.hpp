@@ -25,7 +25,6 @@ private:
     void printTimeStats(const std::vector<MLCMSTSolver::Result>& results);
 
     void printStatistics(const std::vector<double>& v);
-    double average(const std::vector<double>& v);
 
 };
 

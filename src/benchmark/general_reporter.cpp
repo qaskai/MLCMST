@@ -3,6 +3,8 @@
 #include <numeric>
 #include <algorithm>
 
+#include <util/util.hpp>
+
 namespace MLCMST::benchmark {
 
 GeneralReporter::GeneralReporter(std::ostream &out) : _out(out)
@@ -98,17 +100,10 @@ void GeneralReporter::printStatistics(const std::vector<double> &v)
         _out << "no stats...\n";
         return;
     }
-    _out << "avg " << average(v) << " ";
+    _out << "avg " << util::mean(v) << " ";
     _out << "min " << *std::min_element(v.begin(), v.end()) << " ";
     _out << "max " << *std::max_element(v.begin(), v.end()) << " ";
     _out << "\n";
 }
-
-double GeneralReporter::average(const std::vector<double> &v)
-{
-    double sum = std::accumulate(v.begin(), v.end(), 0.0);
-    return sum / v.size();
-}
-
 
 }
