@@ -18,12 +18,29 @@ struct Chromosome
 
 public:
     static std::vector<int> createGroupIdVector(int center, const std::vector<int>& vertex_group);
+    [[nodiscard]] Chromosome refreshIds() const;
 };
 }
 
 class GeneticGamvros final : public MLCMSTSolver
 {
 public:
+    struct Params {
+        int population_size = 100;
+        int most_fit_mutate_number = 10;
+        int parents_number = 70;
+        int generations_number = 10;
+
+        double network_fuzzing_epsilon = 0.5;
+
+        double crossover_shrunk_move_probability = 0.9;
+        int crossover_move_less_than_k = 6;
+    };
+
+    GeneticGamvros(
+            std::vector<std::unique_ptr< MLCMSTSolver > > init_population_solvers,
+            std::unique_ptr< MLCMSTSolver > subnet_solver,
+            const Params& params);
     ~GeneticGamvros() override;
 
     Result solve(const network::MLCCNetwork &mlcc_network) override;
@@ -33,11 +50,7 @@ private:
 
     const network::MLCCNetwork* network_;
 
-    int population_size_;
-    int most_fit_mutate_number_;
-    int parents_number_;
-    int generations_number_;
-
+    Params params_;
     std::vector<std::unique_ptr< MLCMSTSolver >> init_population_solvers_;
     MLCMST_SubnetSolver subnet_solver_;
 

@@ -32,9 +32,30 @@ std::vector<int> Chromosome::createGroupIdVector(int center, const std::vector<i
     return std::vector<int>(group_ids.begin(), group_ids.end());
 }
 
+Chromosome Chromosome::refreshIds() const
+{
+    std::unordered_map<int, int> mapping;
+    std::vector<int> new_vertex_group(vertex_group.size());
+    for (int i=0; i<vertex_group.size(); i++) {
+        int old_g = vertex_group[i];
+        if (!mapping.count(old_g)) {
+            mapping[old_g] = i;
+        }
+        new_vertex_group[i] = mapping[old_g];
+    }
+    return Chromosome(center, new_vertex_group);
+}
+
 }
 
 
+
+GeneticGamvros::GeneticGamvros(std::vector<std::unique_ptr<MLCMSTSolver>> init_population_solvers,
+        std::unique_ptr<MLCMSTSolver> subnet_solver, const Params& params)
+    : params_(params), init_population_solvers_(std::move(init_population_solvers)),
+      subnet_solver_(std::move(subnet_solver))
+{
+}
 
 GeneticGamvros::~GeneticGamvros() = default;
 
@@ -47,15 +68,16 @@ MLCMSTSolver::Result GeneticGamvros::solve(const network::MLCCNetwork &mlcc_netw
     auto time_start = std::chrono::high_resolution_clock::now();
 
     std::vector< internal::Chromosome > population = initializePopulation();
-    for (int i=0; i < generations_number_; i++) {
+    for (int i=0; i < params_.generations_number; i++) {
         auto population_with_fitness = evaluateFitness(population);
         auto copied_chromosomes = selectChromosomes(
-                population_size_ - parents_number_ - most_fit_mutate_number_, population_with_fitness);
-        auto children = crossoverChromosomes(selectChromosomes(parents_number_, population_with_fitness));
-        auto mutated_chromosomes = mutate(selectMostFit(most_fit_mutate_number_, population_with_fitness));
+                params_.population_size - params_.parents_number - params_.most_fit_mutate_number, population_with_fitness);
+        auto children = crossoverChromosomes(selectChromosomes(params_.parents_number, population_with_fitness));
+        auto mutated_chromosomes = mutate(selectMostFit(
+                params_.most_fit_mutate_number, population_with_fitness));
 
         std::vector< internal::Chromosome > new_population;
-        new_population.reserve(population_size_);
+        new_population.reserve(params_.population_size);
         new_population.insert(new_population.end(), copied_chromosomes.begin(), copied_chromosomes.end());
         new_population.insert(new_population.end(), children.begin(), children.end());
         new_population.insert(new_population.end(), children.begin(), children.end());
@@ -76,15 +98,13 @@ MLCMSTSolver::Result GeneticGamvros::solve(const network::MLCCNetwork &mlcc_netw
 
 std::vector<internal::Chromosome> GeneticGamvros::initializePopulation()
 {
-    const double network_multiplication_epsilon = 0.1;
-
     util::number::RealNumberGenerator epsilon_generator(
-            1.0 - network_multiplication_epsilon, 1.0 + network_multiplication_epsilon);
+            1.0 - params_.network_fuzzing_epsilon, 1.0 + params_.network_fuzzing_epsilon);
     std::vector<internal::Chromosome> population;
-    population.reserve(population_size_);
+    population.reserve(params_.population_size);
 
-    while (population.size() < population_size_) {
-        for (int i=0; i < init_population_solvers_.size() && population.size() < population_size_; i++){
+    while (population.size() < params_.population_size) {
+        for (int i=0; i < init_population_solvers_.size() && population.size() < params_.population_size; i++){
             network::MLCMST mlcmst = init_population_solvers_[i]->solve(
                     network_->multiplyEdgeCosts(epsilon_generator.generate())).mlcmst.value();
             population.emplace_back(network_->center(), mlcmst.subnet());
@@ -100,8 +120,8 @@ GeneticGamvros::crossoverChromosomes(const internal::Chromosome &parent1, const 
     util::number::IntGenerator int_generator_2(0, parent2.group_ids.size());
     util::number::RealNumberGenerator probability_generator(0,1);
 
-    const double move_p = 0.5;
-    const int move_if_smaller_k = 6;
+    const double move_p = params_.crossover_shrunk_move_probability;
+    const int move_k = params_.crossover_move_less_than_k;
 
     auto generate_dividers = [] (util::number::IntGenerator& generator) {
         int a = generator.generate(), b = generator.generate();
@@ -109,9 +129,9 @@ GeneticGamvros::crossoverChromosomes(const internal::Chromosome &parent1, const 
             std::swap(a,b);
         return std::make_pair(a,b);
     };
-    auto getFirstNFreeIds = [] (int N, const std::vector<int>& ids) {
-        std::vector<bool> taken(N+ids.size(), false);
-        for (int x : ids)
+    auto getFirstNFreeIds = [] (int N, const std::vector<int>& vertex_group_ids) {
+        std::vector<bool> taken(N+vertex_group_ids.size(), false);
+        for (int x : vertex_group_ids)
             taken[x] = true;
         std::vector<int> freeIds;
         for (int i=0; freeIds.size() < N; i++) {
@@ -132,7 +152,7 @@ GeneticGamvros::crossoverChromosomes(const internal::Chromosome &parent1, const 
     {
         std::vector<int> moved_groups(
                 parent1.group_ids.begin() + dividers1.first, parent1.group_ids.begin() + dividers1.second);
-        std::vector<int> new_ids = getFirstNFreeIds(moved_groups.size(), parent2.group_ids);
+        std::vector<int> new_ids = getFirstNFreeIds(moved_groups.size(), parent2.vertex_group);
         for (int i = 0; i < new_ids.size(); i++) {
             id_mapping[moved_groups[i]] = new_ids[i];
         }
@@ -165,7 +185,7 @@ GeneticGamvros::crossoverChromosomes(const internal::Chromosome &parent1, const 
         const auto child_groups = util::groupIndexesByValue(child.vertex_group);
         for (int g : shrunk_groups) {
             int count = child_groups.at(g).size();
-            if (count >= move_if_smaller_k)
+            if (count >= move_k)
                 continue;
             for (int i : child_groups.at(g)) {
                 if (probability_generator.generate() > move_p)
@@ -186,7 +206,7 @@ GeneticGamvros::crossoverChromosomes(const internal::Chromosome &parent1, const 
         }
     }
 
-    return child;
+    return child.refreshIds();
 }
 
 std::vector<internal::Chromosome> GeneticGamvros::crossoverChromosomes(const std::vector<internal::Chromosome>& parents)
@@ -207,8 +227,9 @@ std::vector<internal::Chromosome> GeneticGamvros::selectChromosomes(
     const double stdev_multiplier_constant = 3;
 
     std::vector<double> chromosome_fitness;
-    chromosome_fitness.reserve(population_size_);
-    std::transform(population_with_fitness.begin(), population_with_fitness.end(), std::back_inserter(chromosome_fitness),
+    chromosome_fitness.reserve(params_.population_size);
+    std::transform(
+            population_with_fitness.begin(), population_with_fitness.end(),std::back_inserter(chromosome_fitness),
             [] (const auto& p) { return p.second; });
     double max_fitness = *std::max_element(chromosome_fitness.begin(), chromosome_fitness.end());
     double mean_fitness = util::mean(chromosome_fitness);
@@ -224,7 +245,7 @@ std::vector<internal::Chromosome> GeneticGamvros::selectChromosomes(
         });
 
     std::vector<double> probabilities;
-    probabilities.reserve(population_size_);
+    probabilities.reserve(params_.population_size);
     std::transform(chromosome_fitness.begin(), chromosome_fitness.end(), std::back_inserter(probabilities),
         [max_fitness, modifiedFitness, probability_divider] (double f) {
             return (max_fitness - modifiedFitness(f)) / probability_divider;
