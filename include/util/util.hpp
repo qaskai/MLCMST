@@ -15,6 +15,8 @@ double mean(const std::vector<double> &v);
 double stdev(const std::vector<double>& v);
 
 
+template <typename T>
+void erase(std::vector<T>& v, T val);
 
 template <typename T>
 std::vector<std::vector<T>> break_up(unsigned int N, std::vector<T> vec);
@@ -25,7 +27,11 @@ template <typename V>
 std::unordered_map<V, std::vector<int> > groupIndexesByValue(const std::vector<V>& v);
 
 
-
+template <typename T>
+void erase(std::vector<T>& v, T val)
+{
+    v.erase(std::find(v.begin(), v.end(), val));
+}
 
 // template function implementation
 template <typename T>

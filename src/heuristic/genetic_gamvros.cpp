@@ -182,25 +182,35 @@ GeneticGamvros::crossoverChromosomes(const internal::Chromosome &parent1, const 
 
     // phase 2 -- randomly move vertices from shrunk groups to the closest group
     {
-        const auto child_groups = util::groupIndexesByValue(child.vertex_group);
+        auto child_groups = util::groupIndexesByValue(child.vertex_group);
+        const int maximal_capacity = network_->edgeCapacity(network_->levelsNumber()-1);
         for (int g : shrunk_groups) {
-            int count = child_groups.at(g).size();
-            if (count >= move_k)
+            if (child_groups.at(g).size() >= move_k)
                 continue;
             for (int i : child_groups.at(g)) {
                 if (probability_generator.generate() > move_p)
                     continue;
+                // find the closest vertex in a different group
+                // (maybe even one that was removed from group g earlier in the loop)
                 auto distances = network_->network(0).costs()[i];
                 distances[network_->center()] = std::numeric_limits<double>::max();
                 for (int j : child_groups.at(g)) {
                     distances[j] = std::numeric_limits<double>::max();
                 }
-                int closest_vertex_in_different_group =
-                        std::distance(distances.begin(), std::min_element(distances.begin(), distances.end()));
-                child.vertex_group[i] = child.vertex_group[closest_vertex_in_different_group];
-                count--;
+                int closest_v = std::distance(distances.begin(), std::min_element(distances.begin(), distances.end()));
+                int closest_v_group = child.vertex_group[closest_v];
+                int group_load = std::accumulate(
+                    child_groups.at(closest_v_group).begin(), child_groups.at(closest_v_group).end(), 0,
+                    [&] (int acc, int v) {
+                        return acc + network_->demand(v);
+                    });
+                if (group_load + network_->demand(i) <= maximal_capacity) {
+                    child_groups[closest_v_group].push_back(i);
+                    util::erase(child_groups.at(g), i);
+                    child.vertex_group[i] = child.vertex_group[closest_v];
+                }
             }
-            if (count == 0) {
+            if (child_groups.at(g).empty()) {
                 child.group_ids.erase(std::find(child.group_ids.begin(), child.group_ids.end(), g));
             }
         }
@@ -232,6 +242,7 @@ std::vector<internal::Chromosome> GeneticGamvros::selectChromosomes(
             population_with_fitness.begin(), population_with_fitness.end(),std::back_inserter(chromosome_fitness),
             [] (const auto& p) { return p.second; });
     double max_fitness = *std::max_element(chromosome_fitness.begin(), chromosome_fitness.end());
+    double f_max = max_fitness + 1.0;
     double mean_fitness = util::mean(chromosome_fitness);
     double stdev_fitness = util::stdev(chromosome_fitness);
 
@@ -239,16 +250,16 @@ std::vector<internal::Chromosome> GeneticGamvros::selectChromosomes(
         return f + mean_fitness - stdev_multiplier_constant * stdev_fitness;
     };
     double probability_divider = std::accumulate(chromosome_fitness.begin(), chromosome_fitness.end(), 0.0,
-        [max_fitness, modifiedFitness] (double acc, double f) {
-            double f_ = max_fitness - modifiedFitness(f);
+        [f_max, modifiedFitness] (double acc, double f) {
+            double f_ = f_max - modifiedFitness(f);
             return acc + f_;
         });
 
     std::vector<double> probabilities;
     probabilities.reserve(params_.population_size);
     std::transform(chromosome_fitness.begin(), chromosome_fitness.end(), std::back_inserter(probabilities),
-        [max_fitness, modifiedFitness, probability_divider] (double f) {
-            return (max_fitness - modifiedFitness(f)) / probability_divider;
+        [f_max, &modifiedFitness, probability_divider] (double f) {
+            return (f_max - modifiedFitness(f)) / probability_divider;
         });
 
     util::number::NonUniformIntGenerator index_generator(0, probabilities);

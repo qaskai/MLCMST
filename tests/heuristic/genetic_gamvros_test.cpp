@@ -17,9 +17,10 @@ TEST_CASE( "Genetic Algorithm by Gamvros et. al.", "[heuristic]" )
 
     auto center_position = EuclidMLCCNetworkGenerator::CenterPosition::CENTER;
     auto demand_type = EuclidMLCCNetworkGenerator::DemandType::UNIT;
-    auto levels = std::vector<Level>{ Level{1,1.0}, Level{3, 2.0} };
+    auto levels = std::vector<Level>{
+        Level{1,1.0}, Level{3, 2.0}, Level {10, 5.0} };
     auto network_generator = EuclidMLCCNetworkGenerator(
-            10, center_position, demand_type, levels,
+            20, center_position, demand_type, levels,
             std::make_unique<MLCMST::geometry::generation::IntPointGenerator>(0, 10, 1));
 
     MLCCNetwork mlcc_network = network_generator.generate();

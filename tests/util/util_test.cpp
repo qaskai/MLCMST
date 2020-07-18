@@ -4,6 +4,20 @@
 
 #include <util/util.hpp>
 
+TEST_CASE( "vector erase", "[util]" )
+{
+    std::vector<int> vec {1, 5, 3, 1};
+
+    SECTION( "one occurrence in array" ) {
+        MLCMST::util::erase(vec, 5);
+        REQUIRE( vec == std::vector<int> { 1,3,1 } );
+    }
+    SECTION( "erase first one if occurs twice" ) {
+        MLCMST::util::erase(vec, 1);
+        REQUIRE( vec == std::vector<int> { 5,3,1 } );
+    }
+}
+
 TEST_CASE( "break up vector", "[util]" )
 {
     std::vector<int> vec{ 1,2,3,4,5,6 };
