@@ -4,6 +4,7 @@
 - [or-tools](https://github.com/google/or-tools "or-tools") (downloaded by CMake)
 - [glog](https://github.com/google/glog "glog") (downloaded by CMake)
 - [cxxopts](https://github.com/jarro2783/cxxopts.git, "cxxopts") (downloaded by CMake)
+- [rapidjson](https://github.com/Tencent/rapidjson, "rapidjson") (downloaded by CMake)
 
 ### Build
 When in project root run the following.

@@ -28,3 +28,11 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(catch2)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${catch2_SOURCE_DIR}/contrib")
+
+FetchContent_Declare(
+        rapidjson
+        GIT_REPOSITORY "https://github.com/Tencent/rapidjson.git"
+        GIT_TAG master
+)
+FetchContent_MakeAvailable(rapidjson)
+include_directories("${rapidjson_SOURCE_DIR}/include")
