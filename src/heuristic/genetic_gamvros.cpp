@@ -49,6 +49,8 @@ Chromosome Chromosome::refreshIds() const
 }
 
 
+std::string GeneticGamvros::ID = "genetic_gamvros";
+
 
 GeneticGamvros::GeneticGamvros(std::vector<std::unique_ptr<MLCMSTSolver>> init_population_solvers,
         std::unique_ptr<MLCMSTSolver> subnet_solver, const Params& params)

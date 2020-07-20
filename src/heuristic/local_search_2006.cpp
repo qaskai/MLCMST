@@ -9,6 +9,8 @@
 
 namespace MLCMST::heuristic {
 
+std::string LocalSearch2006::ID = "local_search_2006";
+
 double LocalSearch2006::EPS_ = 1e-9;
 
 LocalSearch2006::LocalSearch2006() : LocalSearch2006(std::make_unique<LinkUpgradeUD>(), std::make_unique<LinkUpgradeUD>())

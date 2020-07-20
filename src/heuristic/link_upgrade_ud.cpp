@@ -11,8 +11,9 @@
 
 namespace MLCMST::heuristic {
 
-LinkUpgradeUD::~LinkUpgradeUD() = default;
+std::string LinkUpgradeUD::ID = "link_upgrade_UD";
 
+LinkUpgradeUD::~LinkUpgradeUD() = default;
 
 void LinkUpgradeUD::checkDemands(const MLCCNetwork& mlcc_network)
 {

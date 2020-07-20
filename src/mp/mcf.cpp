@@ -8,6 +8,7 @@
 
 namespace MLCMST::mp {
 
+std::string MCF::ID = "MP_MCF";
 
 MCF::MCF(bool exact_solution) : MP_MLCMSTSolver(exact_solution)
 {

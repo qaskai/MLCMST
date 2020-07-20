@@ -18,6 +18,8 @@ namespace MLCMST::mp {
 class SCF : public MP_MLCMSTSolver
 {
 public:
+    static std::string ID;
+
     explicit SCF(bool exact_solution=false);
     explicit SCF(MLCMST::mp::MPSolverFactory mp_solver_factory);
     ~SCF() override;

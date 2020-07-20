@@ -13,6 +13,8 @@ namespace MLCMST::heuristic {
 class LinkUpgradeUD : public MLCMSTSolver
 {
 public:
+    static std::string ID;
+
     ~LinkUpgradeUD() override;
 
     Result solve(const network::MLCCNetwork &mlcc_network) override;
