@@ -9,7 +9,11 @@
 
 namespace MLCMST::heuristic {
 
-std::string LocalSearch2006::ID = "local_search_2006";
+std::string LocalSearch2006::id()
+{
+    static std::string id = "local_search_2006";
+    return id;
+}
 
 double LocalSearch2006::EPS_ = 1e-9;
 

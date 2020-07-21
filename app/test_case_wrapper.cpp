@@ -38,9 +38,9 @@ public:
 
 private:
     const std::map<std::string, std::function<std::shared_ptr< mp::MP_MLCMSTSolver >(bool)> > solvers {
-        std::make_pair(mp::SCF::ID, [] (bool optimal) { return std::make_shared<mp::SCF>(optimal); } ),
-        std::make_pair(mp::ESCF::ID, [] (bool optimal) { return std::make_shared<mp::ESCF>(optimal); } ),
-        std::make_pair(mp::MCF::ID, [] (bool optimal) { return std::make_shared<mp::MCF>(optimal); } )
+        { mp::SCF::id(), [] (bool optimal) { return std::make_shared<mp::SCF>(optimal); } },
+        { mp::ESCF::id(), [] (bool optimal) { return std::make_shared<mp::ESCF>(optimal); } },
+        { mp::MCF::id(), [] (bool optimal) { return std::make_shared<mp::MCF>(optimal); } }
     };
 
     cxxopts::Options createOptions() override;

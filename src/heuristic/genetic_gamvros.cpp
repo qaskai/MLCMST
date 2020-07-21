@@ -49,7 +49,11 @@ Chromosome Chromosome::refreshIds() const
 }
 
 
-std::string GeneticGamvros::ID = "genetic_gamvros";
+std::string GeneticGamvros::id()
+{
+    static std::string id = "genetic_gamvros";
+    return id;
+}
 
 
 GeneticGamvros::GeneticGamvros(std::vector<std::unique_ptr<MLCMSTSolver>> init_population_solvers,

@@ -25,7 +25,7 @@ public:
 class GeneticGamvros final : public MLCMSTSolver
 {
 public:
-    static std::string ID;
+    static std::string id();
 
     struct Params {
         int population_size = 100;

@@ -1,3 +1,4 @@
+#include <numeric>
 #include <iostream>
 #include <string>
 #include <stdexcept>
@@ -16,7 +17,6 @@
 
 #include "../app.hpp"
 #include "solver_builder.hpp"
-#include "help.hpp"
 
 typedef MLCMST::benchmark::TestCase TestCase;
 typedef MLCMST::benchmark::Benchmark Benchmark;
@@ -34,7 +34,6 @@ struct Params
 class BenchmarkApp : public App<Params>
 {
 public:
-//    BenchmarkApp();
     ~BenchmarkApp() override;
 
 private:
@@ -64,6 +63,22 @@ BenchmarkApp::~BenchmarkApp() = default;
 cxxopts::Options BenchmarkApp::createOptions()
 {
     cxxopts::Options options("benchmark", "Runs set of test cases on the specified solver");
+    std::string benchmark_help_string = R""""(
+    --config parameter should be a path to a file containing JSON with a list of solvers with their parameters.
+    The format of those JSON for each type of solver follows.
+    {
+        "id": solver_id
+        "name": string - must be unique, optional - if not provided id will be used
+        "params": solver_parameters
+    }
+    Params attribute describes the solver parameters. It is different for every solver.
+    )"""";
+    benchmark_help_string +=
+        std::accumulate(SolverBuilder::solver_json_template.begin(), SolverBuilder::solver_json_template.end(),
+        std::string("\n"),
+            [](std::string s, const auto& p) {
+                return std::move(s) + p.second;
+            });
     options.custom_help(benchmark_help_string);
 
     options.add_options()

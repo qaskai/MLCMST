@@ -2,7 +2,11 @@
 
 namespace MLCMST::mp {
 
-std::string ESCF::ID = "MP_ESCF";
+std::string ESCF::id()
+{
+    static std::string id = "MP_ESCF";
+    return id;
+}
 
 ESCF::ESCF(bool exact_solution) : SCF(exact_solution)
 {

@@ -13,7 +13,7 @@ namespace MLCMST::heuristic {
 class LinkUpgradeUD : public MLCMSTSolver
 {
 public:
-    static std::string ID;
+    static std::string id();
 
     ~LinkUpgradeUD() override;
 

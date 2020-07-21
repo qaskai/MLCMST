@@ -11,7 +11,11 @@
 
 namespace MLCMST::heuristic {
 
-std::string LinkUpgradeUD::ID = "link_upgrade_UD";
+std::string LinkUpgradeUD::id()
+{
+    static std::string id = "link_upgrade_UD";
+    return id;
+}
 
 LinkUpgradeUD::~LinkUpgradeUD() = default;
 

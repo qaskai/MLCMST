@@ -13,11 +13,15 @@
 using namespace MLCMST;
 using rapidjson::Value;
 
-std::unordered_map<std::string, std::function<std::unique_ptr<MLCMSTSolver>(const Value& v)>>
+const std::unordered_map<std::string, std::function<std::unique_ptr<MLCMSTSolver>(const Value& v)>>
 SolverBuilder::id_to_solver_builder =
-std::unordered_map<std::string, std::function<std::unique_ptr<MLCMSTSolver>(const Value& v)>>{
-    std::make_pair(heuristic::LinkUpgradeUD::ID, SolverBuilder::buildLinkUpgradeUD),
-    std::make_pair(heuristic::LocalSearch2006::ID, SolverBuilder::buildLocalSearch2006)
+{
+    { heuristic::LinkUpgradeUD::id(), SolverBuilder::buildLinkUpgradeUD },
+    { heuristic::LocalSearch2006::id(), SolverBuilder::buildLocalSearch2006 },
+    { heuristic::GeneticGamvros::id(), SolverBuilder::buildGeneticGamvros },
+    { mp::SCF::id(), SolverBuilder::buildSCF },
+    { mp::ESCF::id(), SolverBuilder::buildESCF },
+    { mp::MCF::id(), SolverBuilder::buildMCF }
 };
 
 std::pair<std::string, std::unique_ptr<MLCMSTSolver >> SolverBuilder::buildNamedSolver(const Value &v)
@@ -39,7 +43,7 @@ std::unique_ptr<MLCMSTSolver> SolverBuilder::buildSolver(const Value &v)
     if (!id_to_solver_builder.count(id)) {
         throw std::invalid_argument("solver with id '" + id + "' does not exist");
     }
-    return id_to_solver_builder[id](v);
+    return id_to_solver_builder.at(id)(v);
 }
 
 std::unique_ptr<MLCMSTSolver> SolverBuilder::buildLinkUpgradeUD(const Value& v)
@@ -49,9 +53,137 @@ std::unique_ptr<MLCMSTSolver> SolverBuilder::buildLinkUpgradeUD(const Value& v)
 
 std::unique_ptr<MLCMSTSolver> SolverBuilder::buildLocalSearch2006(const Value &v)
 {
+    const std::string id = heuristic::LocalSearch2006::id();
+    if (!v.HasMember("params"))
+        throw std::invalid_argument(solver_json_template.at(id));
     const Value& params = v["params"];
+    if (!params.HasMember("init_solver") || !params.HasMember("subnet_solver"))
+        throw std::invalid_argument(solver_json_template.at(id));
+
     auto init_solver = buildSolver(params["init_solver"]);
-    auto subproblem_solver = buildSolver(params["subproblem_solver"]);
+    auto subproblem_solver = buildSolver(params["subnet_solver"]);
     return std::make_unique<heuristic::LocalSearch2006>(
             std::move(init_solver), std::move(subproblem_solver));
 }
+
+std::unique_ptr<MLCMSTSolver> SolverBuilder::buildGeneticGamvros(const Value &v)
+{
+    std::string id = heuristic::GeneticGamvros::id();
+    if (!v.HasMember("params"))
+        throw std::invalid_argument(solver_json_template.at(id));
+    const Value& params = v["params"];
+    const std::vector<std::string> required_params{
+        "init_solvers", "subnet_solver",
+        "population_size", "most_fit_mutate_number", "parents_number", "generations_number",
+        "network_fuzzing_epsilon", "crossover_shrunk_move_probability", "crossover_move_less_than_k"
+    };
+    for (const std::string& s : required_params) {
+        if (!params.HasMember(rapidjson::StringRef(s.c_str())))
+            throw std::invalid_argument(solver_json_template.at(id));
+    }
+
+    heuristic::GeneticGamvros::Params solver_params{
+        .population_size = params["population_size"].GetInt(),
+        .most_fit_mutate_number = params["most_fit_mutate_number"].GetInt(),
+        .parents_number = params["parents_number"].GetInt(),
+        .generations_number = params["generations_number"].GetInt(),
+        .network_fuzzing_epsilon = params["network_fuzzing_epsilon"].GetDouble(),
+        .crossover_shrunk_move_probability = params["crossover_shrunk_move_probability"].GetDouble(),
+        .crossover_move_less_than_k = params["crossover_move_less_than_k"].GetInt()
+    };
+    std::vector< std::unique_ptr< MLCMSTSolver > > init_solvers;
+    std::transform(params["init_solvers"].Begin(), params["init_solvers"].End(), std::back_inserter(init_solvers),
+        [] (const Value& solver) {
+            return buildSolver(solver);
+        });
+    auto subnet_solver = buildSolver(params["subnet_solver"]);
+
+    return std::make_unique<heuristic::GeneticGamvros>(
+            std::move(init_solvers), std::move(subnet_solver), solver_params);
+}
+
+std::unique_ptr<MLCMSTSolver> SolverBuilder::buildMPSolver(
+        const Value &v, const std::function<std::unique_ptr<MLCMSTSolver>(bool)>& creator)
+{
+    bool exact = false;
+    if (v.HasMember("params") && v["params"].HasMember("exact")) {
+        exact = v["params"]["exact"].GetBool();
+    }
+    return creator(exact);
+}
+
+std::unique_ptr<MLCMSTSolver> SolverBuilder::buildSCF(const Value &v)
+{
+    return buildMPSolver(v, [](bool exact) { return std::make_unique<mp::SCF>(exact); });
+}
+
+std::unique_ptr<MLCMSTSolver> SolverBuilder::buildESCF(const Value &v)
+{
+    return buildMPSolver(v, [](bool exact) { return std::make_unique<mp::ESCF>(exact); });
+}
+
+std::unique_ptr<MLCMSTSolver> SolverBuilder::buildMCF(const Value &v)
+{
+    return buildMPSolver(v, [](bool exact) { return std::make_unique<mp::MCF>(exact); });
+}
+
+const std::unordered_map<std::string, std::string> SolverBuilder::solver_json_template =
+{
+
+{ heuristic::LinkUpgradeUD::id(),
+  "id == " + heuristic::LinkUpgradeUD::id() + " params:"
+R""""(
+{
+}
+)"""" + "\n" },
+
+{ heuristic::LocalSearch2006::id(),
+  "id == " + heuristic::LocalSearch2006::id() + " params:"
+R""""(
+{
+    "init_solver": <solver_json>,
+    "subnet_solver": <solver_json>
+}
+)"""" + "\n"},
+
+{ heuristic::GeneticGamvros::id(),
+  "id == " + heuristic::GeneticGamvros::id() + " params:"
+R""""(
+{
+    "init_solvers": <solver_json> list,
+    "subnet_solver": <solver_json>,
+    "population_size": int,
+    "most_fit_mutate_number": int,
+    "parents_number": int,
+    "generations_number": int,
+    "network_fuzzing_epsilon": double,
+    "crossover_shrunk_move_probability": double,
+    "crossover_move_less_than_k": int
+}
+)"""" + "\n"},
+
+{ mp::SCF::id(),
+  "id == " + mp::SCF::id() + " params:"
+R""""(
+{
+    "exact": bool -- optional, default false
+}
+)"""" + "\n"},
+
+{ mp::ESCF::id(),
+  "id == " + mp::ESCF::id() + " params:"
+R""""(
+{
+    "exact": bool -- optional, default false
+}
+)"""" + "\n"},
+
+{ mp::MCF::id(),
+  "id == " + mp::MCF::id() + " params:"
+R""""(
+{
+    "exact": bool -- optional, default false
+}
+)"""" + "\n"},
+
+};

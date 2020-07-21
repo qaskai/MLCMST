@@ -17,7 +17,7 @@ namespace MLCMST::heuristic {
 class LocalSearch2006 : public MLCMSTSolver
 {
 public:
-    static std::string ID;
+    static std::string id();
 
     LocalSearch2006();
     LocalSearch2006(std::unique_ptr< MLCMSTSolver > init_solver, std::unique_ptr< MLCMSTSolver > inner_mlcmst_solver);
