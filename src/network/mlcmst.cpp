@@ -93,6 +93,18 @@ std::vector<int> MLCMST::leafs() const
     return leafs;
 }
 
+std::vector<int> MLCMST::subtreeVertices(int v) const
+{
+    auto children_lists = childrenLists();
+    std::vector<int> subtree_vertices;
+    std::function<void(int)> dfs = [&] (int i) {
+        subtree_vertices.push_back(i);
+        std::for_each(children_lists[i].begin(), children_lists[i].end(), dfs);
+    };
+    dfs(v);
+    return subtree_vertices;
+}
+
 std::vector<int> MLCMST::loads(const MLCCNetwork &network) const
 {
     std::vector<int> load(vertexCount());
@@ -177,12 +189,18 @@ std::vector<int> MLCMST::subnet() const
     return subnet;
 }
 
-MLCMST MLCMST::star(int N, int root)
+MLCMST MLCMST::star(const MLCCNetwork& network)
 {
-    MLCMST mlcmst(N, root);
-    for (int i=0; i<N; i++) {
-        mlcmst.parent(i) = root;
+    MLCMST mlcmst(network.vertexCount(), network.center());
+    for (int i=0; i<network.vertexCount(); i++) {
+        mlcmst.parent(i) = network.center();
         mlcmst.edgeLevel(i) = 0;
+        for (int l = 0; l < network.levelsNumber(); l++) {
+            if (network.demand(i) <= network.edgeCapacity(l)) {
+                mlcmst.edgeLevel(i) = l;
+                break;
+            }
+        }
     }
     return mlcmst;
 }

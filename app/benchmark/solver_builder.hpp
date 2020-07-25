@@ -23,7 +23,7 @@ public:
 
 private:
     static std::unique_ptr< MLCMSTSolver > buildSolver(const Value& v);
-    static std::unique_ptr< MLCMSTSolver > buildLinkUpgradeUD(const Value& v);
+    static std::unique_ptr< MLCMSTSolver > buildLinkUpgrade(const Value& v);
     static std::unique_ptr< MLCMSTSolver > buildLocalSearch2006(const Value& v);
     static std::unique_ptr< MLCMSTSolver > buildGeneticGamvros(const Value& v);
     static std::unique_ptr< MLCMSTSolver > buildSCF(const Value& v);
@@ -32,4 +32,6 @@ private:
 
     static std::unique_ptr< MLCMSTSolver > buildMPSolver(
             const Value& v, const std::function<std::unique_ptr<MLCMSTSolver>(bool)>& creator);
+
+    static bool checkContainsMembers(const Value& v, const std::vector<std::string>& required_member_ids);
 };

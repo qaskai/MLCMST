@@ -5,7 +5,7 @@
 #include <numeric>
 #include <queue>
 
-#include <heuristic/link_upgrade_ud.hpp>
+#include <heuristic/link_upgrade.hpp>
 
 namespace MLCMST::heuristic {
 
@@ -17,7 +17,12 @@ std::string LocalSearch2006::id()
 
 double LocalSearch2006::EPS_ = 1e-9;
 
-LocalSearch2006::LocalSearch2006() : LocalSearch2006(std::make_unique<LinkUpgradeUD>(), std::make_unique<LinkUpgradeUD>())
+LocalSearch2006::LocalSearch2006() :
+    LocalSearch2006(std::make_unique<LinkUpgrade>(LinkUpgrade::Params{
+        true, false, false
+    }), std::make_unique<LinkUpgrade>(LinkUpgrade::Params{
+        true, false, false
+    }))
 {
 
 }

@@ -41,6 +41,7 @@ public:
     MLCCNetwork generate() override;
 
     void setDemands(const std::vector<int>& demands);
+    void setMaxRandomDemand(int max_demand);
 
     [[nodiscard]] std::vector<Point> lastPointSet() const;
 
@@ -52,7 +53,8 @@ private:
     std::vector<Level> _levels;
 
     std::unique_ptr< Generator<vector<Point>> > _point_set_generator;
-    util::number::IntGenerator _int_generator;
+    util::number::IntGenerator _demand_int_generator;
+    util::number::IntGenerator _random_vertex_generator;
 
     std::vector<Point> _last_point_set;
 
@@ -66,7 +68,7 @@ private:
     );
 
     int determineCenter(const std::vector<Point>& points);
-    std::vector<int> generateDemands(int max_capacity);
+    std::vector<int> generateDemands();
 
     vector<double> flatten(const vector<vector<double>>& v);
     vector<double> multiply(vector<double> v, double scalar);

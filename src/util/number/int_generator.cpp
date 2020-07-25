@@ -13,7 +13,7 @@ IntGenerator::IntGenerator(int from, int to) : IntGenerator(from, to, clockMilli
 IntGenerator::IntGenerator(int from, int to, long seed)
     : _from(from), _to(to)
 {
-    assert(("Interval start should be smaller than end", from < to));
+    assert(("Interval start should be smaller than end", from <= to));
 
     _random_generator = std::default_random_engine(seed);
     _random_distribution = std::uniform_int_distribution<int>(from, to);

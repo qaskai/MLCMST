@@ -6,7 +6,7 @@
 #include <mp/escf.hpp>
 #include <mp/mcf.hpp>
 
-#include <heuristic/link_upgrade_ud.hpp>
+#include <heuristic/link_upgrade.hpp>
 #include <heuristic/local_search_2006.hpp>
 #include <heuristic/genetic_gamvros.hpp>
 
@@ -16,7 +16,7 @@ using rapidjson::Value;
 const std::unordered_map<std::string, std::function<std::unique_ptr<MLCMSTSolver>(const Value& v)>>
 SolverBuilder::id_to_solver_builder =
 {
-    { heuristic::LinkUpgradeUD::id(), SolverBuilder::buildLinkUpgradeUD },
+    { heuristic::LinkUpgrade::id(), SolverBuilder::buildLinkUpgrade },
     { heuristic::LocalSearch2006::id(), SolverBuilder::buildLocalSearch2006 },
     { heuristic::GeneticGamvros::id(), SolverBuilder::buildGeneticGamvros },
     { mp::SCF::id(), SolverBuilder::buildSCF },
@@ -46,9 +46,25 @@ std::unique_ptr<MLCMSTSolver> SolverBuilder::buildSolver(const Value &v)
     return id_to_solver_builder.at(id)(v);
 }
 
-std::unique_ptr<MLCMSTSolver> SolverBuilder::buildLinkUpgradeUD(const Value& v)
+std::unique_ptr<MLCMSTSolver> SolverBuilder::buildLinkUpgrade(const Value& v)
 {
-    return std::make_unique<heuristic::LinkUpgradeUD>();
+    const std::string id = heuristic::LinkUpgrade::id();
+    if (!v.HasMember("params"))
+        throw std::invalid_argument(solver_json_template.at(id));
+    const Value& params = v["params"];
+    const std::vector<std::string> required_params{
+        "H_leafs_only", "check_all_link_types", "reupgrade_nodes"
+    };
+    if (!checkContainsMembers(params, required_params)) {
+        throw std::invalid_argument(solver_json_template.at(id));
+    }
+    heuristic::LinkUpgrade::Params solver_params{
+        .H_leafs_only= params["H_leafs_only"].GetBool(),
+        .check_all_link_types= params["check_all_link_types"].GetBool(),
+        .reupgrade_nodes= params["reupgrade_nodes"].GetBool()
+    };
+
+    return std::make_unique<heuristic::LinkUpgrade>(solver_params);
 }
 
 std::unique_ptr<MLCMSTSolver> SolverBuilder::buildLocalSearch2006(const Value &v)
@@ -77,9 +93,8 @@ std::unique_ptr<MLCMSTSolver> SolverBuilder::buildGeneticGamvros(const Value &v)
         "population_size", "most_fit_mutate_number", "parents_number", "generations_number",
         "network_fuzzing_epsilon", "crossover_shrunk_move_probability", "crossover_move_less_than_k"
     };
-    for (const std::string& s : required_params) {
-        if (!params.HasMember(rapidjson::StringRef(s.c_str())))
-            throw std::invalid_argument(solver_json_template.at(id));
+    if (!checkContainsMembers(params, required_params)) {
+        throw std::invalid_argument(solver_json_template.at(id));
     }
 
     heuristic::GeneticGamvros::Params solver_params{
@@ -127,13 +142,25 @@ std::unique_ptr<MLCMSTSolver> SolverBuilder::buildMCF(const Value &v)
     return buildMPSolver(v, [](bool exact) { return std::make_unique<mp::MCF>(exact); });
 }
 
+bool SolverBuilder::checkContainsMembers(const Value& v, const std::vector<std::string>& required_member_ids)
+{
+    for (const std::string& s : required_member_ids) {
+        if (!v.HasMember(rapidjson::StringRef(s.c_str())))
+            return false;
+    }
+    return true;
+}
+
 const std::unordered_map<std::string, std::string> SolverBuilder::solver_json_template =
 {
 
-{ heuristic::LinkUpgradeUD::id(),
-  "id == " + heuristic::LinkUpgradeUD::id() + " params:"
+{ heuristic::LinkUpgrade::id(),
+  "id == " + heuristic::LinkUpgrade::id() + " params:"
 R""""(
 {
+    "H_leafs_only": bool,
+    "check_all_link_types": bool, // if true will iterate over viable link upgrades to find best H, if not L,L-1,...,0
+    "reupgrade_nodes": bool
 }
 )"""" + "\n" },
 

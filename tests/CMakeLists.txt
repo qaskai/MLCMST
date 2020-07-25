@@ -7,7 +7,9 @@ file(
     "*test.cpp"
 )
 
-add_executable(mlcmst_tests "${TESTS_SRC}")
+include_directories(_util)
+
+add_executable(mlcmst_tests "${TESTS_SRC}" _util/_util.cpp)
 target_link_libraries(mlcmst_tests catch_main mlcmst)
 
 include(Catch)

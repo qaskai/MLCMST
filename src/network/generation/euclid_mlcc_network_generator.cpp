@@ -1,5 +1,6 @@
 #include <network/generation/euclid_mlcc_network_generator.hpp>
 
+#include <stdexcept>
 #include <algorithm>
 #include <utility>
 
@@ -31,8 +32,9 @@ EuclidMLCCNetworkGenerator::EuclidMLCCNetworkGenerator(
     std::unique_ptr< Generator<std::vector<Point>> > point_set_generator
 )
     : _size(N), _center_position(center_position), _demand_type(demand_type), _levels(std::move(levels)),
-        _point_set_generator(std::move(point_set_generator)),
-        _int_generator(util::number::IntGenerator(0, static_cast<int>(N-1)))
+      _point_set_generator(std::move(point_set_generator)),
+      _demand_int_generator(util::number::IntGenerator(1,1)),
+      _random_vertex_generator(util::number::IntGenerator(0, N - 1))
 {
     _demands = std::vector<int>(_size, 1);
 }
@@ -50,7 +52,7 @@ MLCCNetwork EuclidMLCCNetworkGenerator::generate()
         network_levels.emplace_back(level.capacity, Network(new_costs));
     }
     const int center = determineCenter(points);
-    vector<int> demands = generateDemands(network_levels.back().edgeCapacity());
+    vector<int> demands = generateDemands();
     demands[center] = 0;
     return MLCCNetwork(center, network_levels, demands);
 }
@@ -61,7 +63,7 @@ int EuclidMLCCNetworkGenerator::determineCenter(const std::vector<Point>& points
 
     switch (_center_position) {
         case CenterPosition::RANDOM:
-            return _int_generator.generate();
+            return _random_vertex_generator.generate();
         case CenterPosition::CORNER:
         {
             auto it = std::min_element(points.begin(), points.end(), [] (const Point& p, const Point& q) -> bool {
@@ -81,7 +83,7 @@ int EuclidMLCCNetworkGenerator::determineCenter(const std::vector<Point>& points
     return 0;
 }
 
-std::vector<int> EuclidMLCCNetworkGenerator::generateDemands(int max_capacity)
+std::vector<int> EuclidMLCCNetworkGenerator::generateDemands()
 {
     switch (_demand_type) {
         case DemandType::UNIT:
@@ -90,12 +92,14 @@ std::vector<int> EuclidMLCCNetworkGenerator::generateDemands(int max_capacity)
         {
             std::vector<int> dem(_size, 0);
             for (int& x : dem) {
-                x = (_int_generator.generate() % max_capacity) + 1;
+                x = _demand_int_generator.generate();
             }
             return dem;
         }
         case DemandType::SET:
             return _demands;
+        default:
+            throw std::invalid_argument("Unexpected demand type");
     }
 }
 
@@ -128,6 +132,12 @@ void EuclidMLCCNetworkGenerator::setDemands(const std::vector<int>& demands)
     if (_size == demands.size()) {
         _demands = demands;
     }
+}
+
+void EuclidMLCCNetworkGenerator::setMaxRandomDemand(int max_demand)
+{
+    max_demand = std::min((unsigned) max_demand, _levels.back().capacity);
+    _demand_int_generator = util::number::IntGenerator(1, max_demand);
 }
 
 }

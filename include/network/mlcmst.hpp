@@ -29,6 +29,8 @@ public:
 
     [[nodiscard]] std::vector<std::vector<int>> childrenLists() const;
     [[nodiscard]] std::vector<int> leafs() const;
+    [[nodiscard]] std::vector<int> subtreeVertices(int v) const;
+
     [[nodiscard]] double cost(const MLCCNetwork& mlcc_network) const;
     [[nodiscard]] bool checkValidity(const MLCCNetwork& network) const;
     [[nodiscard]] std::vector<int> loads(const MLCCNetwork &network) const;
@@ -36,7 +38,7 @@ public:
     [[nodiscard]] std::vector<int> reserves(const MLCCNetwork &network) const;
     [[nodiscard]] std::vector<int> subnet() const;
 
-    static MLCMST star(int N, int root);
+    static MLCMST star(const MLCCNetwork& network);
 
 private:
     int _root;

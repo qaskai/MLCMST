@@ -1,7 +1,7 @@
 #include <catch2/catch.hpp>
 
 #include <heuristic/genetic_gamvros.hpp>
-#include <heuristic/link_upgrade_ud.hpp>
+#include <heuristic/link_upgrade.hpp>
 
 #include <network/generation/euclid_mlcc_network_generator.hpp>
 
@@ -10,7 +10,7 @@
 TEST_CASE( "Genetic Algorithm by Gamvros et. al.", "[heuristic]" )
 {
     using MLCMST::heuristic::GeneticGamvros;
-    using MLCMST::heuristic::LinkUpgradeUD;
+    using MLCMST::heuristic::LinkUpgrade;
     using MLCMST::network::generation::EuclidMLCCNetworkGenerator;
     using Level = MLCMST::network::generation::EuclidMLCCNetworkGenerator::Level;
     using MLCMST::network::MLCCNetwork;
@@ -26,9 +26,11 @@ TEST_CASE( "Genetic Algorithm by Gamvros et. al.", "[heuristic]" )
     MLCCNetwork mlcc_network = network_generator.generate();
 
     std::vector<std::unique_ptr<MLCMST::MLCMSTSolver> > init_solvers;
-    init_solvers.emplace_back(std::make_unique<LinkUpgradeUD>());
-    GeneticGamvros solver(std::move(init_solvers), std::make_unique<LinkUpgradeUD>(),
-                          GeneticGamvros::Params{});
+    init_solvers.emplace_back(std::make_unique<LinkUpgrade>(
+            LinkUpgrade::Params{ true, false, false }));
+    GeneticGamvros solver(std::move(init_solvers),
+            std::make_unique<LinkUpgrade>(LinkUpgrade::Params{ true, false, false }),
+            GeneticGamvros::Params{});
 
     auto result = solver.solve(mlcc_network);
 
