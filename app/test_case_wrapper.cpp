@@ -16,6 +16,7 @@
 #include <mp/scf.hpp>
 #include <mp/escf.hpp>
 #include <mp/mcf.hpp>
+#include <mp/capacity_indexed.hpp>
 
 #include "app.hpp"
 
@@ -40,7 +41,8 @@ private:
     const std::map<std::string, std::function<std::shared_ptr< mp::MP_MLCMSTSolver >(bool)> > solvers {
         { mp::SCF::id(), [] (bool optimal) { return std::make_shared<mp::SCF>(optimal); } },
         { mp::ESCF::id(), [] (bool optimal) { return std::make_shared<mp::ESCF>(optimal); } },
-        { mp::MCF::id(), [] (bool optimal) { return std::make_shared<mp::MCF>(optimal); } }
+        { mp::MCF::id(), [] (bool optimal) { return std::make_shared<mp::MCF>(optimal); } },
+        { mp::CapacityIndexed::id(), [] (bool optimal) { return std::make_shared<mp::CapacityIndexed>(optimal); } }
     };
 
     cxxopts::Options createOptions() override;

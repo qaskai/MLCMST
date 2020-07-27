@@ -34,7 +34,7 @@ void SCF::setupLocalVariables()
     _supply[_mlcc_network->center()] = std::accumulate(_supply.begin(), _supply.end(), 0);
 
     _vertex_set = MLCMST::util::firstN(_mlcc_network->vertexCount());
-    _arc_set = util::createArcSet(_mlcc_network->vertexCount());
+    _arc_set = util::createArcSet(*_mlcc_network);
 }
 
 void SCF::createVariables()
@@ -140,7 +140,7 @@ void SCF::createOneOutgoingConstraints()
 }
 
 void SCF::createOneBetweenConstraints() {
-    for (auto [i,j] : util::createUndirectedEdgeSet(_mlcc_network->vertexCount())) {
+    for (auto [i,j] : util::createUndirectedEdgeSet(*_mlcc_network)) {
         if (i == _mlcc_network->center() || j == _mlcc_network->center())
             continue;
 

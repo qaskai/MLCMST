@@ -73,3 +73,18 @@ TEST_CASE( "statistic utils", "[util]" )
         REQUIRE( stdev == Approx(3.94).margin(0.01) );
     }
 }
+
+TEST_CASE( "concat", "[util]" )
+{
+    std::vector<std::vector<int>> v{
+        {1, 2, 3},
+        {0, 2},
+        {},
+        {-1}
+    };
+    std::vector<int> expected{ 1,2,3,0,2,-1 };
+
+    std::vector<int> concat_result = MLCMST::util::concat(v);
+
+    REQUIRE( concat_result == expected );
+}

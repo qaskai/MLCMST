@@ -40,7 +40,6 @@ protected:
     void createDemandConstraints();
     void createCapacityConstraints();
     void createOneOutgoingConstraints();
-
     void createOneBetweenConstraints();
 
 private:

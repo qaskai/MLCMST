@@ -55,27 +55,27 @@ std::vector<operations_research::LinearExpr> variablesToExpr(const std::vector<o
     return expr_vec;
 }
 
-std::vector<std::tuple<int, int>> createArcSet(unsigned int N)
+std::vector<std::tuple<int, int>> createArcSet(const network::MLCCNetwork& mlcc_network)
 {
     std::vector<std::tuple<int,int>> arc_set;
-    for (int v : MLCMST::util::firstN(N)) {
-        for (int w : MLCMST::util::firstN(N)) {
-            if (v != w)
+    auto neighbourhood_lists = mlcc_network.network(0).neighbourhoods();
+    for (int v : MLCMST::util::firstN(mlcc_network.vertexCount())) {
+        for (int w : neighbourhood_lists[v]) {
                 arc_set.emplace_back(v, w);
         }
     }
     return arc_set;
 }
 
-std::vector<std::tuple<int, int>> createUndirectedEdgeSet(unsigned int N)
+std::vector<std::tuple<int, int>> createUndirectedEdgeSet(const network::MLCCNetwork& mlcc_network)
 {
-    std::vector<std::tuple<int, int>> undirected_edges;
-    for (unsigned int i : MLCMST::util::firstN(N)) {
-        for (unsigned int j =i+1; j < N; j++) {
-            undirected_edges.emplace_back(i,j);
-        }
+    std::set<std::tuple<int, int>> undirected_edges;
+    for (auto [v,w] : createArcSet(mlcc_network)) {
+        if (v > w)
+            std::swap(v,w);
+        undirected_edges.insert({ v,w });
     }
-    return undirected_edges;
+    return std::vector<std::tuple<int,int>>(undirected_edges.begin(), undirected_edges.end());
 }
 
 

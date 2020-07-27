@@ -29,6 +29,7 @@ private:
     static std::unique_ptr< MLCMSTSolver > buildSCF(const Value& v);
     static std::unique_ptr< MLCMSTSolver > buildESCF(const Value& v);
     static std::unique_ptr< MLCMSTSolver > buildMCF(const Value& v);
+    static std::unique_ptr< MLCMSTSolver > buildCapacityIndexed(const Value& v);
 
     static std::unique_ptr< MLCMSTSolver > buildMPSolver(
             const Value& v, const std::function<std::unique_ptr<MLCMSTSolver>(bool)>& creator);

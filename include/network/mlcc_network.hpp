@@ -34,6 +34,7 @@ public:
     [[nodiscard]] const std::vector<CapacitatedNetwork>& networks() const;
     [[nodiscard]] int edgeCapacity(int network_i) const;
     [[nodiscard]] double edgeCost(int v, int w, int level) const;
+    [[nodiscard]] int maxEdgeCapacity() const;
 
     [[nodiscard]] MLCCNetwork multiplyEdgeCosts(double scalar) const;
 

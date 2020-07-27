@@ -71,6 +71,11 @@ double MLCCNetwork::edgeCost(int v, int w, int level) const
     return network(level).edgeCost(v, w);
 }
 
+int MLCCNetwork::maxEdgeCapacity() const
+{
+    return _networks.back().edgeCapacity();
+}
+
 std::pair<MLCCNetwork, std::vector<int>> MLCCNetwork::subNetwork(std::vector<int> vertices) const
 {
     if (std::find(vertices.begin(), vertices.end(), _center) == vertices.end()) {

@@ -5,6 +5,7 @@
 #include <mp/scf.hpp>
 #include <mp/escf.hpp>
 #include <mp/mcf.hpp>
+#include <mp/capacity_indexed.hpp>
 
 #include <heuristic/link_upgrade.hpp>
 #include <heuristic/local_search_2006.hpp>
@@ -21,7 +22,8 @@ SolverBuilder::id_to_solver_builder =
     { heuristic::GeneticGamvros::id(), SolverBuilder::buildGeneticGamvros },
     { mp::SCF::id(), SolverBuilder::buildSCF },
     { mp::ESCF::id(), SolverBuilder::buildESCF },
-    { mp::MCF::id(), SolverBuilder::buildMCF }
+    { mp::MCF::id(), SolverBuilder::buildMCF },
+    { mp::CapacityIndexed::id(), SolverBuilder::buildCapacityIndexed }
 };
 
 std::pair<std::string, std::unique_ptr<MLCMSTSolver >> SolverBuilder::buildNamedSolver(const Value &v)
@@ -120,10 +122,13 @@ std::unique_ptr<MLCMSTSolver> SolverBuilder::buildGeneticGamvros(const Value &v)
 std::unique_ptr<MLCMSTSolver> SolverBuilder::buildMPSolver(
         const Value &v, const std::function<std::unique_ptr<MLCMSTSolver>(bool)>& creator)
 {
+    const std::string id = v["id"].GetString();
+
     bool exact = false;
-    if (v.HasMember("params") && v["params"].HasMember("exact")) {
-        exact = v["params"]["exact"].GetBool();
+    if (!v.HasMember("params") || !v["params"].HasMember("exact")) {
+        throw std::invalid_argument(solver_json_template.at(id));
     }
+    exact = v["params"]["exact"].GetBool();
     return creator(exact);
 }
 
@@ -140,6 +145,11 @@ std::unique_ptr<MLCMSTSolver> SolverBuilder::buildESCF(const Value &v)
 std::unique_ptr<MLCMSTSolver> SolverBuilder::buildMCF(const Value &v)
 {
     return buildMPSolver(v, [](bool exact) { return std::make_unique<mp::MCF>(exact); });
+}
+
+std::unique_ptr<MLCMSTSolver> SolverBuilder::buildCapacityIndexed(const Value &v)
+{
+    return buildMPSolver(v, [](bool exact) { return std::make_unique<mp::CapacityIndexed>(exact); });
 }
 
 bool SolverBuilder::checkContainsMembers(const Value& v, const std::vector<std::string>& required_member_ids)
@@ -192,25 +202,26 @@ R""""(
 { mp::SCF::id(),
   "id == " + mp::SCF::id() + " params:"
 R""""(
-{
-    "exact": bool -- optional, default false
-}
+{ "exact": bool }
 )"""" + "\n"},
 
 { mp::ESCF::id(),
   "id == " + mp::ESCF::id() + " params:"
 R""""(
-{
-    "exact": bool -- optional, default false
-}
+{ "exact": bool }
 )"""" + "\n"},
 
 { mp::MCF::id(),
   "id == " + mp::MCF::id() + " params:"
 R""""(
-{
-    "exact": bool -- optional, default false
-}
+{ "exact": bool }
+)"""" + "\n"},
+
+{ mp::CapacityIndexed::id(),
+  "id == " + mp::MCF::id() + " params:"
+R""""(
+{ "exact": bool }
 )"""" + "\n"},
 
 };
+

@@ -3,8 +3,8 @@
 #include <vector>
 #include <tuple>
 
-#include <network/mlcc_network.hpp>
 #include <network/mlcmst.hpp>
+#include <network/mlcc_network.hpp>
 
 #include <ortools/linear_solver/linear_solver.h>
 
@@ -20,7 +20,7 @@ network::MLCMST createMLCMST(
 );
 std::vector<operations_research::LinearExpr> variablesToExpr(const std::vector<operations_research::MPVariable*>& vars);
 
-std::vector<std::tuple<int, int>> createArcSet(unsigned int N);
-std::vector<std::tuple<int, int>> createUndirectedEdgeSet(unsigned int N);
+std::vector<std::tuple<int, int>> createArcSet(const network::MLCCNetwork& mlcc_network);
+std::vector<std::tuple<int, int>> createUndirectedEdgeSet(const network::MLCCNetwork& mlcc_network);
 
 }
