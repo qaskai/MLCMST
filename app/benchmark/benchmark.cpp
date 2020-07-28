@@ -44,9 +44,9 @@ private:
     void run(const Params& params) override;
 
     std::vector<TestCase> readTestCases(std::istream& in);
-    std::vector<std::pair<std::string, std::unique_ptr< MLCMSTSolver >>> createSolvers(const rapidjson::Value& json);
+    std::vector<std::pair<std::string, std::unique_ptr< MLCMST_Solver >>> createSolvers(const rapidjson::Value& json);
     Benchmark createBenchmark(std::unique_ptr< Reporter > reporter,
-            std::vector<std::pair<std::string, std::unique_ptr< MLCMSTSolver >>> solvers,
+            std::vector<std::pair<std::string, std::unique_ptr< MLCMST_Solver >>> solvers,
             const std::vector<TestCase>& test_cases);
     std::unique_ptr< Reporter > createReporter();
 };
@@ -135,7 +135,7 @@ std::vector<TestCase> BenchmarkApp::readTestCases(std::istream &in)
 }
 
 Benchmark BenchmarkApp::createBenchmark(std::unique_ptr<Reporter> reporter,
-                                        std::vector<std::pair<std::string, std::unique_ptr<MLCMSTSolver>>> solvers,
+                                        std::vector<std::pair<std::string, std::unique_ptr<MLCMST_Solver>>> solvers,
                                         const std::vector<TestCase> &test_cases) {
     Benchmark benchmark(std::move(reporter));
     for (const TestCase& test_case : test_cases) {
@@ -153,10 +153,10 @@ std::unique_ptr<Reporter> BenchmarkApp::createReporter()
     return std::make_unique<GeneralReporter>(std::cout);
 }
 
-std::vector<std::pair<std::string, std::unique_ptr<MLCMSTSolver >>>
+std::vector<std::pair<std::string, std::unique_ptr<MLCMST_Solver >>>
 BenchmarkApp::createSolvers(const rapidjson::Value &json)
 {
-    std::vector<std::pair<std::string, std::unique_ptr< MLCMSTSolver >>> solvers_with_names;
+    std::vector<std::pair<std::string, std::unique_ptr< MLCMST_Solver >>> solvers_with_names;
     if (json.IsArray()) {
         for (const rapidjson::Value& v : json.GetArray()) {
             solvers_with_names.push_back(SolverBuilder::buildNamedSolver(v));

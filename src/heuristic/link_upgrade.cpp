@@ -27,23 +27,11 @@ LinkUpgrade::LinkUpgrade(LinkUpgrade::Params params) : params(params) {
 
 LinkUpgrade::~LinkUpgrade() = default;
 
-MLCMSTSolver::Result LinkUpgrade::solve(const network::MLCCNetwork &mlcc_network)
+network::MLCMST LinkUpgrade::run(const network::MLCCNetwork &mlcc_network)
 {
     network_ = &mlcc_network;
-
-    auto time_start = std::chrono::high_resolution_clock::now();
-
-    network::MLCMST mlcmst = mainLoop();
-
-    auto time_end = std::chrono::high_resolution_clock::now();
-    double wall_time = std::chrono::duration<double, std::milli>(time_end - time_start).count();
-
-    return Result(
-        mlcmst,
-        std::nullopt,
-        wall_time,
-        true
-    );
+    auto mlcmst = mainLoop();
+    return mlcmst;
 }
 
 network::MLCMST LinkUpgrade::mainLoop()

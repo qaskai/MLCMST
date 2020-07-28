@@ -2,11 +2,11 @@
 
 #include <vector>
 
-#include <mlcmst_solver.hpp>
+#include <heuristic/mlcmst_heuristic.hpp>
 
 namespace MLCMST::heuristic {
 
-class LinkUpgrade : public MLCMSTSolver
+class LinkUpgrade : public MLCMST_Heuristic
 {
 public:
     static std::string id();
@@ -19,7 +19,7 @@ public:
     explicit LinkUpgrade(Params params);
     ~LinkUpgrade() override;
 
-    Result solve(const network::MLCCNetwork &mlcc_network) override;
+    network::MLCMST run(const network::MLCCNetwork &mlcc_network) override;
 
 private:
     Params params;

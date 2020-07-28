@@ -19,14 +19,14 @@ public:
     Benchmark(Benchmark&& benchmark) noexcept;
     ~Benchmark();
 
-    void addSolver(std::unique_ptr< MLCMSTSolver > solver, const std::string& name);
+    void addSolver(std::unique_ptr< MLCMST_Solver > solver, const std::string& name);
     void addTestCase(const TestCase& test_case);
     void run();
 
 private:
     std::unique_ptr< Reporter > _reporter;
     std::vector<TestCase> _test_cases;
-    std::unordered_map<std::string, std::unique_ptr< MLCMSTSolver >> _solvers;
+    std::unordered_map<std::string, std::unique_ptr< MLCMST_Solver >> _solvers;
 };
 
 }

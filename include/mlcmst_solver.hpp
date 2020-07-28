@@ -7,7 +7,7 @@
 
 namespace MLCMST {
 
-class MLCMSTSolver
+class MLCMST_Solver
 {
 public:
     struct Result
@@ -19,7 +19,7 @@ public:
         Result(std::optional<network::MLCMST> mlcmst, std::optional<double> lower_bound, double wall_time, bool finished);
     };
 
-    virtual ~MLCMSTSolver();
+    virtual ~MLCMST_Solver();
 
     virtual Result solve(const network::MLCCNetwork& mlcc_network) = 0;
 };

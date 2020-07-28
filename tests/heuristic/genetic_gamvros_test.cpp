@@ -25,7 +25,7 @@ TEST_CASE( "Genetic Algorithm by Gamvros et. al.", "[heuristic]" )
 
     MLCCNetwork mlcc_network = network_generator.generate();
 
-    std::vector<std::unique_ptr<MLCMST::MLCMSTSolver> > init_solvers;
+    std::vector<std::unique_ptr<MLCMST::MLCMST_Solver> > init_solvers;
     init_solvers.emplace_back(std::make_unique<LinkUpgrade>(
             LinkUpgrade::Params{ true, false, false }));
     GeneticGamvros solver(std::move(init_solvers),

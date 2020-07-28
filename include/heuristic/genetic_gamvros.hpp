@@ -5,6 +5,7 @@
 
 #include <mlcmst_solver.hpp>
 #include <mlcmst_subnet_solver.hpp>
+#include <heuristic/mlcmst_heuristic.hpp>
 
 namespace MLCMST::heuristic {
 
@@ -22,7 +23,7 @@ public:
 };
 }
 
-class GeneticGamvros final : public MLCMSTSolver
+class GeneticGamvros final : public MLCMST_Heuristic
 {
 public:
     static std::string id();
@@ -40,20 +41,20 @@ public:
     };
 
     GeneticGamvros(
-            std::vector<std::unique_ptr< MLCMSTSolver > > init_population_solvers,
-            std::unique_ptr< MLCMSTSolver > subnet_solver,
+            std::vector<std::unique_ptr< MLCMST_Solver > > init_population_solvers,
+            std::unique_ptr< MLCMST_Solver > subnet_solver,
             const Params& params);
     ~GeneticGamvros() override;
 
-    Result solve(const network::MLCCNetwork &mlcc_network) override;
+    network::MLCMST run(const network::MLCCNetwork &mlcc_network) override;
 
 private:
-    static double EPS_;
+    static const double EPS_;
 
     const network::MLCCNetwork* network_;
 
     Params params_;
-    std::vector<std::unique_ptr< MLCMSTSolver >> init_population_solvers_;
+    std::vector<std::unique_ptr< MLCMST_Solver >> init_population_solvers_;
     MLCMST_SubnetSolver subnet_solver_;
 
     std::vector<internal::Chromosome> initializePopulation();

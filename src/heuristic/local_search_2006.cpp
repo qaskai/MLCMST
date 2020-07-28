@@ -27,8 +27,8 @@ LocalSearch2006::LocalSearch2006() :
 
 }
 
-LocalSearch2006::LocalSearch2006(std::unique_ptr< MLCMSTSolver > init_solver,
-                                 std::unique_ptr< MLCMSTSolver > inner_mlcmst_solver)
+LocalSearch2006::LocalSearch2006(std::unique_ptr< MLCMST_Solver > init_solver,
+                                 std::unique_ptr< MLCMST_Solver > inner_mlcmst_solver)
     : init_solver_(std::move(init_solver)), subnet_solver_(std::move(inner_mlcmst_solver))
 {
 
@@ -36,28 +36,20 @@ LocalSearch2006::LocalSearch2006(std::unique_ptr< MLCMSTSolver > init_solver,
 
 LocalSearch2006::~LocalSearch2006() = default;
 
-MLCMSTSolver::Result LocalSearch2006::solve(const network::MLCCNetwork &network)
-{
-    auto time_start = std::chrono::high_resolution_clock::now();
-    network_ = &network;
-    std::vector<int> group_ids = init_solver_->solve(network).mlcmst->subnet();
 
+network::MLCMST LocalSearch2006::run(const network::MLCCNetwork &mlcc_network)
+{
+    network_ = &mlcc_network;
+
+    std::vector<int> group_ids = init_solver_->solve(*network_).mlcmst->subnet();
     bool done = false;
     while (!done) {
-        std::vector<int> new_group_ids = improvementStep(network, group_ids);
+        std::vector<int> new_group_ids = improvementStep(*network_, group_ids);
         done = std::equal(group_ids.begin(), group_ids.end(), new_group_ids.begin());
         group_ids = new_group_ids;
-    };
+    }
 
-    auto time_end = std::chrono::high_resolution_clock::now();
-    double wall_time = std::chrono::duration<double, std::milli>(time_end - time_start).count();
-
-    return Result {
-        subnet_solver_.solveMLCMST(*network_, group_ids),
-        std::nullopt,
-        wall_time,
-        true
-    };
+    return subnet_solver_.solveMLCMST(*network_, group_ids);
 }
 
 std::vector<int>

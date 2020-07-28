@@ -11,7 +11,7 @@
 class SolverBuilder
 {
 public:
-    using MLCMSTSolver = MLCMST::MLCMSTSolver;
+    using MLCMSTSolver = MLCMST::MLCMST_Solver;
     using Value = rapidjson::Value;
 
     static const std::unordered_map<

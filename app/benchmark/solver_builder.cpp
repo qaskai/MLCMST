@@ -14,7 +14,7 @@
 using namespace MLCMST;
 using rapidjson::Value;
 
-const std::unordered_map<std::string, std::function<std::unique_ptr<MLCMSTSolver>(const Value& v)>>
+const std::unordered_map<std::string, std::function<std::unique_ptr<MLCMST_Solver>(const Value& v)>>
 SolverBuilder::id_to_solver_builder =
 {
     { heuristic::LinkUpgrade::id(), SolverBuilder::buildLinkUpgrade },
@@ -26,7 +26,7 @@ SolverBuilder::id_to_solver_builder =
     { mp::CapacityIndexed::id(), SolverBuilder::buildCapacityIndexed }
 };
 
-std::pair<std::string, std::unique_ptr<MLCMSTSolver >> SolverBuilder::buildNamedSolver(const Value &v)
+std::pair<std::string, std::unique_ptr<MLCMST_Solver >> SolverBuilder::buildNamedSolver(const Value &v)
 {
     std::unique_ptr<MLCMSTSolver> solver = buildSolver(v);
     std::string name = v["id"].GetString();
@@ -36,7 +36,7 @@ std::pair<std::string, std::unique_ptr<MLCMSTSolver >> SolverBuilder::buildNamed
     return std::make_pair( name, std::move(solver) );
 }
 
-std::unique_ptr<MLCMSTSolver> SolverBuilder::buildSolver(const Value &v)
+std::unique_ptr<MLCMST_Solver> SolverBuilder::buildSolver(const Value &v)
 {
     if (!v.HasMember("id")) {
         throw std::invalid_argument("solver json must contain id field");
@@ -48,7 +48,7 @@ std::unique_ptr<MLCMSTSolver> SolverBuilder::buildSolver(const Value &v)
     return id_to_solver_builder.at(id)(v);
 }
 
-std::unique_ptr<MLCMSTSolver> SolverBuilder::buildLinkUpgrade(const Value& v)
+std::unique_ptr<MLCMST_Solver> SolverBuilder::buildLinkUpgrade(const Value& v)
 {
     const std::string id = heuristic::LinkUpgrade::id();
     if (!v.HasMember("params"))
@@ -69,7 +69,7 @@ std::unique_ptr<MLCMSTSolver> SolverBuilder::buildLinkUpgrade(const Value& v)
     return std::make_unique<heuristic::LinkUpgrade>(solver_params);
 }
 
-std::unique_ptr<MLCMSTSolver> SolverBuilder::buildLocalSearch2006(const Value &v)
+std::unique_ptr<MLCMST_Solver> SolverBuilder::buildLocalSearch2006(const Value &v)
 {
     const std::string id = heuristic::LocalSearch2006::id();
     if (!v.HasMember("params"))
@@ -84,7 +84,7 @@ std::unique_ptr<MLCMSTSolver> SolverBuilder::buildLocalSearch2006(const Value &v
             std::move(init_solver), std::move(subproblem_solver));
 }
 
-std::unique_ptr<MLCMSTSolver> SolverBuilder::buildGeneticGamvros(const Value &v)
+std::unique_ptr<MLCMST_Solver> SolverBuilder::buildGeneticGamvros(const Value &v)
 {
     std::string id = heuristic::GeneticGamvros::id();
     if (!v.HasMember("params"))
@@ -119,7 +119,7 @@ std::unique_ptr<MLCMSTSolver> SolverBuilder::buildGeneticGamvros(const Value &v)
             std::move(init_solvers), std::move(subnet_solver), solver_params);
 }
 
-std::unique_ptr<MLCMSTSolver> SolverBuilder::buildMPSolver(
+std::unique_ptr<MLCMST_Solver> SolverBuilder::buildMPSolver(
         const Value &v, const std::function<std::unique_ptr<MLCMSTSolver>(bool)>& creator)
 {
     const std::string id = v["id"].GetString();
@@ -132,22 +132,22 @@ std::unique_ptr<MLCMSTSolver> SolverBuilder::buildMPSolver(
     return creator(exact);
 }
 
-std::unique_ptr<MLCMSTSolver> SolverBuilder::buildSCF(const Value &v)
+std::unique_ptr<MLCMST_Solver> SolverBuilder::buildSCF(const Value &v)
 {
     return buildMPSolver(v, [](bool exact) { return std::make_unique<mp::SCF>(exact); });
 }
 
-std::unique_ptr<MLCMSTSolver> SolverBuilder::buildESCF(const Value &v)
+std::unique_ptr<MLCMST_Solver> SolverBuilder::buildESCF(const Value &v)
 {
     return buildMPSolver(v, [](bool exact) { return std::make_unique<mp::ESCF>(exact); });
 }
 
-std::unique_ptr<MLCMSTSolver> SolverBuilder::buildMCF(const Value &v)
+std::unique_ptr<MLCMST_Solver> SolverBuilder::buildMCF(const Value &v)
 {
     return buildMPSolver(v, [](bool exact) { return std::make_unique<mp::MCF>(exact); });
 }
 
-std::unique_ptr<MLCMSTSolver> SolverBuilder::buildCapacityIndexed(const Value &v)
+std::unique_ptr<MLCMST_Solver> SolverBuilder::buildCapacityIndexed(const Value &v)
 {
     return buildMPSolver(v, [](bool exact) { return std::make_unique<mp::CapacityIndexed>(exact); });
 }

@@ -21,7 +21,7 @@ bool MP_MLCMSTSolver::setThreadNum(int thread_num)
     return status == absl::OkStatus();
 }
 
-MLCMSTSolver::Result MP_MLCMSTSolver::solve(const network::MLCCNetwork &mlcc_network)
+MLCMST_Solver::Result MP_MLCMSTSolver::solve(const network::MLCCNetwork &mlcc_network)
 {
     _mp_solver.Clear();
     _mlcc_network = &mlcc_network;
@@ -37,7 +37,7 @@ MLCMSTSolver::Result MP_MLCMSTSolver::solve(const network::MLCCNetwork &mlcc_net
     double wall_time = std::chrono::duration<double, std::milli>(time_end - time_start).count();
 
     bool finished = result_status == MPSolver::OPTIMAL;
-    return MLCMSTSolver::Result(
+    return MLCMST_Solver::Result(
         finished && _mp_solver.IsMIP() ? createMLCMST() : std::optional<network::MLCMST>(),
         finished ? _mp_solver.Objective().Value() : std::optional<double>(),
         wall_time,

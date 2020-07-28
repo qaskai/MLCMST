@@ -7,6 +7,7 @@
 
 #include <mlcmst_solver.hpp>
 #include <mlcmst_subnet_solver.hpp>
+#include <heuristic/mlcmst_heuristic.hpp>
 
 #include <network/network.hpp>
 #include <network/mlcc_network.hpp>
@@ -14,16 +15,16 @@
 
 namespace MLCMST::heuristic {
 
-class LocalSearch2006 : public MLCMSTSolver
+class LocalSearch2006 : public MLCMST_Heuristic
 {
 public:
     static std::string id();
 
     LocalSearch2006();
-    LocalSearch2006(std::unique_ptr< MLCMSTSolver > init_solver, std::unique_ptr< MLCMSTSolver > inner_mlcmst_solver);
+    LocalSearch2006(std::unique_ptr< MLCMST_Solver > init_solver, std::unique_ptr< MLCMST_Solver > inner_mlcmst_solver);
     ~LocalSearch2006() override;
 
-    Result solve(const network::MLCCNetwork& network) override;
+    network::MLCMST run(const network::MLCCNetwork &mlcc_network) override;
     std::vector<int> improvementStep(const network::MLCCNetwork& network, std::vector<int> group_ids);
 
 private:
@@ -33,7 +34,7 @@ private:
 
     static double EPS_;
 
-    std::unique_ptr< MLCMSTSolver > init_solver_;
+    std::unique_ptr< MLCMST_Solver > init_solver_;
     MLCMST_SubnetSolver subnet_solver_;
 
     const MLCCNetwork* network_;

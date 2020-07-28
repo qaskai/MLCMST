@@ -13,7 +13,7 @@ Benchmark::Benchmark(Benchmark &&benchmark) noexcept : _reporter(std::move(bench
 
 Benchmark::~Benchmark() = default;
 
-void Benchmark::addSolver(std::unique_ptr<MLCMSTSolver> solver, const std::string& name) {
+void Benchmark::addSolver(std::unique_ptr<MLCMST_Solver> solver, const std::string& name) {
     _solvers[name] = std::move(solver);
 }
 
@@ -24,12 +24,12 @@ void Benchmark::addTestCase(const TestCase &test_case)
 
 void Benchmark::run()
 {
-    std::unordered_map<std::string, std::vector<MLCMSTSolver::Result>> results;
+    std::unordered_map<std::string, std::vector<MLCMST_Solver::Result>> results;
     for (const auto& named_solver : _solvers) {
-        std::vector<MLCMSTSolver::Result>& solver_results = results[named_solver.first];
+        std::vector<MLCMST_Solver::Result>& solver_results = results[named_solver.first];
         solver_results.clear();
         for (const TestCase &test_case : _test_cases) {
-            MLCMSTSolver::Result result = named_solver.second->solve(test_case.mlccNetwork());
+            MLCMST_Solver::Result result = named_solver.second->solve(test_case.mlccNetwork());
             solver_results.push_back(result);
         }
     }

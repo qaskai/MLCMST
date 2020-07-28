@@ -19,7 +19,7 @@ public:
         std::vector<int> mapping;
     };
 
-    explicit MLCMST_SubnetSolver(std::unique_ptr<MLCMSTSolver> solver);
+    explicit MLCMST_SubnetSolver(std::unique_ptr<MLCMST_Solver> solver);
     ~MLCMST_SubnetSolver();
 
     std::pair<network::MLCMST, std::vector<int>> subnetTree(
@@ -50,7 +50,7 @@ public:
 
 
 private:
-    std::unique_ptr< MLCMSTSolver > solver_;
+    std::unique_ptr< MLCMST_Solver > solver_;
 
     std::unordered_map<int, std::vector<int>> createGroups(int center, const std::vector<int>& vertex_subnet);
 };

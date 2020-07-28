@@ -56,8 +56,8 @@ std::string GeneticGamvros::id()
 }
 
 
-GeneticGamvros::GeneticGamvros(std::vector<std::unique_ptr<MLCMSTSolver>> init_population_solvers,
-        std::unique_ptr<MLCMSTSolver> subnet_solver, const Params& params)
+GeneticGamvros::GeneticGamvros(std::vector<std::unique_ptr<MLCMST_Solver>> init_population_solvers,
+                               std::unique_ptr<MLCMST_Solver> subnet_solver, const Params& params)
     : params_(params), init_population_solvers_(std::move(init_population_solvers)),
       subnet_solver_(std::move(subnet_solver))
 {
@@ -65,13 +65,11 @@ GeneticGamvros::GeneticGamvros(std::vector<std::unique_ptr<MLCMSTSolver>> init_p
 
 GeneticGamvros::~GeneticGamvros() = default;
 
-double GeneticGamvros::EPS_ = 1e-6;
+double const GeneticGamvros::EPS_ = 1e-9;
 
-MLCMSTSolver::Result GeneticGamvros::solve(const network::MLCCNetwork &mlcc_network)
+network::MLCMST GeneticGamvros::run(const network::MLCCNetwork &mlcc_network)
 {
     network_ = &mlcc_network;
-
-    auto time_start = std::chrono::high_resolution_clock::now();
 
     std::vector< internal::Chromosome > population = initializePopulation();
     for (int i=0; i < params_.generations_number; i++) {
@@ -91,15 +89,7 @@ MLCMSTSolver::Result GeneticGamvros::solve(const network::MLCCNetwork &mlcc_netw
     }
     internal::Chromosome most_fit_chromosome = selectChromosomes(1, evaluateFitness(population))[0];
 
-    auto time_end = std::chrono::high_resolution_clock::now();
-    double wall_time = std::chrono::duration<double, std::milli>(time_end - time_start).count();
-
-    return Result{
-        subnet_solver_.solveMLCMST(*network_, most_fit_chromosome.group_ids),
-        std::nullopt,
-        wall_time,
-        true
-    };
+    return subnet_solver_.solveMLCMST(*network_, most_fit_chromosome.group_ids);
 }
 
 std::vector<internal::Chromosome> GeneticGamvros::initializePopulation()

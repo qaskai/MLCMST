@@ -10,13 +10,13 @@
 
 namespace MLCMST::mp {
 
-class MP_MLCMSTSolver : public MLCMSTSolver
+class MP_MLCMSTSolver : public MLCMST_Solver
 {
 public:
     ~MP_MLCMSTSolver() override;
 
     bool setThreadNum(int thread_num);
-    MLCMSTSolver::Result solve(const network::MLCCNetwork& mlcc_network) final;
+    MLCMST_Solver::Result solve(const network::MLCCNetwork& mlcc_network) final;
 
     virtual void printVariableSolutionValue(std::ostream& out) = 0;
 

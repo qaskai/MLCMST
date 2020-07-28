@@ -4,7 +4,7 @@
 
 namespace MLCMST {
 
-MLCMST_SubnetSolver::MLCMST_SubnetSolver(std::unique_ptr<MLCMSTSolver> solver) : solver_(std::move(solver))
+MLCMST_SubnetSolver::MLCMST_SubnetSolver(std::unique_ptr<MLCMST_Solver> solver) : solver_(std::move(solver))
 {
 }
 

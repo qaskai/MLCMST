@@ -15,7 +15,7 @@ GeneralReporter::~GeneralReporter() = default;
 
 void GeneralReporter::report(
         std::vector<TestCase> &test_cases,
-        std::unordered_map<std::string, std::vector<MLCMSTSolver::Result>> results)
+        std::unordered_map<std::string, std::vector<MLCMST_Solver::Result>> results)
 {
     printTestCaseStats(test_cases);
     for (const auto& p : results) {
@@ -24,7 +24,7 @@ void GeneralReporter::report(
 }
 
 void GeneralReporter::printReport(const std::string& solver_name, std::vector<TestCase> &test_cases,
-        const std::vector<MLCMSTSolver::Result>& results)
+        const std::vector<MLCMST_Solver::Result>& results)
 {
     _out << "****************   " << solver_name << " statistics report" << "    **************\n";
     _out << "------\n";
@@ -48,7 +48,7 @@ void GeneralReporter::printTestCaseStats(const std::vector<TestCase> &test_cases
 }
 
 void GeneralReporter::printLowerBoundGapStats(const std::vector<TestCase> &test_cases,
-        const std::vector<MLCMSTSolver::Result> &results)
+        const std::vector<MLCMST_Solver::Result> &results)
 {
     std::vector<double> lower_bound_gap;
 
@@ -64,7 +64,7 @@ void GeneralReporter::printLowerBoundGapStats(const std::vector<TestCase> &test_
 }
 
 void GeneralReporter::printSolutionGapStats(const std::vector<TestCase> &test_cases,
-        const std::vector<MLCMSTSolver::Result> &results)
+        const std::vector<MLCMST_Solver::Result> &results)
 {
     std::vector<double> gap;
     unsigned invalid_count = 0;
@@ -84,10 +84,10 @@ void GeneralReporter::printSolutionGapStats(const std::vector<TestCase> &test_ca
     printStatistics(gap);
 }
 
-void GeneralReporter::printTimeStats(const std::vector<MLCMSTSolver::Result> &results)
+void GeneralReporter::printTimeStats(const std::vector<MLCMST_Solver::Result> &results)
 {
     std::vector<double> time_in_seconds;
-    for (const MLCMSTSolver::Result& result : results) {
+    for (const MLCMST_Solver::Result& result : results) {
         time_in_seconds.push_back(result.wall_time / 1000.0);
     }
     _out << "runtime in seconds\n";
