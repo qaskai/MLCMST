@@ -67,6 +67,7 @@ void CapacityIndexed::createOneOutgoingConstraints()
     for (int i : _mlcc_network->regularVertexSet()) {
         LinearExpr expr;
         for (int j : _mlcc_network->vertexSet()) {
+            if (i == j) continue;
             for (int p=1; p <= _mlcc_network->maxEdgeCapacity(); p++) {
                 expr += _arc_vars[i][j][p];
             }
@@ -81,12 +82,14 @@ void CapacityIndexed::createCapacityBalanceConstraints()
         LinearExpr expr;
         // outgoing edges
         for (int j : _mlcc_network->vertexSet()) {
+            if (i == j) continue;
             for (int p=1; p <= _mlcc_network->maxEdgeCapacity(); p++) {
                 expr -= p * _arc_vars[i][j][p];
             }
         }
         // ingoing edges
         for (int j : _mlcc_network->regularVertexSet()) {
+            if (i == j) continue;
             for (int p=1; p <= _mlcc_network->maxEdgeCapacity(); p++) {
                 expr += p * _arc_vars[j][i][p];
             }
