@@ -10,6 +10,7 @@
 #include <heuristic/link_upgrade.hpp>
 #include <heuristic/local_search_2006.hpp>
 #include <heuristic/genetic_gamvros.hpp>
+#include <heuristic/martins2008_construction.hpp>
 
 using namespace MLCMST;
 using rapidjson::Value;
@@ -20,6 +21,7 @@ SolverBuilder::id_to_solver_builder =
     { heuristic::LinkUpgrade::id(), SolverBuilder::buildLinkUpgrade },
     { heuristic::LocalSearch2006::id(), SolverBuilder::buildLocalSearch2006 },
     { heuristic::GeneticGamvros::id(), SolverBuilder::buildGeneticGamvros },
+    { heuristic::Martins2008_Construction::id(), SolverBuilder::buildMartins2008_Construction },
     { mp::SCF::id(), SolverBuilder::buildSCF },
     { mp::ESCF::id(), SolverBuilder::buildESCF },
     { mp::MCF::id(), SolverBuilder::buildMCF },
@@ -28,7 +30,7 @@ SolverBuilder::id_to_solver_builder =
 
 std::pair<std::string, std::unique_ptr<MLCMST_Solver >> SolverBuilder::buildNamedSolver(const Value &v)
 {
-    std::unique_ptr<MLCMSTSolver> solver = buildSolver(v);
+    std::unique_ptr<MLCMST_Solver> solver = buildSolver(v);
     std::string name = v["id"].GetString();
     if (v.HasMember("name")) {
         name = v["name"].GetString();
@@ -48,18 +50,33 @@ std::unique_ptr<MLCMST_Solver> SolverBuilder::buildSolver(const Value &v)
     return id_to_solver_builder.at(id)(v);
 }
 
-std::unique_ptr<MLCMST_Solver> SolverBuilder::buildLinkUpgrade(const Value& v)
+void SolverBuilder::validateSolverJson(const Value &v, const std::vector<std::string> &required_params)
 {
-    const std::string id = heuristic::LinkUpgrade::id();
+    if (!v.HasMember("id")) {
+        throw std::invalid_argument("solver json must contain id field");
+    }
+    std::string id = v["id"].GetString();
+    if (!id_to_solver_builder.count(id)) {
+        throw std::invalid_argument("solver with id '" + id + "' does not exist");
+    }
     if (!v.HasMember("params"))
         throw std::invalid_argument(solver_json_template.at(id));
     const Value& params = v["params"];
-    const std::vector<std::string> required_params{
-        "H_leafs_only", "check_all_link_types", "reupgrade_nodes"
-    };
     if (!checkContainsMembers(params, required_params)) {
         throw std::invalid_argument(solver_json_template.at(id));
     }
+}
+
+std::unique_ptr<MLCMST_Solver> SolverBuilder::buildLinkUpgrade(const Value& v)
+{
+    const std::string id = heuristic::LinkUpgrade::id();
+
+    const std::vector<std::string> required_params{
+        "H_leafs_only", "check_all_link_types", "reupgrade_nodes"
+    };
+    validateSolverJson(v, required_params);
+    const Value& params = v["params"];
+
     heuristic::LinkUpgrade::Params solver_params{
         .H_leafs_only= params["H_leafs_only"].GetBool(),
         .check_all_link_types= params["check_all_link_types"].GetBool(),
@@ -72,11 +89,8 @@ std::unique_ptr<MLCMST_Solver> SolverBuilder::buildLinkUpgrade(const Value& v)
 std::unique_ptr<MLCMST_Solver> SolverBuilder::buildLocalSearch2006(const Value &v)
 {
     const std::string id = heuristic::LocalSearch2006::id();
-    if (!v.HasMember("params"))
-        throw std::invalid_argument(solver_json_template.at(id));
+    validateSolverJson(v, { "init_solver", "subnet_solver" });
     const Value& params = v["params"];
-    if (!params.HasMember("init_solver") || !params.HasMember("subnet_solver"))
-        throw std::invalid_argument(solver_json_template.at(id));
 
     auto init_solver = buildSolver(params["init_solver"]);
     auto subproblem_solver = buildSolver(params["subnet_solver"]);
@@ -87,17 +101,13 @@ std::unique_ptr<MLCMST_Solver> SolverBuilder::buildLocalSearch2006(const Value &
 std::unique_ptr<MLCMST_Solver> SolverBuilder::buildGeneticGamvros(const Value &v)
 {
     std::string id = heuristic::GeneticGamvros::id();
-    if (!v.HasMember("params"))
-        throw std::invalid_argument(solver_json_template.at(id));
-    const Value& params = v["params"];
     const std::vector<std::string> required_params{
         "init_solvers", "subnet_solver",
         "population_size", "most_fit_mutate_number", "parents_number", "generations_number",
         "network_fuzzing_epsilon", "crossover_shrunk_move_probability", "crossover_move_less_than_k"
     };
-    if (!checkContainsMembers(params, required_params)) {
-        throw std::invalid_argument(solver_json_template.at(id));
-    }
+    validateSolverJson(v, { "init_solver", "subnet_solver" });
+    const Value& params = v["params"];
 
     heuristic::GeneticGamvros::Params solver_params{
         .population_size = params["population_size"].GetInt(),
@@ -108,7 +118,7 @@ std::unique_ptr<MLCMST_Solver> SolverBuilder::buildGeneticGamvros(const Value &v
         .crossover_shrunk_move_probability = params["crossover_shrunk_move_probability"].GetDouble(),
         .crossover_move_less_than_k = params["crossover_move_less_than_k"].GetInt()
     };
-    std::vector< std::unique_ptr< MLCMSTSolver > > init_solvers;
+    std::vector< std::unique_ptr< MLCMST_Solver > > init_solvers;
     std::transform(params["init_solvers"].Begin(), params["init_solvers"].End(), std::back_inserter(init_solvers),
         [] (const Value& solver) {
             return buildSolver(solver);
@@ -119,8 +129,25 @@ std::unique_ptr<MLCMST_Solver> SolverBuilder::buildGeneticGamvros(const Value &v
             std::move(init_solvers), std::move(subnet_solver), solver_params);
 }
 
+std::unique_ptr<MLCMST_Solver> SolverBuilder::buildMartins2008_Construction(const Value &v)
+{
+    const std::string id = heuristic::Martins2008_Construction::id();
+    validateSolverJson(v, { "subnet_solver", "subnet_size", "alpha" });
+    const Value& params = v["params"];
+
+    heuristic::Martins2008_Construction::Params solver_params{
+        .subnet_size = params["subnet_size"].GetInt(),
+        .alpha = params["alpha"].GetDouble()
+    };
+    auto subnet_solver = buildSolver(params["subnet_solver"]);
+
+    return std::make_unique<heuristic::Martins2008_Construction>(
+            std::move(subnet_solver), solver_params
+            );
+}
+
 std::unique_ptr<MLCMST_Solver> SolverBuilder::buildMPSolver(
-        const Value &v, const std::function<std::unique_ptr<MLCMSTSolver>(bool)>& creator)
+        const Value &v, const std::function<std::unique_ptr<MLCMST_Solver>(bool)>& creator)
 {
     const std::string id = v["id"].GetString();
 
@@ -196,6 +223,16 @@ R""""(
     "network_fuzzing_epsilon": double,
     "crossover_shrunk_move_probability": double,
     "crossover_move_less_than_k": int
+}
+)"""" + "\n"},
+
+{ heuristic::Martins2008_Construction::id(),
+"id == " + heuristic::Martins2008_Construction::id() + " params:"
+R""""(
+{
+    "subnet_solver": <solver_json>,
+    "subnet_size": int,
+    "alpha": double // in [0,1], 0-deterministic, 1-completely random
 }
 )"""" + "\n"},
 
