@@ -103,7 +103,7 @@ MLCMST_SubnetSolver::createGroups(int center, const std::vector<int> &vertex_sub
     for (int i=0; i < vertex_subnet.size(); i++) {
         groups[vertex_subnet[i]].push_back(i);
     }
-    groups.erase(center);
+    groups.erase(vertex_subnet[center]);
     return groups;
 }
 

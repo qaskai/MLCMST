@@ -8,7 +8,7 @@ namespace MLCMST {
 class MLCMST_Improver
 {
 public:
-    ~MLCMST_Improver();
+    virtual ~MLCMST_Improver();
 
     virtual network::MLCMST improve(network::MLCMST mlcmst, const network::MLCCNetwork& mlcc_network) = 0;
 };

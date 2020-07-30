@@ -1,5 +1,6 @@
 #include <heuristic/martins2008_construction.hpp>
 
+#include <cassert>
 #include <limits>
 #include <iterator>
 #include <util/util.hpp>
@@ -48,7 +49,8 @@ network::MLCMST Martins2008_Construction::run(const network::MLCCNetwork &mlcc_n
         }
         id++;
     }
-    return subnet_solver_.solveMLCMST(mlcc_network, vertex_group_id);
+    network::MLCMST mlcmst =  subnet_solver_.solveMLCMST(mlcc_network, vertex_group_id);
+    return mlcmst;
 }
 
 std::vector<int> Martins2008_Construction::createNewGroup(const std::set<int>& unassigned)

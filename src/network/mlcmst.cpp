@@ -1,5 +1,6 @@
 #include <network/mlcmst.hpp>
 
+#include <cassert>
 #include <utility>
 #include <numeric>
 #include <functional>
