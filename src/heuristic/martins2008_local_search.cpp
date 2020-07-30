@@ -9,6 +9,12 @@
 
 namespace MLCMST::heuristic {
 
+std::string Martins2008_LocalSearch::id()
+{
+    static const std::string id = "martins2008_local_search";
+    return id;
+}
+
 Martins2008_LocalSearch::Martins2008_LocalSearch(std::unique_ptr<MLCMST_Solver> subnet_solver,
                                                  Martins2008_LocalSearch::Params params)
         : Martins2008_LocalSearch(std::move(subnet_solver), util::clockMilliseconds(), params)

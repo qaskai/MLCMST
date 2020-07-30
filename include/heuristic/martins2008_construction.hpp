@@ -11,6 +11,8 @@
 
 #include <util/number/int_generator.hpp>
 
+#include <json/property.hpp>
+
 namespace MLCMST::heuristic {
 
 class Martins2008_Construction : public MLCMST_Heuristic
@@ -19,6 +21,11 @@ public:
     struct Params {
         int subnet_size;
         double alpha; // in [0,1], 0-deterministic, 1-completely random
+
+        constexpr static auto properties = std::make_tuple(
+            json::Property<Params, int>{&Params::subnet_size, "subnet_size"},
+            json::Property<Params, double>{&Params::alpha, "alpha"}
+            );
     };
 
     static std::string id();

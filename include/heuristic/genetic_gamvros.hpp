@@ -7,6 +7,8 @@
 #include <mlcmst_subnet_solver.hpp>
 #include <heuristic/mlcmst_heuristic.hpp>
 
+#include <json/property.hpp>
+
 namespace MLCMST::heuristic {
 
 namespace internal {
@@ -35,9 +37,19 @@ public:
         int generations_number = 10;
 
         double network_fuzzing_epsilon = 0.5;
-
         double crossover_shrunk_move_probability = 0.9;
+
         int crossover_move_less_than_k = 6;
+
+        constexpr static auto properties = std::make_tuple(
+            json::Property<Params, int>{&Params::population_size, "population_size"},
+            json::Property<Params, int>{&Params::most_fit_mutate_number, "most_fit_mutate_number"},
+            json::Property<Params, int>{&Params::parents_number, "parents_number"},
+            json::Property<Params, int>{&Params::generations_number, "generations_number"},
+            json::Property<Params, double>{&Params::network_fuzzing_epsilon, "network_fuzzing_epsilon"},
+            json::Property<Params, double>{&Params::crossover_shrunk_move_probability, "crossover_shrunk_move_probability"},
+            json::Property<Params, int>{&Params::crossover_move_less_than_k, "crossover_move_less_than_k"}
+            );
     };
 
     GeneticGamvros(

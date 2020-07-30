@@ -9,4 +9,5 @@ target_link_libraries(benchmark cxxopts mlcmst)
 
 
 add_executable(playground playground.cpp)
+target_compile_features(playground PUBLIC cxx_std_17)
 target_link_libraries(playground mlcmst)

@@ -8,6 +8,8 @@
 
 #include <util/number/int_generator.hpp>
 
+#include <json/property.hpp>
+
 namespace MLCMST::heuristic {
 
 class Martins2008_LocalSearch : public MLCMST_Improver
@@ -15,7 +17,14 @@ class Martins2008_LocalSearch : public MLCMST_Improver
 public:
     struct Params {
         int h_low, h_high;
+
+        constexpr static auto properties = std::make_tuple(
+            json::Property<Params, int>{&Params::h_low, "h_low"},
+            json::Property<Params, int>{&Params::h_high, "h_high"}
+            );
     };
+
+    static std::string id();
 
     Martins2008_LocalSearch(std::unique_ptr< MLCMST_Solver > subnet_solver, Params params);
     Martins2008_LocalSearch(std::unique_ptr< MLCMST_Solver > subnet_solver, long seed, Params params);
