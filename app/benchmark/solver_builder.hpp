@@ -22,8 +22,6 @@ public:
     static const std::unordered_map<std::string, std::string> solver_json_template;
 
 private:
-    static void validateSolverJson(const Value& v, const std::vector<std::string>& required_params);
-
     // mlcmst solver
     static std::unique_ptr< MLCMST_Solver > buildSolver(const Value& v);
     static std::unique_ptr< MLCMST_Solver > buildLinkUpgrade(const Value& v);

@@ -1,14 +1,14 @@
 #include <catch2/catch.hpp>
 
 #include <network/mlcc_network.hpp>
-#include <heuristic/link_upgrade.hpp>
+#include <heuristic/improvement/link_upgrade.hpp>
 #include <_util.hpp>
 
 using namespace MLCMST;
 
 TEST_CASE( "Link upgrade heuristic one step", "[heuristic][link_upgrade]" )
 {
-    using heuristic::LinkUpgrade;
+    using heuristic::improvement::LinkUpgrade;
     LinkUpgrade solver(LinkUpgrade::Params {
         .H_leafs_only=true, .check_all_link_types = false, .reupgrade_nodes = false
     });
@@ -40,7 +40,7 @@ TEST_CASE( "Link upgrade heuristic one step", "[heuristic][link_upgrade]" )
 
 TEST_CASE( "Link upgrade all variations functional", "[heuristic][link_upgrade]" )
 {
-    using heuristic::LinkUpgrade;
+    using heuristic::improvement::LinkUpgrade;
 
     network::MLCCNetwork mlcc_network = tests::Util::generateNetwork(30, false, 1);
 

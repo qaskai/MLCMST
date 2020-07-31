@@ -5,7 +5,7 @@
 #include <unordered_set>
 #include <queue>
 
-#include <heuristic/local_search_2006.hpp>
+#include <heuristic/improvement/local_search_2006.hpp>
 
 #include <util/number/int_generator.hpp>
 #include <util/number/real_number_generator.hpp>
@@ -315,7 +315,7 @@ std::vector<internal::Chromosome> GeneticGamvros::selectMostFit(
 
 internal::Chromosome GeneticGamvros::mutate(internal::Chromosome chromosome)
 {
-    LocalSearch2006 mutator;
+    improvement::LocalSearch2006 mutator;
     chromosome.vertex_group = mutator.improvementStep(*network_, chromosome.vertex_group);
     chromosome.group_ids = internal::Chromosome::createGroupIdVector(chromosome.center, chromosome.vertex_group);
     return chromosome;

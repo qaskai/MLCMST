@@ -5,7 +5,7 @@
 #include <network/generation/euclid_mlcc_network_generator.hpp>
 #include <geometry/generation/int_point_generator.hpp>
 
-#include <heuristic/local_search_2006.hpp>
+#include <heuristic/improvement/local_search_2006.hpp>
 
 TEST_CASE( "Gavmros local search 2006 heuristic random", "[heuristic][local_search]" )
 {
@@ -24,7 +24,7 @@ TEST_CASE( "Gavmros local search 2006 heuristic random", "[heuristic][local_sear
             levels, std::make_unique<MLCMST::geometry::generation::IntPointGenerator>(0 ,20));
     MLCCNetwork mlccNetwork = generator.generate();
 
-    MLCMST::heuristic::LocalSearch2006 solver;
+    MLCMST::heuristic::improvement::LocalSearch2006 solver;
     auto result = solver.solve(mlccNetwork);
 
     REQUIRE( result.mlcmst.has_value() );

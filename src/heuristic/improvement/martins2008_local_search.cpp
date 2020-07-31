@@ -1,4 +1,4 @@
-#include <heuristic/martins2008_local_search.hpp>
+#include <heuristic/improvement/martins2008_local_search.hpp>
 
 #include <cassert>
 
@@ -7,7 +7,7 @@
 
 #include <util/util.hpp>
 
-namespace MLCMST::heuristic {
+namespace MLCMST::heuristic::improvement {
 
 std::string Martins2008_LocalSearch::id()
 {
@@ -15,15 +15,16 @@ std::string Martins2008_LocalSearch::id()
     return id;
 }
 
-Martins2008_LocalSearch::Martins2008_LocalSearch(std::unique_ptr<MLCMST_Solver> subnet_solver,
-                                                 Martins2008_LocalSearch::Params params)
-        : Martins2008_LocalSearch(std::move(subnet_solver), util::clockMilliseconds(), params)
+Martins2008_LocalSearch::Martins2008_LocalSearch(std::unique_ptr< MLCMST_Solver > init_solver,
+        std::unique_ptr<MLCMST_Solver> subnet_solver, Martins2008_LocalSearch::Params params)
+        : Martins2008_LocalSearch(std::move(init_solver), std::move(subnet_solver), util::clockMilliseconds(), params)
 {
 }
 
-Martins2008_LocalSearch::Martins2008_LocalSearch(
+Martins2008_LocalSearch::Martins2008_LocalSearch(std::unique_ptr< MLCMST_Solver > init_solver,
         std::unique_ptr<MLCMST_Solver> subnet_solver, long seed, Martins2008_LocalSearch::Params params)
-    : params(params), subnet_solver_(std::move(subnet_solver)), int_generator_(0, std::numeric_limits<int>::max(), seed)
+    : MLCMST_Improver(std::move(init_solver)),
+        params(params), subnet_solver_(std::move(subnet_solver)), int_generator_(0, std::numeric_limits<int>::max(), seed)
 {
 }
 

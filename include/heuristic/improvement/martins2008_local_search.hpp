@@ -3,16 +3,16 @@
 #include <set>
 
 #include <mlcmst_solver.hpp>
-#include <heuristic/mlcmst_improver.hpp>
+#include <heuristic/improvement/mlcmst_improver.hpp>
 #include <mlcmst_subnet_solver.hpp>
 
 #include <util/number/int_generator.hpp>
 
 #include <json/property.hpp>
 
-namespace MLCMST::heuristic {
+namespace MLCMST::heuristic::improvement {
 
-class Martins2008_LocalSearch : public MLCMST_Improver
+class Martins2008_LocalSearch : public improvement::MLCMST_Improver
 {
 public:
     struct Params {
@@ -26,14 +26,16 @@ public:
 
     static std::string id();
 
-    Martins2008_LocalSearch(std::unique_ptr< MLCMST_Solver > subnet_solver, Params params);
-    Martins2008_LocalSearch(std::unique_ptr< MLCMST_Solver > subnet_solver, long seed, Params params);
+    Martins2008_LocalSearch(std::unique_ptr< MLCMST_Solver > init_solver,
+            std::unique_ptr< MLCMST_Solver > subnet_solver,Params params);
+    Martins2008_LocalSearch(std::unique_ptr< MLCMST_Solver > init_solver,
+            std::unique_ptr< MLCMST_Solver > subnet_solver, long seed, Params params);
     ~Martins2008_LocalSearch() override;
 
     network::MLCMST improve(network::MLCMST mlcmst, const network::MLCCNetwork &mlcc_network) override;
 
 private:
-    const network::MLCCNetwork* mlcc_network_;
+    const network::MLCCNetwork* mlcc_network_ = nullptr;
 
     Params params;
     MLCMST_SubnetSolver subnet_solver_;

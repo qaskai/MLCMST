@@ -1,20 +1,14 @@
-#include <heuristic/link_upgrade.hpp>
-
-#include <assert.h>
+#include <heuristic/improvement/link_upgrade.hpp>
 
 #include <functional>
 #include <algorithm>
-#include <iostream>
 #include <set>
 #include <unordered_set>
-
-#include <algorithm>
 #include <numeric>
-#include <chrono>
 #include <tuple>
 #include <util/util.hpp>
 
-namespace MLCMST::heuristic {
+namespace MLCMST::heuristic::improvement {
 
 std::string LinkUpgrade::id()
 {
@@ -22,19 +16,25 @@ std::string LinkUpgrade::id()
     return id;
 }
 
-LinkUpgrade::LinkUpgrade(LinkUpgrade::Params params) : params(params) {
+LinkUpgrade::LinkUpgrade(LinkUpgrade::Params params) : MLCMST_Improver(), params(params)
+{
+}
+
+LinkUpgrade::LinkUpgrade(std::unique_ptr<MLCMST_Solver> init_solver, LinkUpgrade::Params params)
+    : MLCMST_Improver(std::move(init_solver)), params(params)
+{
 }
 
 LinkUpgrade::~LinkUpgrade() = default;
 
-network::MLCMST LinkUpgrade::run(const network::MLCCNetwork &mlcc_network)
+network::MLCMST LinkUpgrade::improve(network::MLCMST mlcmst, const network::MLCCNetwork &mlcc_network)
 {
     network_ = &mlcc_network;
-    auto mlcmst = mainLoop();
+    mlcmst = mainLoop(mlcmst);
     return mlcmst;
 }
 
-network::MLCMST LinkUpgrade::mainLoop()
+network::MLCMST LinkUpgrade::mainLoop(network::MLCMST mlcmst)
 {
     struct Upgrade {
         double saving;
@@ -42,7 +42,6 @@ network::MLCMST LinkUpgrade::mainLoop()
         std::vector<int> H;
     };
 
-    network::MLCMST mlcmst = network::MLCMST::star(*network_);
     std::vector<int> upgrade_candidates = network_->regularVertexSet();
 
     auto viable_upgrade_set = [&] (int i) -> std::vector<int> {

@@ -3,13 +3,14 @@
 #include <vector>
 #include <tuple>
 
-#include <heuristic/mlcmst_heuristic.hpp>
+#include <mlcmst_solver.hpp>
+#include <heuristic/improvement/mlcmst_improver.hpp>
 
 #include <json/property.hpp>
 
-namespace MLCMST::heuristic {
+namespace MLCMST::heuristic::improvement {
 
-class LinkUpgrade : public MLCMST_Heuristic
+class LinkUpgrade : public MLCMST_Improver
 {
 public:
     static std::string id();
@@ -26,19 +27,20 @@ public:
             );
     };
     explicit LinkUpgrade(Params params);
+    LinkUpgrade(std::unique_ptr< MLCMST_Solver > init_solver, Params params);
     ~LinkUpgrade() override;
 
-    network::MLCMST run(const network::MLCCNetwork &mlcc_network) override;
+    network::MLCMST improve(network::MLCMST mlcmst, const network::MLCCNetwork &mlcc_network) override;
 
 private:
     Params params;
 
-    const network::MLCCNetwork* network_;
+    const network::MLCCNetwork* network_ = nullptr;
 
-    network::MLCMST mainLoop();
+    network::MLCMST mainLoop(network::MLCMST mlcmst);
 
     std::pair<double, std::vector<int>> findUpgradeSetH(int i, int level, network::MLCMST mlcmst);
-    void implementUpgrade(network::MLCMST& mlcmst, int i, int level, const std::vector<int>& H);
+    static void implementUpgrade(network::MLCMST& mlcmst, int i, int level, const std::vector<int>& H);
 
     double d(int i, int j, const network::MLCMST& mlcmst);
     double modified_d(int i, int j, const network::MLCMST& mlcmst, const std::vector<int>& load);

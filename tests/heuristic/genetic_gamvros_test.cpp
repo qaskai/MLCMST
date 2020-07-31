@@ -1,7 +1,7 @@
 #include <catch2/catch.hpp>
 
 #include <heuristic/genetic_gamvros.hpp>
-#include <heuristic/link_upgrade.hpp>
+#include <heuristic/improvement/link_upgrade.hpp>
 
 #include <network/generation/euclid_mlcc_network_generator.hpp>
 
@@ -10,7 +10,7 @@
 TEST_CASE( "Genetic Algorithm by Gamvros et. al.", "[heuristic]" )
 {
     using MLCMST::heuristic::GeneticGamvros;
-    using MLCMST::heuristic::LinkUpgrade;
+    using MLCMST::heuristic::improvement::LinkUpgrade;
     using MLCMST::network::generation::EuclidMLCCNetworkGenerator;
     using Level = MLCMST::network::generation::EuclidMLCCNetworkGenerator::Level;
     using MLCMST::network::MLCCNetwork;

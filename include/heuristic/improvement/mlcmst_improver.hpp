@@ -8,7 +8,7 @@
 #include <network/mlcmst.hpp>
 #include <network/mlcc_network.hpp>
 
-namespace MLCMST::heuristic {
+namespace MLCMST::heuristic::improvement {
 
 class MLCMST_Improver : public MLCMST_Heuristic
 {

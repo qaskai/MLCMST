@@ -1,13 +1,13 @@
-#include <heuristic/local_search_2006.hpp>
+#include <heuristic/improvement/local_search_2006.hpp>
 
 #include <algorithm>
 #include <chrono>
 #include <numeric>
 #include <queue>
 
-#include <heuristic/link_upgrade.hpp>
+#include <heuristic/improvement/link_upgrade.hpp>
 
-namespace MLCMST::heuristic {
+namespace MLCMST::heuristic::improvement {
 
 std::string LocalSearch2006::id()
 {
@@ -24,24 +24,22 @@ LocalSearch2006::LocalSearch2006() :
         true, false, false
     }))
 {
-
 }
 
 LocalSearch2006::LocalSearch2006(std::unique_ptr< MLCMST_Solver > init_solver,
-                                 std::unique_ptr< MLCMST_Solver > inner_mlcmst_solver)
-    : init_solver_(std::move(init_solver)), subnet_solver_(std::move(inner_mlcmst_solver))
+                                 std::unique_ptr< MLCMST_Solver > subnet_solver)
+    : MLCMST_Improver(std::move(init_solver)), subnet_solver_(std::move(subnet_solver))
 {
-
 }
 
 LocalSearch2006::~LocalSearch2006() = default;
 
 
-network::MLCMST LocalSearch2006::run(const network::MLCCNetwork &mlcc_network)
+network::MLCMST LocalSearch2006::improve(network::MLCMST mlcmst, const network::MLCCNetwork &mlcc_network)
 {
     network_ = &mlcc_network;
 
-    std::vector<int> group_ids = init_solver_->solve(*network_).mlcmst->subnet();
+    std::vector<int> group_ids = mlcmst.subnet();
     bool done = false;
     while (!done) {
         std::vector<int> new_group_ids = improvementStep(*network_, group_ids);

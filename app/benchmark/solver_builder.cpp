@@ -7,11 +7,11 @@
 #include <mp/mcf.hpp>
 #include <mp/capacity_indexed.hpp>
 
-#include <heuristic/link_upgrade.hpp>
-#include <heuristic/local_search_2006.hpp>
+#include <heuristic/improvement/link_upgrade.hpp>
+#include <heuristic/improvement/local_search_2006.hpp>
 #include <heuristic/genetic_gamvros.hpp>
 #include <heuristic/martins2008_construction.hpp>
-#include <heuristic/martins2008_local_search.hpp>
+#include <heuristic/improvement/martins2008_local_search.hpp>
 
 #include <json/json.hpp>
 
@@ -21,11 +21,11 @@ using rapidjson::Value;
 const std::unordered_map<std::string, std::function<std::unique_ptr<MLCMST_Solver>(const Value& v)>>
 SolverBuilder::id_to_solver_builder =
 {
-    { heuristic::LinkUpgrade::id(), SolverBuilder::buildLinkUpgrade },
-    { heuristic::LocalSearch2006::id(), SolverBuilder::buildLocalSearch2006 },
+    { heuristic::improvement::LinkUpgrade::id(), SolverBuilder::buildLinkUpgrade },
+    { heuristic::improvement::LocalSearch2006::id(), SolverBuilder::buildLocalSearch2006 },
     { heuristic::GeneticGamvros::id(), SolverBuilder::buildGeneticGamvros },
     { heuristic::Martins2008_Construction::id(), SolverBuilder::buildMartins2008_Construction },
-    { heuristic::Martins2008_LocalSearch::id(), SolverBuilder::buildMartins2008_LocalSearch },
+    { heuristic::improvement::Martins2008_LocalSearch::id(), SolverBuilder::buildMartins2008_LocalSearch },
     { mp::SCF::id(), SolverBuilder::buildSCF },
     { mp::ESCF::id(), SolverBuilder::buildESCF },
     { mp::MCF::id(), SolverBuilder::buildMCF },
@@ -54,28 +54,12 @@ std::unique_ptr<MLCMST_Solver> SolverBuilder::buildSolver(const Value &v)
     return id_to_solver_builder.at(id)(v);
 }
 
-void SolverBuilder::validateSolverJson(const Value &v, const std::vector<std::string> &required_params)
-{
-    if (!v.HasMember("id")) {
-        throw std::invalid_argument("solver json must contain id field");
-    }
-    std::string id = v["id"].GetString();
-    if (!id_to_solver_builder.count(id)) {
-        throw std::invalid_argument("solver with id '" + id + "' does not exist");
-    }
-    if (!v.HasMember("params"))
-        throw std::invalid_argument(solver_json_template.at(id));
-    const Value& params = v["params"];
-    if (!checkContainsMembers(params, required_params)) {
-        throw std::invalid_argument(solver_json_template.at(id));
-    }
-}
-
 std::unique_ptr<MLCMST_Solver> SolverBuilder::buildLinkUpgrade(const Value& v)
 {
     const Value& params = v["params"];
-    auto solver_params = json::fromJson< heuristic::LinkUpgrade::Params >(params);
-    return std::make_unique<heuristic::LinkUpgrade>(solver_params);
+    auto init_solver = buildSolver(params["init_solver"]);
+    auto solver_params = json::fromJson< heuristic::improvement::LinkUpgrade::Params >(params);
+    return std::make_unique<heuristic::improvement::LinkUpgrade>(solver_params);
 }
 
 std::unique_ptr<MLCMST_Solver> SolverBuilder::buildLocalSearch2006(const Value &v)
@@ -83,7 +67,7 @@ std::unique_ptr<MLCMST_Solver> SolverBuilder::buildLocalSearch2006(const Value &
     const Value& params = v["params"];
     auto init_solver = buildSolver(params["init_solver"]);
     auto subproblem_solver = buildSolver(params["subnet_solver"]);
-    return std::make_unique<heuristic::LocalSearch2006>(
+    return std::make_unique<heuristic::improvement::LocalSearch2006>(
             std::move(init_solver), std::move(subproblem_solver));
 }
 
@@ -113,13 +97,11 @@ std::unique_ptr<MLCMST_Solver> SolverBuilder::buildMartins2008_Construction(cons
 std::unique_ptr<MLCMST_Solver> SolverBuilder::buildMartins2008_LocalSearch(const Value &v)
 {
     const Value& params = v["params"];
-    auto solver_params = json::fromJson<heuristic::Martins2008_LocalSearch::Params>(params);
+    auto init_solver = buildSolver(params["init_solver"]);
     auto subnet_solver = buildSolver(params["subnet_solver"]);
-    throw std::invalid_argument("not implemented");
-    // TODO: make subnet improver a instance of MLCMST_Solver
-//
-//    return std::make_unique<heuristic::Martins2008_LocalSearch>(
-//        std::move(subnet_solver), solver_params);
+    auto solver_params = json::fromJson<heuristic::improvement::Martins2008_LocalSearch::Params>(params);
+    return std::make_unique<heuristic::improvement::Martins2008_LocalSearch>(
+        std::move(init_solver), std::move(subnet_solver), solver_params);
 }
 
 std::unique_ptr<MLCMST_Solver> SolverBuilder::buildMPSolver(
@@ -162,18 +144,19 @@ bool SolverBuilder::checkContainsMembers(const Value& v, const std::vector<std::
 const std::unordered_map<std::string, std::string> SolverBuilder::solver_json_template =
 {
 
-{ heuristic::LinkUpgrade::id(),
-  "id == " + heuristic::LinkUpgrade::id() + " params:"
+{ heuristic::improvement::LinkUpgrade::id(),
+  "id == " + heuristic::improvement::LinkUpgrade::id() + " params:"
 R""""(
 {
+    "init_solver": <solver_json>,
     "H_leafs_only": bool,
-    "check_all_link_types": bool, // if true will iterate over viable link upgrades to find best H, if not L,L-1,...,0
+    "check_all_link_types": bool,
     "reupgrade_nodes": bool
 }
 )"""" + "\n" },
 
-{ heuristic::LocalSearch2006::id(),
-  "id == " + heuristic::LocalSearch2006::id() + " params:"
+{ heuristic::improvement::LocalSearch2006::id(),
+  "id == " + heuristic::improvement::LocalSearch2006::id() + " params:"
 R""""(
 {
     "init_solver": <solver_json>,
@@ -201,16 +184,18 @@ R""""(
 "id == " + heuristic::Martins2008_Construction::id() + " params:"
 R""""(
 {
+    "init_solver": <solver_json>,
     "subnet_solver": <solver_json>,
     "subnet_size": int,
     "alpha": double // in [0,1], 0-deterministic, 1-completely random
 }
 )"""" + "\n"},
 
-{ heuristic::Martins2008_LocalSearch::id(),
-        "id == " + heuristic::Martins2008_LocalSearch::id() + " params:"
+{ heuristic::improvement::Martins2008_LocalSearch::id(),
+        "id == " + heuristic::improvement::Martins2008_LocalSearch::id() + " params:"
 R""""(
 {
+    "init_solver": <solver_json>,
     "subnet_solver": <solver_json>,
     "h_low": int,
     "h_high": int
