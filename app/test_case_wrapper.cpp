@@ -12,7 +12,7 @@
 #include <benchmark/test_case.hpp>
 #include <benchmark/serialization/test_case_serialization.hpp>
 
-#include <mp/mp_mlcmst_solver.hpp>
+#include <mp/mlcmst_mp_solver.hpp>
 #include <mp/scf.hpp>
 #include <mp/escf.hpp>
 #include <mp/mcf.hpp>
@@ -38,7 +38,7 @@ public:
     ~TestCaseWrapperApp() override;
 
 private:
-    const std::map<std::string, std::function<std::shared_ptr< mp::MP_MLCMSTSolver >(bool)> > solvers {
+    const std::map<std::string, std::function<std::shared_ptr< mp::MLCMST_MPSolver >(bool)> > solvers {
         { mp::SCF::id(), [] (bool optimal) { return std::make_shared<mp::SCF>(optimal); } },
         { mp::ESCF::id(), [] (bool optimal) { return std::make_shared<mp::ESCF>(optimal); } },
         { mp::MCF::id(), [] (bool optimal) { return std::make_shared<mp::MCF>(optimal); } },
@@ -52,9 +52,9 @@ private:
 
     std::vector<MLCCNetwork> readNetworks();
     std::vector<TestCase> createTestCases(
-            const std::vector<MLCCNetwork>& networks, const std::shared_ptr< mp::MP_MLCMSTSolver >& solver);
+            const std::vector<MLCCNetwork>& networks, const std::shared_ptr< mp::MLCMST_MPSolver >& solver);
     void printTestCases(const std::vector<TestCase>& test_cases);
-    std::shared_ptr< mp::MP_MLCMSTSolver > getSolver(const std::string& id, bool optimal, int thread_num=1);
+    std::shared_ptr< mp::MLCMST_MPSolver > getSolver(const std::string& id, bool optimal, int thread_num=1);
 };
 
 TestCaseWrapperApp::~TestCaseWrapperApp() = default;
@@ -127,7 +127,7 @@ std::vector<MLCCNetwork> TestCaseWrapperApp::readNetworks()
 }
 
 std::vector<TestCase> TestCaseWrapperApp::createTestCases(
-        const std::vector<MLCCNetwork> &networks, const std::shared_ptr<mp::MP_MLCMSTSolver>& solver)
+        const std::vector<MLCCNetwork> &networks, const std::shared_ptr<mp::MLCMST_MPSolver>& solver)
 {
     std::vector<TestCase> test_cases;
     test_cases.reserve(networks.size());
@@ -151,7 +151,7 @@ void TestCaseWrapperApp::printTestCases(const std::vector<TestCase> &test_cases)
     }
 }
 
-std::shared_ptr<mp::MP_MLCMSTSolver> TestCaseWrapperApp::getSolver(const std::string &id, bool optimal, int thread_num)
+std::shared_ptr<mp::MLCMST_MPSolver> TestCaseWrapperApp::getSolver(const std::string &id, bool optimal, int thread_num)
 {
     if (solvers.count(id)) {
         auto solver = solvers.at(id)(optimal);

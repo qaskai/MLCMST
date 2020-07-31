@@ -10,10 +10,10 @@
 
 namespace MLCMST::mp {
 
-class MP_MLCMSTSolver : public MLCMST_Solver
+class MLCMST_MPSolver : public MLCMST_Solver
 {
 public:
-    ~MP_MLCMSTSolver() override;
+    ~MLCMST_MPSolver() override;
 
     bool setThreadNum(int thread_num);
     MLCMST_Solver::Result solve(const network::MLCCNetwork& mlcc_network) final;
@@ -32,8 +32,8 @@ protected:
     MPSolver _mp_solver;
     const network::MLCCNetwork* _mlcc_network;
 
-    explicit MP_MLCMSTSolver(bool exact_solution);
-    explicit MP_MLCMSTSolver(mp::MPSolverFactory mp_solver_factory);
+    explicit MLCMST_MPSolver(bool exact_solution);
+    explicit MLCMST_MPSolver(mp::MPSolverFactory mp_solver_factory);
 
     virtual void setupLocalVariables() = 0;
     virtual void createVariables() = 0;

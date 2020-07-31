@@ -13,11 +13,11 @@ std::string SCF::id()
     return id;
 }
 
-SCF::SCF(bool exact_solution) : MP_MLCMSTSolver(exact_solution)
+SCF::SCF(bool exact_solution) : MLCMST_MPSolver(exact_solution)
 {
 }
 
-SCF::SCF(MLCMST::mp::MPSolverFactory mp_solver_factory) : MP_MLCMSTSolver(mp_solver_factory)
+SCF::SCF(MLCMST::mp::MPSolverFactory mp_solver_factory) : MLCMST_MPSolver(mp_solver_factory)
 {
 }
 

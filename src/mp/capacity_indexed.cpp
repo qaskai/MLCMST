@@ -14,11 +14,11 @@ std::string CapacityIndexed::id()
     return id;
 }
 
-CapacityIndexed::CapacityIndexed(bool exact_solution) : MP_MLCMSTSolver(exact_solution)
+CapacityIndexed::CapacityIndexed(bool exact_solution) : MLCMST_MPSolver(exact_solution)
 {
 }
 
-CapacityIndexed::CapacityIndexed(MPSolverFactory mp_solver_factory) : MP_MLCMSTSolver(mp_solver_factory)
+CapacityIndexed::CapacityIndexed(MPSolverFactory mp_solver_factory) : MLCMST_MPSolver(mp_solver_factory)
 {
 }
 

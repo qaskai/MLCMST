@@ -14,11 +14,11 @@ std::string MCF::id()
     return id;
 }
 
-MCF::MCF(bool exact_solution) : MP_MLCMSTSolver(exact_solution)
+MCF::MCF(bool exact_solution) : MLCMST_MPSolver(exact_solution)
 {
 }
 
-MCF::MCF(MLCMST::mp::MPSolverFactory mp_solver_factory) : MP_MLCMSTSolver(mp_solver_factory)
+MCF::MCF(MLCMST::mp::MPSolverFactory mp_solver_factory) : MLCMST_MPSolver(mp_solver_factory)
 {
 }
 

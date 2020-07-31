@@ -4,7 +4,7 @@
 #include <tuple>
 #include <string>
 
-#include <mp/mp_mlcmst_solver.hpp>
+#include <mp/mlcmst_mp_solver.hpp>
 
 namespace MLCMST::mp {
 
@@ -13,7 +13,7 @@ namespace MLCMST::mp {
  *
  * MLCMST solver
  */
-class MCF : public MP_MLCMSTSolver
+class MCF : public MLCMST_MPSolver
 {
 public:
     static std::string id();

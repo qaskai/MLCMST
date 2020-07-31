@@ -5,7 +5,7 @@
 #include <functional>
 #include <vector>
 
-#include <mp/mp_mlcmst_solver.hpp>
+#include <mp/mlcmst_mp_solver.hpp>
 #include <mp/mp_solver_factory.hpp>
 
 namespace MLCMST::mp {
@@ -15,7 +15,7 @@ namespace MLCMST::mp {
  *
  * MLCMST solver
  */
-class SCF : public MP_MLCMSTSolver
+class SCF : public MLCMST_MPSolver
 {
 public:
     static std::string id();

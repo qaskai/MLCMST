@@ -2,12 +2,12 @@
 
 #include <string>
 
-#include <mp/mp_mlcmst_solver.hpp>
+#include <mp/mlcmst_mp_solver.hpp>
 #include <mp/mp_solver_factory.hpp>
 
 namespace MLCMST::mp {
 
-class CapacityIndexed : public MP_MLCMSTSolver
+class CapacityIndexed : public MLCMST_MPSolver
 {
 public:
     static std::string id();
