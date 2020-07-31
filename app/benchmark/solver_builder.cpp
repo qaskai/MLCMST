@@ -7,6 +7,7 @@
 #include <mp/mcf.hpp>
 #include <mp/capacity_indexed.hpp>
 
+#include <heuristic/star.hpp>
 #include <heuristic/improvement/link_upgrade.hpp>
 #include <heuristic/improvement/local_search_2006.hpp>
 #include <heuristic/genetic_gamvros.hpp>
@@ -18,9 +19,10 @@
 using namespace MLCMST;
 using rapidjson::Value;
 
-const std::unordered_map<std::string, std::function<std::unique_ptr<MLCMST_Solver>(const Value& v)>>
+const std::map<std::string, std::function<std::unique_ptr<MLCMST_Solver>(const Value& v)>>
 SolverBuilder::id_to_solver_builder =
 {
+    { heuristic::Star::id(), buildStar },
     { heuristic::improvement::LinkUpgrade::id(), SolverBuilder::buildLinkUpgrade },
     { heuristic::improvement::LocalSearch2006::id(), SolverBuilder::buildLocalSearch2006 },
     { heuristic::GeneticGamvros::id(), SolverBuilder::buildGeneticGamvros },
@@ -52,6 +54,11 @@ std::unique_ptr<MLCMST_Solver> SolverBuilder::buildSolver(const Value &v)
         throw std::invalid_argument("solver with id '" + id + "' does not exist");
     }
     return id_to_solver_builder.at(id)(v);
+}
+
+std::unique_ptr<MLCMST_Solver> SolverBuilder::buildStar(const Value &v)
+{
+    return std::make_unique<heuristic::Star>();
 }
 
 std::unique_ptr<MLCMST_Solver> SolverBuilder::buildLinkUpgrade(const Value& v)
@@ -141,11 +148,17 @@ bool SolverBuilder::checkContainsMembers(const Value& v, const std::vector<std::
     return true;
 }
 
-const std::unordered_map<std::string, std::string> SolverBuilder::solver_json_template =
+const std::map<std::string, std::string> SolverBuilder::solver_json_template =
 {
 
+{ heuristic::Star::id(),
+  "id == \"" + heuristic::Star::id() + "\", params:"
+R""""(
+{}
+)"""" + "\n" },
+
 { heuristic::improvement::LinkUpgrade::id(),
-  "id == " + heuristic::improvement::LinkUpgrade::id() + " params:"
+  "id == \"" + heuristic::improvement::LinkUpgrade::id() + "\", params:"
 R""""(
 {
     "init_solver": <solver_json>,
@@ -156,7 +169,7 @@ R""""(
 )"""" + "\n" },
 
 { heuristic::improvement::LocalSearch2006::id(),
-  "id == " + heuristic::improvement::LocalSearch2006::id() + " params:"
+  "id == \"" + heuristic::improvement::LocalSearch2006::id() + "\", params:"
 R""""(
 {
     "init_solver": <solver_json>,
@@ -165,7 +178,7 @@ R""""(
 )"""" + "\n"},
 
 { heuristic::GeneticGamvros::id(),
-  "id == " + heuristic::GeneticGamvros::id() + " params:"
+"id == \"" + heuristic::GeneticGamvros::id() + "\", params:"
 R""""(
 {
     "init_solvers": <solver_json> list,
@@ -181,7 +194,7 @@ R""""(
 )"""" + "\n"},
 
 { heuristic::Martins2008_Construction::id(),
-"id == " + heuristic::Martins2008_Construction::id() + " params:"
+"id == \"" + heuristic::Martins2008_Construction::id() + "\", params:"
 R""""(
 {
     "init_solver": <solver_json>,
@@ -192,7 +205,7 @@ R""""(
 )"""" + "\n"},
 
 { heuristic::improvement::Martins2008_LocalSearch::id(),
-        "id == " + heuristic::improvement::Martins2008_LocalSearch::id() + " params:"
+"id == \"" + heuristic::improvement::Martins2008_LocalSearch::id() + "\", params:"
 R""""(
 {
     "init_solver": <solver_json>,
@@ -203,28 +216,28 @@ R""""(
 )"""" + "\n"},
 
 { mp::SCF::id(),
-  "id == " + mp::SCF::id() + " params:"
+  "id == \"" + mp::SCF::id() + "\", params:"
 R""""(
 { "exact": bool }
 )"""" + "\n"},
 
 { mp::ESCF::id(),
-  "id == " + mp::ESCF::id() + " params:"
+  "id == \"" + mp::ESCF::id() + "\", params:"
 R""""(
 { "exact": bool }
 )"""" + "\n"},
 
 { mp::MCF::id(),
-  "id == " + mp::MCF::id() + " params:"
+  "id == \"" + mp::MCF::id() + "\", params:"
 R""""(
 { "exact": bool }
 )"""" + "\n"},
 
 { mp::CapacityIndexed::id(),
-  "id == " + mp::MCF::id() + " params:"
+  "id == \"" + mp::CapacityIndexed::id() + "\", params:"
 R""""(
 { "exact": bool }
-)"""" + "\n"},
+)"""" + "\n"}
 
 };
 

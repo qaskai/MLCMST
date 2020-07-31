@@ -1,6 +1,6 @@
 #pragma once
 
-#include <unordered_map>
+#include <map>
 #include <functional>
 #include <memory>
 
@@ -14,16 +14,18 @@ public:
     using MLCMST_Solver = MLCMST::MLCMST_Solver;
     using Value = rapidjson::Value;
 
-    static const std::unordered_map<
+    static const std::map<
             std::string, std::function<std::unique_ptr<MLCMST_Solver>(const Value& v)>
             > id_to_solver_builder;
 
     static std::pair<std::string, std::unique_ptr< MLCMST_Solver >> buildNamedSolver(const Value& v);
-    static const std::unordered_map<std::string, std::string> solver_json_template;
+    static const std::map<std::string, std::string> solver_json_template;
 
 private:
     // mlcmst solver
     static std::unique_ptr< MLCMST_Solver > buildSolver(const Value& v);
+
+    static std::unique_ptr< MLCMST_Solver > buildStar(const Value& v);
     static std::unique_ptr< MLCMST_Solver > buildLinkUpgrade(const Value& v);
     static std::unique_ptr< MLCMST_Solver > buildLocalSearch2006(const Value& v);
     static std::unique_ptr< MLCMST_Solver > buildGeneticGamvros(const Value& v);
