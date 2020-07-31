@@ -3,7 +3,7 @@
 #include <set>
 
 #include <mlcmst_solver.hpp>
-#include <mlcmst_improver.hpp>
+#include <heuristic/mlcmst_improver.hpp>
 #include <mlcmst_subnet_solver.hpp>
 
 #include <util/number/int_generator.hpp>
