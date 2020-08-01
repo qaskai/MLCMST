@@ -14,6 +14,7 @@
 #include <heuristic/genetic_gamvros.hpp>
 #include <heuristic/martins2008_construction.hpp>
 #include <heuristic/improvement/martins2008_local_search.hpp>
+#include <heuristic/grasp.hpp>
 
 #include <json/json.hpp>
 
@@ -28,6 +29,7 @@ SolverBuilder::id_to_solver_builder =
     { heuristic::improvement::LinkUpgrade::id(), SolverBuilder::buildLinkUpgrade },
     { heuristic::improvement::LocalSearch2006::id(), SolverBuilder::buildLocalSearch2006 },
     { heuristic::GeneticGamvros::id(), SolverBuilder::buildGeneticGamvros },
+    { heuristic::GRASP::id(), SolverBuilder::buildGRASP },
     { heuristic::Martins2008_Construction::id(), SolverBuilder::buildMartins2008_Construction },
     { heuristic::improvement::Martins2008_LocalSearch::id(), SolverBuilder::buildMartins2008_LocalSearch },
     { mp::SCF::id(), SolverBuilder::buildSCF },
@@ -96,6 +98,18 @@ std::unique_ptr<MLCMST_Solver> SolverBuilder::buildGeneticGamvros(const Value &v
 
     return std::make_unique<heuristic::GeneticGamvros>(
             std::move(init_solvers), std::move(subnet_solver), solver_params);
+}
+
+std::unique_ptr<MLCMST_Solver> SolverBuilder::buildGRASP(const Value &v)
+{
+    const Value& params = v["params"];
+    std::unique_ptr<heuristic::MLCMST_Heuristic> construction(
+            dynamic_cast<heuristic::MLCMST_Heuristic*>(buildSolver(params["construction_phase"]).release()));
+    std::unique_ptr<heuristic::improvement::MLCMST_Improver> improvement(
+            dynamic_cast<heuristic::improvement::MLCMST_Improver*>(buildSolver(params["improvement_phase"]).release()));
+    auto solver_params = json::fromJson<heuristic::GRASP::Params>(params);
+    return std::make_unique<heuristic::GRASP>(
+        std::move(construction), std::move(improvement), solver_params);
 }
 
 std::unique_ptr<MLCMST_Solver> SolverBuilder::buildMartins2008_Construction(const Value &v)
@@ -203,6 +217,16 @@ R""""(
     "network_fuzzing_epsilon": double,
     "crossover_shrunk_move_probability": double,
     "crossover_move_less_than_k": int
+}
+)"""" + "\n"},
+
+{ heuristic::GRASP::id(),
+"id == \"" + heuristic::GRASP::id() + "\", params:"
+R""""(
+{
+    "construction_phase": <solver_json> (of heuristic type),
+    "improvement_phase": <solver_json> (of improver type),
+    "iterations_no": int
 }
 )"""" + "\n"},
 

@@ -30,6 +30,7 @@ private:
     static std::unique_ptr< MLCMST_Solver > buildLinkUpgrade(const Value& v);
     static std::unique_ptr< MLCMST_Solver > buildLocalSearch2006(const Value& v);
     static std::unique_ptr< MLCMST_Solver > buildGeneticGamvros(const Value& v);
+    static std::unique_ptr< MLCMST_Solver > buildGRASP(const Value& v);
     static std::unique_ptr< MLCMST_Solver > buildMartins2008_Construction(const Value& v);
     static std::unique_ptr< MLCMST_Solver > buildMartins2008_LocalSearch(const Value& v);
 
