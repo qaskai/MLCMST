@@ -9,6 +9,8 @@
 
 #include <json/property.hpp>
 
+#include <util/number/int_generator.hpp>
+
 namespace MLCMST::heuristic {
 
 namespace internal {
@@ -23,8 +25,11 @@ public:
     static std::vector<int> createGroupIdVector(int center, const std::vector<int>& vertex_group);
     [[nodiscard]] Chromosome refreshIds() const;
 };
+bool operator==(const Chromosome& c1, const Chromosome& c2);
+bool operator!=(const Chromosome& c1, const Chromosome& c2);
 }
 
+// TODO: init population diversification not working properly
 class GeneticGamvros final : public MLCMST_Heuristic
 {
 public:
@@ -32,6 +37,7 @@ public:
 
     struct Params {
         int population_size = 100;
+        int init_diversification_attempts = 400;
         int most_fit_mutate_number = 10;
         int parents_number = 70;
         int generations_number = 10;
@@ -43,6 +49,7 @@ public:
 
         constexpr static auto properties = std::make_tuple(
             json::Property<Params, int>{&Params::population_size, "population_size"},
+            json::Property<Params, int>{&Params::init_diversification_attempts, "init_diversification_attempts"},
             json::Property<Params, int>{&Params::most_fit_mutate_number, "most_fit_mutate_number"},
             json::Property<Params, int>{&Params::parents_number, "parents_number"},
             json::Property<Params, int>{&Params::generations_number, "generations_number"},
