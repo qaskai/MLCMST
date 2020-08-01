@@ -26,6 +26,7 @@ private:
     static std::unique_ptr< MLCMST_Solver > buildSolver(const Value& v);
 
     static std::unique_ptr< MLCMST_Solver > buildStar(const Value& v);
+    static std::unique_ptr< MLCMST_Solver > buildEsauWilliams(const Value& v);
     static std::unique_ptr< MLCMST_Solver > buildLinkUpgrade(const Value& v);
     static std::unique_ptr< MLCMST_Solver > buildLocalSearch2006(const Value& v);
     static std::unique_ptr< MLCMST_Solver > buildGeneticGamvros(const Value& v);

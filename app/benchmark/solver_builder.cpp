@@ -8,6 +8,7 @@
 #include <mp/capacity_indexed.hpp>
 
 #include <heuristic/star.hpp>
+#include <heuristic/esau_williams.hpp>
 #include <heuristic/improvement/link_upgrade.hpp>
 #include <heuristic/improvement/local_search_2006.hpp>
 #include <heuristic/genetic_gamvros.hpp>
@@ -23,6 +24,7 @@ const std::map<std::string, std::function<std::unique_ptr<MLCMST_Solver>(const V
 SolverBuilder::id_to_solver_builder =
 {
     { heuristic::Star::id(), buildStar },
+    { heuristic::EsauWilliams::id(), buildEsauWilliams },
     { heuristic::improvement::LinkUpgrade::id(), SolverBuilder::buildLinkUpgrade },
     { heuristic::improvement::LocalSearch2006::id(), SolverBuilder::buildLocalSearch2006 },
     { heuristic::GeneticGamvros::id(), SolverBuilder::buildGeneticGamvros },
@@ -59,6 +61,11 @@ std::unique_ptr<MLCMST_Solver> SolverBuilder::buildSolver(const Value &v)
 std::unique_ptr<MLCMST_Solver> SolverBuilder::buildStar(const Value &v)
 {
     return std::make_unique<heuristic::Star>();
+}
+
+std::unique_ptr<MLCMST_Solver> SolverBuilder::buildEsauWilliams(const Value &v)
+{
+    return std::make_unique<heuristic::EsauWilliams>();
 }
 
 std::unique_ptr<MLCMST_Solver> SolverBuilder::buildLinkUpgrade(const Value& v)
@@ -153,6 +160,12 @@ const std::map<std::string, std::string> SolverBuilder::solver_json_template =
 
 { heuristic::Star::id(),
   "id == \"" + heuristic::Star::id() + "\", params:"
+R""""(
+{}
+)"""" + "\n" },
+
+{ heuristic::EsauWilliams::id(),
+"id == \"" + heuristic::EsauWilliams::id() + "\", params:"
 R""""(
 {}
 )"""" + "\n" },
