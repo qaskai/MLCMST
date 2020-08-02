@@ -23,13 +23,14 @@ struct Chromosome
 
 public:
     static std::vector<int> createGroupIdVector(int center, const std::vector<int>& vertex_group);
+    [[nodiscard]] int freeId() const;
     [[nodiscard]] Chromosome refreshIds() const;
 };
 bool operator==(const Chromosome& c1, const Chromosome& c2);
 bool operator!=(const Chromosome& c1, const Chromosome& c2);
 }
 
-// TODO: init population diversification not working properly
+// TODO: the results obtained by this heuristic are hugely below expectations, look into that
 class GeneticGamvros final : public MLCMST_Heuristic
 {
 public:
@@ -37,7 +38,6 @@ public:
 
     struct Params {
         int population_size = 100;
-        int init_diversification_attempts = 400;
         int most_fit_mutate_number = 10;
         int parents_number = 70;
         int generations_number = 10;
@@ -49,7 +49,6 @@ public:
 
         constexpr static auto properties = std::make_tuple(
             json::Property<Params, int>{&Params::population_size, "population_size"},
-            json::Property<Params, int>{&Params::init_diversification_attempts, "init_diversification_attempts"},
             json::Property<Params, int>{&Params::most_fit_mutate_number, "most_fit_mutate_number"},
             json::Property<Params, int>{&Params::parents_number, "parents_number"},
             json::Property<Params, int>{&Params::generations_number, "generations_number"},
@@ -77,6 +76,8 @@ private:
     MLCMST_SubnetSolver subnet_solver_;
 
     std::vector<internal::Chromosome> initializePopulation();
+    std::vector< internal::Chromosome > forceDiversity(std::vector<internal::Chromosome> population);
+    internal::Chromosome diversify(internal::Chromosome c);
 
     double evaluateFitness(const internal::Chromosome& chromosome);
     std::vector< std::pair< internal::Chromosome, double > > evaluateFitness(
@@ -92,7 +93,6 @@ private:
             int N, const std::vector< std::pair<internal::Chromosome, double> >& population_with_fitness);
     internal::Chromosome mutate(internal::Chromosome chromosome);
     std::vector< internal::Chromosome > mutate(std::vector< internal::Chromosome > chromosomes);
-
 };
 
 }

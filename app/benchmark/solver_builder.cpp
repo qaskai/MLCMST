@@ -211,7 +211,6 @@ R""""(
     "init_solvers": <solver_json> list,
     "subnet_solver": <solver_json>,
     "population_size": int,
-    "init_diversification_attempts" : int,
     "most_fit_mutate_number": int,
     "parents_number": int,
     "generations_number": int,

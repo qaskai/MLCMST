@@ -34,6 +34,17 @@ std::vector<int> Chromosome::createGroupIdVector(int center, const std::vector<i
     return std::vector<int>(group_ids.begin(), group_ids.end());
 }
 
+int Chromosome::freeId() const
+{
+    std::unordered_set<int> taken(group_ids.begin(), group_ids.end());
+    taken.insert(vertex_group[center]);
+    for (int i=0; ; i++){
+        if (!taken.count(i)) {
+            return i;
+        }
+    }
+}
+
 Chromosome Chromosome::refreshIds() const
 {
     std::unordered_map<int, int> mapping;
@@ -107,7 +118,7 @@ network::MLCMST GeneticGamvros::run(const network::MLCCNetwork &mlcc_network)
         new_population.insert(new_population.end(), copied_chromosomes.begin(), copied_chromosomes.end());
         new_population.insert(new_population.end(), children.begin(), children.end());
         new_population.insert(new_population.end(), children.begin(), children.end());
-        population = new_population;
+        population = forceDiversity(new_population);
     }
     internal::Chromosome most_fit_chromosome = selectChromosomes(1, evaluateFitness(population))[0];
 
@@ -121,24 +132,56 @@ std::vector<internal::Chromosome> GeneticGamvros::initializePopulation()
     std::vector<internal::Chromosome> population;
     population.reserve(params_.population_size);
 
-//    TODO: initial population diversification is not working well, check it later
-    int failed_attempts = 0;
     while (population.size() < params_.population_size) {
         for (int i=0; i < init_population_solvers_.size() && population.size() < params_.population_size; i++){
             network::MLCMST mlcmst = init_population_solvers_[i]->solve(
                     network_->multiplyEdgeCosts(epsilon_generator.generate())).mlcmst.value();
-            internal::Chromosome new_chromosome(network_->center(), mlcmst.subnet());
-            if (std::find(population.begin(), population.end(), new_chromosome) != population.end()
-                    && failed_attempts < params_.init_diversification_attempts) {
-                failed_attempts++;
-                i--;
-            } else {
-                population.push_back(new_chromosome);
-            }
+            population.push_back(
+                    internal::Chromosome(network_->center(), mlcmst.subnet()).refreshIds());
         }
     }
 
+    return forceDiversity(population);
+}
+
+std::vector<internal::Chromosome> GeneticGamvros::forceDiversity(std::vector<internal::Chromosome> population)
+{
+    for (int i=0; i<population.size(); i++) {
+        internal::Chromosome c = population[i];
+        auto last_it = population.begin() + i;
+        while (std::find(population.begin(), last_it, c) != last_it) {
+            c = diversify(c);
+        }
+        population[i] = c;
+    }
     return population;
+}
+
+internal::Chromosome GeneticGamvros::diversify(internal::Chromosome c)
+{
+    util::number::IntGenerator int_gen(0, std::numeric_limits<int>::max());
+    const int force_new_group_subtrees = 3;
+
+    int i = c.center;
+    while (i == c.center) {
+        i = int_gen.generate() % (int)c.vertex_group.size();
+    }
+    int old_g = c.vertex_group[i];
+    if (c.group_ids.size() < force_new_group_subtrees ) {
+        int g = c.freeId();
+        c.group_ids.push_back(g);
+        c.vertex_group[i] = g;
+    } else {
+        int g = old_g;
+        while (g == c.vertex_group[i]) {
+            g = c.group_ids[int_gen.generate() % (int)c.group_ids.size()];
+        }
+        c.vertex_group[i] = g;
+    }
+    if (std::find(c.vertex_group.begin(), c.vertex_group.end(), old_g) == c.vertex_group.end()) {
+        util::erase(c.group_ids, old_g);
+    }
+    return c;
 }
 
 internal::Chromosome
