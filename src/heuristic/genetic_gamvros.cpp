@@ -104,7 +104,8 @@ network::MLCMST GeneticGamvros::run(const network::MLCCNetwork &mlcc_network)
 {
     network_ = &mlcc_network;
 
-    std::vector< internal::Chromosome > population = initializePopulation();
+    std::vector< internal::Chromosome > population = forceDiversity(initializePopulation());
+//    std::vector< internal::Chromosome > population = initializePopulation();
     for (int i=0; i < params_.generations_number; i++) {
         auto population_with_fitness = evaluateFitness(population);
         auto copied_chromosomes = selectChromosomes(
@@ -117,12 +118,13 @@ network::MLCMST GeneticGamvros::run(const network::MLCCNetwork &mlcc_network)
         new_population.reserve(params_.population_size);
         new_population.insert(new_population.end(), copied_chromosomes.begin(), copied_chromosomes.end());
         new_population.insert(new_population.end(), children.begin(), children.end());
-        new_population.insert(new_population.end(), children.begin(), children.end());
+        new_population.insert(new_population.end(), mutated_chromosomes.begin(), mutated_chromosomes.end());
         population = forceDiversity(new_population);
+//        population = new_population;
     }
-    internal::Chromosome most_fit_chromosome = selectChromosomes(1, evaluateFitness(population))[0];
+    internal::Chromosome most_fit_chromosome = selectMostFit(1, evaluateFitness(population))[0];
 
-    return subnet_solver_.solveMLCMST(*network_, most_fit_chromosome.group_ids);
+    return subnet_solver_.solveMLCMST(*network_, most_fit_chromosome.vertex_group);
 }
 
 std::vector<internal::Chromosome> GeneticGamvros::initializePopulation()
@@ -131,7 +133,6 @@ std::vector<internal::Chromosome> GeneticGamvros::initializePopulation()
             1.0 - params_.network_fuzzing_epsilon, 1.0 + params_.network_fuzzing_epsilon);
     std::vector<internal::Chromosome> population;
     population.reserve(params_.population_size);
-
     while (population.size() < params_.population_size) {
         for (int i=0; i < init_population_solvers_.size() && population.size() < params_.population_size; i++){
             network::MLCMST mlcmst = init_population_solvers_[i]->solve(
@@ -141,7 +142,7 @@ std::vector<internal::Chromosome> GeneticGamvros::initializePopulation()
         }
     }
 
-    return forceDiversity(population);
+    return population;
 }
 
 std::vector<internal::Chromosome> GeneticGamvros::forceDiversity(std::vector<internal::Chromosome> population)
@@ -217,6 +218,7 @@ GeneticGamvros::crossoverChromosomes(const internal::Chromosome &parent1, const 
 
     std::pair<int,int> dividers1 = generate_dividers(int_generator_1);
     std::pair<int,int> dividers2 = generate_dividers(int_generator_2);
+    // TODO: dividers1.first == dividers2.second -- in that case child == parent2, so do sth about it
 
     // phase 1 -- move override grouping int parent2 with selected groups of parent1
     std::unordered_map<int, int> id_mapping;
@@ -227,6 +229,7 @@ GeneticGamvros::crossoverChromosomes(const internal::Chromosome &parent1, const 
         for (int i = 0; i < new_ids.size(); i++) {
             id_mapping[moved_groups[i]] = new_ids[i];
         }
+        child.group_ids.insert(child.group_ids.end(), moved_groups.begin(), moved_groups.end());
     }
     std::transform(parent1.group_ids.begin() + dividers1.first, parent1.group_ids.begin() + dividers1.second,
             std::inserter(child.group_ids, child.group_ids.begin() + dividers2.first),

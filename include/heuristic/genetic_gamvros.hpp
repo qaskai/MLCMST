@@ -30,7 +30,7 @@ bool operator==(const Chromosome& c1, const Chromosome& c2);
 bool operator!=(const Chromosome& c1, const Chromosome& c2);
 }
 
-// TODO: the results obtained by this heuristic are hugely below expectations, look into that
+// TODO: Falls into local minima very fast. Experiment with it.
 class GeneticGamvros final : public MLCMST_Heuristic
 {
 public:
