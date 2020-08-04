@@ -33,6 +33,7 @@ private:
     static std::unique_ptr< MLCMST_Solver > buildGRASP(const Value& v);
     static std::unique_ptr< MLCMST_Solver > buildMartins2008_Construction(const Value& v);
     static std::unique_ptr< MLCMST_Solver > buildMartins2008_LocalSearch(const Value& v);
+    static std::unique_ptr< MLCMST_Solver > buildVNS_Campos(const Value& v);
 
     // mlcmst improver
 

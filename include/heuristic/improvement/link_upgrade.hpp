@@ -16,14 +16,14 @@ public:
     static std::string id();
 
     struct Params {
-        bool H_leafs_only;
         bool check_all_link_types; // if true will iterate over viable link upgrades to find best H, if not L,L-1,...,0
         bool reupgrade_nodes;
+        bool H_leafs_only;
 
         constexpr static auto properties = std::make_tuple(
-            json::Property<Params,bool>{&Params::H_leafs_only, "H_leafs_only"},
             json::Property<Params,bool>{&Params::check_all_link_types, "check_all_link_types"},
-            json::Property<Params,bool>{&Params::reupgrade_nodes, "reupgrade_nodes"}
+            json::Property<Params,bool>{&Params::reupgrade_nodes, "reupgrade_nodes"},
+            json::Property<Params,bool>{&Params::H_leafs_only, "H_leafs_only"}
             );
     };
     explicit LinkUpgrade(Params params);

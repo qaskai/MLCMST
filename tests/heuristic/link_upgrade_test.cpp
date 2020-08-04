@@ -10,7 +10,7 @@ TEST_CASE( "Link upgrade heuristic one step", "[heuristic][link_upgrade]" )
 {
     using heuristic::improvement::LinkUpgrade;
     LinkUpgrade solver(LinkUpgrade::Params {
-        .H_leafs_only=true, .check_all_link_types = false, .reupgrade_nodes = false
+        .check_all_link_types = false, .reupgrade_nodes = false, .H_leafs_only=true
     });
     network::MLCCNetwork network(
         0,
@@ -46,7 +46,7 @@ TEST_CASE( "Link upgrade all variations functional", "[heuristic][link_upgrade]"
 
     for (int i=0; i<8; i++) {
         LinkUpgrade::Params params{
-            .H_leafs_only=((i & 1)==0), .check_all_link_types=((i&2)==0), .reupgrade_nodes=((i&4)==0)
+            .check_all_link_types=((i&2)==0), .reupgrade_nodes=((i&4)==0), .H_leafs_only=((i & 1)==0)
         };
         LinkUpgrade linkUpgrade(params);
 

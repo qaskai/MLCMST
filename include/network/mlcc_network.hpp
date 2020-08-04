@@ -28,6 +28,7 @@ public:
     [[nodiscard]] std::vector<int> vertexSet() const;
     [[nodiscard]] std::vector<int> regularVertexSet() const;
     [[nodiscard]] int levelsNumber() const;
+    [[nodiscard]] std::vector<int> levels() const;
     [[nodiscard]] int demand(int v) const;
     [[nodiscard]] const std::vector<int>& demands() const;
     [[nodiscard]] const Network& network(int i) const;

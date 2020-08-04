@@ -15,6 +15,31 @@ MLCMST::MLCMST(int N, int root) : _root(root), _parents(N, root), _edge_levels(N
 
 MLCMST::~MLCMST() = default;
 
+bool MLCMST::setMinimalViableLevels(const MLCCNetwork &mlcc_network)
+{
+    std::vector<int> levels = mlcc_network.levels();
+    std::vector<int> load = loads(mlcc_network);
+    auto children = childrenLists();
+    std::function<bool(int)> dfs = [&] (int v) {
+        auto it = std::lower_bound(levels.begin(), levels.end(), load[v]);
+        if (it == levels.end()) {
+            return false;
+        }
+        _edge_levels[v] = std::distance(levels.begin(), it);
+        for (int c : children[v]) {
+            dfs(c);
+        }
+        return true;
+    };
+
+    bool valid_tree = true;
+    for (int c : children[_root]) {
+        valid_tree = valid_tree && dfs(c);
+    }
+    _edge_levels[_root] = 0;
+    return valid_tree;
+}
+
 unsigned MLCMST::vertexCount() const
 {
     return _parents.size();
@@ -94,6 +119,23 @@ std::vector<int> MLCMST::leafs() const
     return leafs;
 }
 
+std::vector<int> MLCMST::nonLeafTerminals() const
+{
+    std::vector<int> leafs = this->leafs();
+    std::vector<bool> take(vertexCount(), true);
+    take[root()] = false;
+    for (int l : leafs) {
+        take[l] = false;
+    }
+
+    std::vector<int> non_leaf_terminals;
+    for (int i=0; i<vertexCount(); i++) {
+        if (take[i])
+            non_leaf_terminals.push_back(i);
+    }
+    return non_leaf_terminals;
+}
+
 std::vector<int> MLCMST::subtreeVertices(int v) const
 {
     auto children_lists = childrenLists();
@@ -104,6 +146,16 @@ std::vector<int> MLCMST::subtreeVertices(int v) const
     };
     dfs(v);
     return subtree_vertices;
+}
+
+std::vector<int> MLCMST::pathToRoot(int v) const
+{
+    std::vector<int> path{v};
+    while (path.back() != root()) {
+        path.push_back(_parents[path.back()]);
+    }
+    std::reverse(path.begin(), path.end());
+    return path;
 }
 
 std::vector<int> MLCMST::loads(const MLCCNetwork &network) const

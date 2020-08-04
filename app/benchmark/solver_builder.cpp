@@ -15,6 +15,7 @@
 #include <heuristic/martins2008_construction.hpp>
 #include <heuristic/improvement/martins2008_local_search.hpp>
 #include <heuristic/grasp.hpp>
+#include <heuristic/vns_campos.hpp>
 
 #include <json/json.hpp>
 
@@ -32,6 +33,7 @@ SolverBuilder::id_to_solver_builder =
     { heuristic::GRASP::id(), SolverBuilder::buildGRASP },
     { heuristic::Martins2008_Construction::id(), SolverBuilder::buildMartins2008_Construction },
     { heuristic::improvement::Martins2008_LocalSearch::id(), SolverBuilder::buildMartins2008_LocalSearch },
+    { heuristic::VNS_Campos::id(), SolverBuilder::buildVNS_Campos },
     { mp::SCF::id(), SolverBuilder::buildSCF },
     { mp::ESCF::id(), SolverBuilder::buildESCF },
     { mp::MCF::id(), SolverBuilder::buildMCF },
@@ -130,6 +132,16 @@ std::unique_ptr<MLCMST_Solver> SolverBuilder::buildMartins2008_LocalSearch(const
     auto solver_params = json::fromJson<heuristic::improvement::Martins2008_LocalSearch::Params>(params);
     return std::make_unique<heuristic::improvement::Martins2008_LocalSearch>(
         std::move(init_solver), std::move(subnet_solver), solver_params);
+}
+
+std::unique_ptr<MLCMST_Solver> SolverBuilder::buildVNS_Campos(const Value &v)
+{
+    const Value& params = v["params"];
+    std::unique_ptr<heuristic::MLCMST_Heuristic> init_solver(
+            dynamic_cast<heuristic::MLCMST_Heuristic*>(buildSolver(params["init_solver"]).release()));
+    auto solver_params = json::fromJson<heuristic::VNS_Campos::Params>(params);
+    return std::make_unique<heuristic::VNS_Campos>(
+            std::move(init_solver), solver_params);
 }
 
 std::unique_ptr<MLCMST_Solver> SolverBuilder::buildMPSolver(
@@ -249,6 +261,16 @@ R""""(
     "subnet_solver": <solver_json>,
     "h_low": int,
     "h_high": int
+}
+)"""" + "\n"},
+
+
+{ heuristic::VNS_Campos::id(),
+"id == \"" + heuristic::VNS_Campos::id() + "\", params:"
+R""""(
+{
+    "init_solver": <solver_json>,
+    "max_failed_iterations": int
 }
 )"""" + "\n"},
 

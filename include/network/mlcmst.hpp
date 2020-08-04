@@ -17,6 +17,12 @@ public:
     MLCMST(int N, int root);
     ~MLCMST();
 
+    /**
+     * Sets minimal levels on edges that still make it viable.
+     * @return False if viable setting of the levels was not possible.
+     */
+    bool setMinimalViableLevels(const MLCCNetwork& mlcc_network);
+
     [[nodiscard]] unsigned vertexCount() const;
     [[nodiscard]] std::vector<int> vertexSet() const;
     int& parent(int v);
@@ -29,7 +35,9 @@ public:
 
     [[nodiscard]] std::vector<std::vector<int>> childrenLists() const;
     [[nodiscard]] std::vector<int> leafs() const;
+    [[nodiscard]] std::vector<int> nonLeafTerminals() const;
     [[nodiscard]] std::vector<int> subtreeVertices(int v) const;
+    [[nodiscard]] std::vector<int> pathToRoot(int v) const;
 
     [[nodiscard]] double cost(const MLCCNetwork& mlcc_network) const;
     [[nodiscard]] bool checkValidity(const MLCCNetwork& network) const;

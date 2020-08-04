@@ -29,6 +29,15 @@ int MLCCNetwork::levelsNumber() const
     return _networks.size();
 }
 
+std::vector<int> MLCCNetwork::levels() const
+{
+    std::vector<int> levels(levelsNumber());
+    for (int l = 0; l < levelsNumber(); l++) {
+        levels[l] = edgeCapacity(l);
+    }
+    return levels;
+}
+
 int MLCCNetwork::demand(int v) const
 {
     return _demands[v];
