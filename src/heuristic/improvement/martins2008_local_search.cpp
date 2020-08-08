@@ -30,7 +30,7 @@ Martins2008_LocalSearch::Martins2008_LocalSearch(std::unique_ptr< MLCMST_Solver 
 
 Martins2008_LocalSearch::~Martins2008_LocalSearch() = default;
 
-network::MLCMST Martins2008_LocalSearch::improve(network::MLCMST mlcmst, const network::MLCCNetwork &mlcc_network)
+network::MLCMST Martins2008_LocalSearch::improve(long steps, network::MLCMST mlcmst, const network::MLCCNetwork &mlcc_network)
 {
     mlcc_network_ = &mlcc_network;
 
@@ -38,7 +38,8 @@ network::MLCMST Martins2008_LocalSearch::improve(network::MLCMST mlcmst, const n
     for (int l : mlcmst.leafs()) {
         S.erase(l);
     }
-    while (!S.empty()) {
+    while (!S.empty() && steps > 0) {
+        steps--;
         step(S, mlcmst);
     }
     return mlcmst;
@@ -55,7 +56,6 @@ void Martins2008_LocalSearch::step(std::set<int> &S, network::MLCMST &mlcmst)
     auto [P, old_cost] = groupSubtrees(i, mlcmst);
     if (P.size() > i_group.size() + 1) {
         MLCMST_SubnetSolver::Result result = subnet_solver_.solveSubnet(*mlcc_network_, P);
-        assert(result.mlcmst.checkValidity(mlcc_network_->subNetwork(P).first));
         if (result.cost < old_cost - 1e-9) {
             std::set<int> subtree_leafs = vectorToSet(result.mlcmst.leafs());
             for (int v=0; v<result.mapping.size(); v++) {

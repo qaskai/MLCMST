@@ -30,14 +30,14 @@ public:
     LinkUpgrade(std::unique_ptr< MLCMST_Solver > init_solver, Params params);
     ~LinkUpgrade() override;
 
-    network::MLCMST improve(network::MLCMST mlcmst, const network::MLCCNetwork &mlcc_network) override;
+    network::MLCMST improve(long steps, network::MLCMST mlcmst, const network::MLCCNetwork &mlcc_network) override;
 
 private:
     Params params;
 
     const network::MLCCNetwork* network_ = nullptr;
 
-    network::MLCMST mainLoop(network::MLCMST mlcmst);
+    network::MLCMST mainLoop(long steps, network::MLCMST mlcmst);
 
     std::pair<double, std::vector<int>> findUpgradeSetH(int i, int level, network::MLCMST mlcmst);
     static void implementUpgrade(network::MLCMST& mlcmst, int i, int level, const std::vector<int>& H);

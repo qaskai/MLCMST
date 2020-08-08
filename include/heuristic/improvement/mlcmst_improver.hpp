@@ -19,7 +19,8 @@ public:
 
     network::MLCMST run(const network::MLCCNetwork &mlcc_network) final;
 
-    virtual network::MLCMST improve(network::MLCMST mlcmst, const network::MLCCNetwork& mlcc_network) = 0;
+    network::MLCMST improve(const network::MLCMST& mlcmst, const network::MLCCNetwork& mlcc_network);
+    virtual network::MLCMST improve(long steps, network::MLCMST mlcmst, const network::MLCCNetwork& mlcc_network) = 0;
 
 private:
     std::unique_ptr< MLCMST_Solver > init_solver_;

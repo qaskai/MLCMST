@@ -32,7 +32,7 @@ public:
             std::unique_ptr< MLCMST_Solver > subnet_solver, long seed, Params params);
     ~Martins2008_LocalSearch() override;
 
-    network::MLCMST improve(network::MLCMST mlcmst, const network::MLCCNetwork &mlcc_network) override;
+    network::MLCMST improve(long steps, network::MLCMST mlcmst, const network::MLCCNetwork &mlcc_network) override;
 
 private:
     const network::MLCCNetwork* mlcc_network_ = nullptr;

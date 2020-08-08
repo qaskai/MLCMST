@@ -24,7 +24,7 @@ public:
     LocalSearch2006(std::unique_ptr< MLCMST_Solver > init_solver, std::unique_ptr< MLCMST_Solver > subnet_solver);
     ~LocalSearch2006() override;
 
-    network::MLCMST improve(network::MLCMST mlcmst, const network::MLCCNetwork &mlcc_network) override;
+    network::MLCMST improve(long steps, network::MLCMST mlcmst, const network::MLCCNetwork &mlcc_network) override;
     std::vector<int> improvementStep(const network::MLCCNetwork& network, std::vector<int> group_ids);
 
 private:

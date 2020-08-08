@@ -35,15 +35,17 @@ LocalSearch2006::LocalSearch2006(std::unique_ptr< MLCMST_Solver > init_solver,
 LocalSearch2006::~LocalSearch2006() = default;
 
 
-network::MLCMST LocalSearch2006::improve(network::MLCMST mlcmst, const network::MLCCNetwork &mlcc_network)
+network::MLCMST LocalSearch2006::improve(long steps, network::MLCMST mlcmst, const network::MLCCNetwork &mlcc_network)
 {
     network_ = &mlcc_network;
 
     std::vector<int> group_ids = mlcmst.subnet();
-    bool done = false;
-    while (!done) {
+    while (steps > 0) {
+        steps--;
         std::vector<int> new_group_ids = improvementStep(*network_, group_ids);
-        done = std::equal(group_ids.begin(), group_ids.end(), new_group_ids.begin());
+        if (std::equal(group_ids.begin(), group_ids.end(), new_group_ids.begin())) {
+            break;
+        }
         group_ids = new_group_ids;
     }
 

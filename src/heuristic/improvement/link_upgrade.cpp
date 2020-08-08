@@ -27,14 +27,13 @@ LinkUpgrade::LinkUpgrade(std::unique_ptr<MLCMST_Solver> init_solver, LinkUpgrade
 
 LinkUpgrade::~LinkUpgrade() = default;
 
-network::MLCMST LinkUpgrade::improve(network::MLCMST mlcmst, const network::MLCCNetwork &mlcc_network)
+network::MLCMST LinkUpgrade::improve(long steps, network::MLCMST mlcmst, const network::MLCCNetwork &mlcc_network)
 {
     network_ = &mlcc_network;
-    mlcmst = mainLoop(mlcmst);
-    return mlcmst;
+    return mainLoop(steps, mlcmst);
 }
 
-network::MLCMST LinkUpgrade::mainLoop(network::MLCMST mlcmst)
+network::MLCMST LinkUpgrade::mainLoop(long steps, network::MLCMST mlcmst)
 {
     struct Upgrade {
         double saving;
@@ -50,7 +49,8 @@ network::MLCMST LinkUpgrade::mainLoop(network::MLCMST mlcmst)
         return available_levels;
     };
     auto loop = [&] (int set_level) -> void {
-        while (true) {
+        while (steps > 0) {
+            steps--;
             Upgrade best_upgrade{ .saving=1e-9, .i=-1 };
             auto update_best_upgrade = [&] (int i, int l) {
                 auto[saving, H] = findUpgradeSetH(i, l, mlcmst);
