@@ -29,6 +29,7 @@ network::MLCMST EsauWilliams::run(const network::MLCCNetwork &mlcc_network)
     }
     mlcmst.parent(center) = center;
     mlcmst.edgeLevel(center) = 0;
+    mlcmst.setMinimalViableLevels(mlcc_network);
     return mlcmst;
 }
 
