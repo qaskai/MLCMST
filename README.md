@@ -35,6 +35,5 @@ briefly described here. For further usage information please run `<app_path> -h`
 
 
 ### Todo
-- implementation of MLCMST heuristics and LP formulations (various),
- [this](https://terpconnect.umd.edu/~raghavan/preprints/mlcmst.pdf "this") will go first
-- collect, describe and classify heuristics and LP formulations in a paper
+- add to the [the paper](https://github.com/qaskai/MLCMST_paper "the paper") short description of main design of this project and computation results
+- verify that GA, VNS, GRASP heurisits give expected results and fix if not
