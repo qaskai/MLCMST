@@ -100,7 +100,7 @@ GeneticGamvros::~GeneticGamvros() = default;
 
 double const GeneticGamvros::EPS_ = 1e-9;
 
-network::MLCMST GeneticGamvros::run(const network::MLCCNetwork &mlcc_network)
+network::MLCST GeneticGamvros::run(const network::MLCCNetwork &mlcc_network)
 {
     network_ = &mlcc_network;
 
@@ -135,7 +135,7 @@ std::vector<internal::Chromosome> GeneticGamvros::initializePopulation()
     population.reserve(params_.population_size);
     while (population.size() < params_.population_size) {
         for (int i=0; i < init_population_solvers_.size() && population.size() < params_.population_size; i++){
-            network::MLCMST mlcmst = init_population_solvers_[i]->solve(
+            network::MLCST mlcmst = init_population_solvers_[i]->solve(
                     network_->multiplyEdgeCosts(epsilon_generator.generate())).mlcmst.value();
             population.push_back(
                     internal::Chromosome(network_->center(), mlcmst.subnet()).refreshIds());

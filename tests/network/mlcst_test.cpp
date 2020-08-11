@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
 
-#include <network/mlcmst.hpp>
+#include <network/mlcst.hpp>
 #include <network/mlcc_network.hpp>
 
 using namespace MLCMST;
@@ -19,7 +19,7 @@ TEST_CASE( "setMinimalViableLevels", "[network]" )
                 {0, 3, 1, 1}
     );
     std::vector<int> parents { 0, 0, 1, 2 };
-    network::MLCMST mlcmst(parents.size(), 0);
+    network::MLCST mlcmst(parents.size(), 0);
     for (int i=0; i<parents.size(); i++) {
         mlcmst.parent(i) = parents[i];
     }

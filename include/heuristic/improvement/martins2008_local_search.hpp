@@ -32,7 +32,7 @@ public:
             std::unique_ptr< MLCMST_Solver > subnet_solver, long seed, Params params);
     ~Martins2008_LocalSearch() override;
 
-    network::MLCMST improve(long steps, network::MLCMST mlcmst, const network::MLCCNetwork &mlcc_network) override;
+    network::MLCST improve(long steps, network::MLCST mlcmst, const network::MLCCNetwork &mlcc_network) override;
 
 private:
     const network::MLCCNetwork* mlcc_network_ = nullptr;
@@ -41,9 +41,9 @@ private:
     MLCMST_SubnetSolver subnet_solver_;
     util::number::IntGenerator int_generator_;
 
-    void step(std::set<int>& S, network::MLCMST& mlcmst);
-    std::pair<std::vector<int>, double> groupSubtrees(int i, const network::MLCMST& mlcmst);
-    double subtreeCost(const std::vector<int>& vertices, const network::MLCMST& mlcmst);
+    void step(std::set<int>& S, network::MLCST& mlcmst);
+    std::pair<std::vector<int>, double> groupSubtrees(int i, const network::MLCST& mlcmst);
+    double subtreeCost(const std::vector<int>& vertices, const network::MLCST& mlcmst);
 
     static std::set<int> vectorToSet(const std::vector<int>& v);
 };

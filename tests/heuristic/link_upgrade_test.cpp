@@ -31,7 +31,7 @@ TEST_CASE( "Link upgrade heuristic one step", "[heuristic][link_upgrade]" )
         {0, 1, 1, 1});
 
     LinkUpgrade::Result result = solver.solve(network);
-    network::MLCMST mlcmst = result.mlcmst.value();
+    network::MLCST mlcmst = result.mlcmst.value();
 
     REQUIRE(mlcmst.checkValidity(network) );
     REQUIRE( mlcmst.parents() == std::vector<int>({ 0, 0, 1, 1 }) );

@@ -5,7 +5,7 @@
 #include <mlcmst_solver.hpp>
 #include <heuristic/mlcmst_heuristic.hpp>
 
-#include <network/mlcmst.hpp>
+#include <network/mlcst.hpp>
 #include <network/mlcc_network.hpp>
 
 namespace MLCMST::heuristic::improvement {
@@ -17,10 +17,10 @@ public:
     explicit MLCMST_Improver(std::unique_ptr< MLCMST_Solver > init_solver);
     ~MLCMST_Improver() override;
 
-    network::MLCMST run(const network::MLCCNetwork &mlcc_network) final;
+    network::MLCST run(const network::MLCCNetwork &mlcc_network) final;
 
-    network::MLCMST improve(const network::MLCMST& mlcmst, const network::MLCCNetwork& mlcc_network);
-    virtual network::MLCMST improve(long steps, network::MLCMST mlcmst, const network::MLCCNetwork& mlcc_network) = 0;
+    network::MLCST improve(const network::MLCST& mlcmst, const network::MLCCNetwork& mlcc_network);
+    virtual network::MLCST improve(long steps, network::MLCST mlcmst, const network::MLCCNetwork& mlcc_network) = 0;
 
 private:
     std::unique_ptr< MLCMST_Solver > init_solver_;

@@ -35,7 +35,7 @@ LocalSearch2006::LocalSearch2006(std::unique_ptr< MLCMST_Solver > init_solver,
 LocalSearch2006::~LocalSearch2006() = default;
 
 
-network::MLCMST LocalSearch2006::improve(long steps, network::MLCMST mlcmst, const network::MLCCNetwork &mlcc_network)
+network::MLCST LocalSearch2006::improve(long steps, network::MLCST mlcmst, const network::MLCCNetwork &mlcc_network)
 {
     network_ = &mlcc_network;
 

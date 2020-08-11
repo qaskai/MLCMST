@@ -1,7 +1,7 @@
 #include <catch2/catch.hpp>
 
 #include <network/mlcc_network.hpp>
-#include <network/mlcmst.hpp>
+#include <network/mlcst.hpp>
 #include <mp/escf.hpp>
 
 using namespace MLCMST;

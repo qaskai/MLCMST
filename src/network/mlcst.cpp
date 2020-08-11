@@ -1,4 +1,4 @@
-#include <network/mlcmst.hpp>
+#include <network/mlcst.hpp>
 
 #include <cassert>
 #include <utility>
@@ -9,13 +9,13 @@
 
 namespace MLCMST::network {
 
-MLCMST::MLCMST(int N, int root) : _root(root), _parents(N, root), _edge_levels(N, 0)
+MLCST::MLCST(int N, int root) : _root(root), _parents(N, root), _edge_levels(N, 0)
 {
 }
 
-MLCMST::~MLCMST() = default;
+MLCST::~MLCST() = default;
 
-bool MLCMST::setMinimalViableLevels(const MLCCNetwork &mlcc_network)
+bool MLCST::setMinimalViableLevels(const MLCCNetwork &mlcc_network)
 {
     std::vector<int> levels = mlcc_network.levels();
     std::vector<int> load = loads(mlcc_network);
@@ -40,47 +40,47 @@ bool MLCMST::setMinimalViableLevels(const MLCCNetwork &mlcc_network)
     return valid_tree;
 }
 
-unsigned MLCMST::vertexCount() const
+unsigned MLCST::vertexCount() const
 {
     return _parents.size();
 }
 
-std::vector<int> MLCMST::vertexSet() const
+std::vector<int> MLCST::vertexSet() const
 {
     return util::firstN(vertexCount());
 }
 
-int& MLCMST::parent(int v)
+int& MLCST::parent(int v)
 {
     return _parents[v];
 }
 
-int MLCMST::parent(int v) const
+int MLCST::parent(int v) const
 {
     return _parents[v];
 }
 
-const std::vector<int> &MLCMST::parents() const
+const std::vector<int> &MLCST::parents() const
 {
     return _parents;
 }
 
-int& MLCMST::edgeLevel(int v)
+int& MLCST::edgeLevel(int v)
 {
     return _edge_levels[v];
 }
 
-int MLCMST::edgeLevel(int v) const
+int MLCST::edgeLevel(int v) const
 {
     return _edge_levels[v];
 }
 
-const std::vector<int> &MLCMST::edgeLevels() const
+const std::vector<int> &MLCST::edgeLevels() const
 {
     return _edge_levels;
 }
 
-double MLCMST::cost(const MLCCNetwork& mlcc_network) const
+double MLCST::cost(const MLCCNetwork& mlcc_network) const
 {
     double cost = 0;
     for (int i=0; i < mlcc_network.vertexCount(); i++) {
@@ -91,12 +91,12 @@ double MLCMST::cost(const MLCCNetwork& mlcc_network) const
     return cost;
 }
 
-int MLCMST::root() const
+int MLCST::root() const
 {
     return _root;
 }
 
-std::vector<std::vector<int>> MLCMST::childrenLists() const
+std::vector<std::vector<int>> MLCST::childrenLists() const
 {
     std::vector<std::vector<int>> children(vertexCount());
     for (int v : vertexSet()) {
@@ -107,7 +107,7 @@ std::vector<std::vector<int>> MLCMST::childrenLists() const
     return children;
 }
 
-std::vector<int> MLCMST::leafs() const
+std::vector<int> MLCST::leafs() const
 {
     std::vector<std::vector<int>> children = childrenLists();
     std::vector<int> leafs;
@@ -119,7 +119,7 @@ std::vector<int> MLCMST::leafs() const
     return leafs;
 }
 
-std::vector<int> MLCMST::nonLeafTerminals() const
+std::vector<int> MLCST::nonLeafTerminals() const
 {
     std::vector<int> leafs = this->leafs();
     std::vector<bool> take(vertexCount(), true);
@@ -136,7 +136,7 @@ std::vector<int> MLCMST::nonLeafTerminals() const
     return non_leaf_terminals;
 }
 
-std::vector<int> MLCMST::subtreeVertices(int v) const
+std::vector<int> MLCST::subtreeVertices(int v) const
 {
     auto children_lists = childrenLists();
     std::vector<int> subtree_vertices;
@@ -148,7 +148,7 @@ std::vector<int> MLCMST::subtreeVertices(int v) const
     return subtree_vertices;
 }
 
-std::vector<int> MLCMST::pathToRoot(int v) const
+std::vector<int> MLCST::pathToRoot(int v) const
 {
     std::vector<int> path{v};
     while (path.back() != root()) {
@@ -158,7 +158,7 @@ std::vector<int> MLCMST::pathToRoot(int v) const
     return path;
 }
 
-std::vector<int> MLCMST::loads(const MLCCNetwork &network) const
+std::vector<int> MLCST::loads(const MLCCNetwork &network) const
 {
     std::vector<int> load(vertexCount());
     auto children = childrenLists();
@@ -178,7 +178,7 @@ std::vector<int> MLCMST::loads(const MLCCNetwork &network) const
     return load;
 }
 
-bool MLCMST::checkValidity(const MLCCNetwork &network) const
+bool MLCST::checkValidity(const MLCCNetwork &network) const
 {
     std::vector<int> load = loads(network);
     if (_root != network.center()) {
@@ -192,7 +192,7 @@ bool MLCMST::checkValidity(const MLCCNetwork &network) const
     return true;
 }
 
-std::vector<int> MLCMST::slack(const MLCCNetwork &network) const
+std::vector<int> MLCST::slack(const MLCCNetwork &network) const
 {
     std::vector<int> slack(network.vertexCount());
     std::vector<int> load = loads(network);
@@ -204,7 +204,7 @@ std::vector<int> MLCMST::slack(const MLCCNetwork &network) const
     return slack;
 }
 
-std::vector<int> MLCMST::reserves(const MLCCNetwork &network) const
+std::vector<int> MLCST::reserves(const MLCCNetwork &network) const
 {
     std::vector<int> res(network.vertexCount());
     auto slack = this->slack(network);
@@ -223,7 +223,7 @@ std::vector<int> MLCMST::reserves(const MLCCNetwork &network) const
     return res;
 }
 
-std::vector<int> MLCMST::subnet() const
+std::vector<int> MLCST::subnet() const
 {
     std::vector<int> subnet(vertexCount());
     auto children = childrenLists();
@@ -242,9 +242,9 @@ std::vector<int> MLCMST::subnet() const
     return subnet;
 }
 
-MLCMST MLCMST::star(const MLCCNetwork& network)
+MLCST MLCST::star(const MLCCNetwork& network)
 {
-    MLCMST mlcmst(network.vertexCount(), network.center());
+    MLCST mlcmst(network.vertexCount(), network.center());
     for (int i=0; i<network.vertexCount(); i++) {
         mlcmst.parent(i) = network.center();
         mlcmst.edgeLevel(i) = 0;

@@ -3,7 +3,7 @@
 #include <vector>
 #include <tuple>
 
-#include <network/mlcmst.hpp>
+#include <network/mlcst.hpp>
 #include <network/mlcc_network.hpp>
 
 #include <ortools/linear_solver/linear_solver.h>
@@ -14,7 +14,7 @@ operations_research::LinearExpr createDefaultObjectiveExpression(
     const network::MLCCNetwork& mlcc_network,
     const std::vector<std::vector<std::vector<operations_research::LinearExpr>>>& arc_vars
 );
-network::MLCMST createMLCMST(
+network::MLCST createMLCMST(
     const network::MLCCNetwork& mlcc_network,
     const std::vector<std::vector<std::vector<operations_research::LinearExpr>>>& arc_vars
 );

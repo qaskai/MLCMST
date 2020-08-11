@@ -152,7 +152,7 @@ void SCF::createOneBetweenConstraints() {
     }
 }
 
-network::MLCMST SCF::createMLCMST()
+network::MLCST SCF::createMLCMST()
 {
     return util::createMLCMST(*_mlcc_network, _arc_vars);
 }

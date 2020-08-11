@@ -10,7 +10,7 @@ MLCMST_SubnetSolver::MLCMST_SubnetSolver(std::unique_ptr<MLCMST_Solver> solver) 
 
 MLCMST_SubnetSolver::~MLCMST_SubnetSolver() = default;
 
-std::pair<network::MLCMST, std::vector<int>>
+std::pair<network::MLCST, std::vector<int>>
 MLCMST_SubnetSolver::subnetTree(const network::MLCCNetwork &network, const std::vector<int>& subnet_vertices)
 {
     auto result = solveSubnet(network, subnet_vertices);
@@ -22,7 +22,7 @@ double MLCMST_SubnetSolver::subnetTreeCost(const network::MLCCNetwork &network, 
     return solveSubnet(network, subnet_vertices).cost;
 }
 
-std::unordered_map<int, std::pair< network::MLCMST, std::vector<int> > >
+std::unordered_map<int, std::pair< network::MLCST, std::vector<int> > >
 MLCMST_SubnetSolver::allSubnetTrees(const network::MLCCNetwork &network, const std::vector<int> &vertex_subnet)
 {
     return allSubnetTrees(network, createGroups(network.center(), vertex_subnet));
@@ -34,12 +34,12 @@ MLCMST_SubnetSolver::allSubnetTreeCosts(const network::MLCCNetwork &network, con
     return allSubnetTreeCosts(network, createGroups(network.center(), vertex_subnet));
 }
 
-std::unordered_map<int, std::pair<network::MLCMST, std::vector<int> > >
+std::unordered_map<int, std::pair<network::MLCST, std::vector<int> > >
 MLCMST_SubnetSolver::allSubnetTrees(const network::MLCCNetwork &network,
     const std::unordered_map<int, std::vector<int>> &groups)
 {
     auto results = solveAllSubnets(network, groups);
-    std::unordered_map<int, std::pair< network::MLCMST, std::vector<int> >> trees;
+    std::unordered_map<int, std::pair< network::MLCST, std::vector<int> >> trees;
     std::transform(results.begin(), results.end(), std::inserter(trees, trees.end()),
         [] (const auto& p) {
             auto r = p.second;
@@ -107,16 +107,16 @@ MLCMST_SubnetSolver::createGroups(int center, const std::vector<int> &vertex_sub
     return groups;
 }
 
-network::MLCMST MLCMST_SubnetSolver::solveMLCMST(
+network::MLCST MLCMST_SubnetSolver::solveMLCMST(
         const network::MLCCNetwork &network, const std::vector<int> &vertex_subnet)
 {
     return solveMLCMST(network, createGroups(network.center(), vertex_subnet));
 }
 
-network::MLCMST MLCMST_SubnetSolver::solveMLCMST(
+network::MLCST MLCMST_SubnetSolver::solveMLCMST(
         const network::MLCCNetwork &network, const std::unordered_map<int, std::vector<int>> &groups)
 {
-    network::MLCMST mlcmst(network.vertexCount(), network.center());
+    network::MLCST mlcmst(network.vertexCount(), network.center());
     for (const auto& group : groups) {
         auto [ inner_mlcmst, mapping ] = subnetTree(network, group.second);
         for (int i=0; i<mapping.size(); i++) {

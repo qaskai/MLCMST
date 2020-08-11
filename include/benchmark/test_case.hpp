@@ -3,7 +3,7 @@
 #include <optional>
 
 #include <network/mlcc_network.hpp>
-#include <network/mlcmst.hpp>
+#include <network/mlcst.hpp>
 
 namespace MLCMST::benchmark {
 

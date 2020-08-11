@@ -1,11 +1,11 @@
-#include <network/serialization/mlcmst_serialization.hpp>
+#include <network/serialization/mlcst_serialization.hpp>
 
 
 namespace MLCMST::network::serialization {
 
-MLCMSTSerializer::~MLCMSTSerializer() = default;
+MLCSTSerializer::~MLCSTSerializer() = default;
 
-void MLCMSTSerializer::serialize(const MLCMST &mlcmst, std::ostream &stream)
+void MLCSTSerializer::serialize(const MLCST &mlcmst, std::ostream &stream)
 {
     const int N = mlcmst.vertexCount();
     stream << N << "\n";
@@ -23,11 +23,11 @@ void MLCMSTSerializer::serialize(const MLCMST &mlcmst, std::ostream &stream)
 
 MLCMSTDeserializer::~MLCMSTDeserializer() = default;
 
-MLCMST MLCMSTDeserializer::deserialize(std::istream &stream)
+MLCST MLCMSTDeserializer::deserialize(std::istream &stream)
 {
     int N, root;
     stream >> N >> root;
-    MLCMST mlcmst(N, root);
+    MLCST mlcmst(N, root);
 
     for (int i=0; i<N; i++) {
         stream >> mlcmst.parent(i);

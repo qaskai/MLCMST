@@ -11,7 +11,7 @@
 
 #include <network/network.hpp>
 #include <network/mlcc_network.hpp>
-#include <network/mlcmst.hpp>
+#include <network/mlcst.hpp>
 
 namespace MLCMST::heuristic::improvement {
 
@@ -24,11 +24,11 @@ public:
     LocalSearch2006(std::unique_ptr< MLCMST_Solver > init_solver, std::unique_ptr< MLCMST_Solver > subnet_solver);
     ~LocalSearch2006() override;
 
-    network::MLCMST improve(long steps, network::MLCMST mlcmst, const network::MLCCNetwork &mlcc_network) override;
+    network::MLCST improve(long steps, network::MLCST mlcmst, const network::MLCCNetwork &mlcc_network) override;
     std::vector<int> improvementStep(const network::MLCCNetwork& network, std::vector<int> group_ids);
 
 private:
-    using MLCMST = network::MLCMST;
+    using MLCMST = network::MLCST;
     using MLCCNetwork = network::MLCCNetwork;
     using Network = network::Network;
 

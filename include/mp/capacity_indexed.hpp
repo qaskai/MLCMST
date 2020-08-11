@@ -29,7 +29,7 @@ private:
     void createVariables() override;
     void createConstraints() override;
     void createObjective() override;
-    network::MLCMST createMLCMST() override;
+    network::MLCST createMLCMST() override;
 
 
     void createOneOutgoingConstraints();

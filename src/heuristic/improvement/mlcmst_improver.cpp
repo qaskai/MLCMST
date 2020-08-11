@@ -14,14 +14,14 @@ MLCMST_Improver::MLCMST_Improver(std::unique_ptr<MLCMST_Solver> init_solver) : i
 {
 }
 
-network::MLCMST MLCMST_Improver::run(const network::MLCCNetwork &mlcc_network)
+network::MLCST MLCMST_Improver::run(const network::MLCCNetwork &mlcc_network)
 {
-    network::MLCMST mlcmst = init_solver_->solve(mlcc_network).mlcmst.value();
+    network::MLCST mlcmst = init_solver_->solve(mlcc_network).mlcmst.value();
     mlcmst = improve(mlcmst, mlcc_network);
     return mlcmst;
 }
 
-network::MLCMST MLCMST_Improver::improve(const network::MLCMST& mlcmst, const network::MLCCNetwork &mlcc_network)
+network::MLCST MLCMST_Improver::improve(const network::MLCST& mlcmst, const network::MLCCNetwork &mlcc_network)
 {
     return improve(std::numeric_limits<long>::max(), mlcmst, mlcc_network);
 }

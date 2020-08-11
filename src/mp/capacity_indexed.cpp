@@ -114,9 +114,9 @@ void CapacityIndexed::createObjective()
     objective->MinimizeLinearExpr(expr);
 }
 
-network::MLCMST CapacityIndexed::createMLCMST()
+network::MLCST CapacityIndexed::createMLCMST()
 {
-    network::MLCMST mlcmst(_mlcc_network->vertexCount(), _mlcc_network->center());
+    network::MLCST mlcmst(_mlcc_network->vertexCount(), _mlcc_network->center());
     for (int i : _mlcc_network->regularVertexSet()) {
         for (int j : _mlcc_network->vertexSet()) {
             for (int p=1; p <= _mlcc_network->maxEdgeCapacity(); p++) {

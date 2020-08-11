@@ -47,7 +47,7 @@ private:
     void createVariables() override;
     void createObjective() override;
 
-    network::MLCMST createMLCMST() override;
+    network::MLCST createMLCMST() override;
 
 };
 

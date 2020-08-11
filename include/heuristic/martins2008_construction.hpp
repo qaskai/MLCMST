@@ -34,7 +34,7 @@ public:
     Martins2008_Construction(std::unique_ptr< MLCMST_Solver > subnet_solver, long seed, Params params);
     ~Martins2008_Construction() override;
 
-    network::MLCMST run(const network::MLCCNetwork &mlcc_network) override;
+    network::MLCST run(const network::MLCCNetwork &mlcc_network) override;
 
 private:
     const network::MLCCNetwork* mlcc_network_;

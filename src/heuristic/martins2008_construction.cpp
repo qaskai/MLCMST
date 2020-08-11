@@ -27,7 +27,7 @@ Martins2008_Construction::Martins2008_Construction(std::unique_ptr<MLCMST_Solver
 
 Martins2008_Construction::~Martins2008_Construction() = default;
 
-network::MLCMST Martins2008_Construction::run(const network::MLCCNetwork &mlcc_network)
+network::MLCST Martins2008_Construction::run(const network::MLCCNetwork &mlcc_network)
 {
     mlcc_network_ = &mlcc_network;
 
@@ -49,7 +49,7 @@ network::MLCMST Martins2008_Construction::run(const network::MLCCNetwork &mlcc_n
         }
         id++;
     }
-    network::MLCMST mlcmst =  subnet_solver_.solveMLCMST(mlcc_network, vertex_group_id);
+    network::MLCST mlcmst =  subnet_solver_.solveMLCMST(mlcc_network, vertex_group_id);
     return mlcmst;
 }
 

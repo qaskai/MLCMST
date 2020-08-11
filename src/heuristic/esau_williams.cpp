@@ -17,12 +17,12 @@ std::string EsauWilliams::id()
 
 EsauWilliams::~EsauWilliams() = default;
 
-network::MLCMST EsauWilliams::run(const network::MLCCNetwork &mlcc_network)
+network::MLCST EsauWilliams::run(const network::MLCCNetwork &mlcc_network)
 {
     const int center = mlcc_network.center();
     std::vector<int> parents = run(
             center, mlcc_network.networks()[mlcc_network.levelsNumber()-1], mlcc_network.demands());
-    network::MLCMST mlcmst(mlcc_network.vertexCount(), center);
+    network::MLCST mlcmst(mlcc_network.vertexCount(), center);
     for (int i : mlcc_network.vertexSet()) {
         mlcmst.parent(i) = parents[i];
         mlcmst.edgeLevel(i) = mlcc_network.levelsNumber()-1;

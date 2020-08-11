@@ -3,15 +3,15 @@
 #include <string>
 #include <sstream>
 
-#include <network/serialization/mlcmst_serialization.hpp>
+#include <network/serialization/mlcst_serialization.hpp>
 #include <util/util.hpp>
 
 TEST_CASE( "MLCMST serialization", "[network][serialization]" )
 {
-    using MLCMST::network::MLCMST;
+    using MLCMST::network::MLCST;
 
     const int N = 5, root = 1;
-    MLCMST mlcmst(N, root);
+    MLCST mlcmst(N, root);
     std::vector<int> nodes = ::MLCMST::util::firstN(N);
 
     std::vector<int> parents = {1, 1, 4, 2, 1};
@@ -29,7 +29,7 @@ TEST_CASE( "MLCMST serialization", "[network][serialization]" )
     std::stringstream ss;
 
     SECTION( "serialize" ) {
-        ::MLCMST::network::serialization::MLCMSTSerializer serializer;
+        ::MLCMST::network::serialization::MLCSTSerializer serializer;
 
         serializer.serialize(mlcmst, ss);
 
@@ -39,7 +39,7 @@ TEST_CASE( "MLCMST serialization", "[network][serialization]" )
         ::MLCMST::network::serialization::MLCMSTDeserializer deserializer;
         ss << serialized_mlcmst;
 
-        MLCMST deserialized_mlcmst = deserializer.deserialize(ss);
+        MLCST deserialized_mlcmst = deserializer.deserialize(ss);
 
         REQUIRE( deserialized_mlcmst.vertexCount() == N );
         REQUIRE( deserialized_mlcmst.root() == root );

@@ -32,11 +32,11 @@ public:
     VNS_Campos(std::unique_ptr< MLCMST_Heuristic > init_solver, Params params);
     ~VNS_Campos() override;
 
-    network::MLCMST run(const network::MLCCNetwork &mlcc_network) override;
+    network::MLCST run(const network::MLCCNetwork &mlcc_network) override;
 
 private:
     std::unique_ptr< MLCMST_Heuristic > init_solver_;
-    std::vector<std::function<network::MLCMST(const network::MLCMST&, const network::MLCCNetwork&)>>
+    std::vector<std::function<network::MLCST(const network::MLCST&, const network::MLCCNetwork&)>>
     random_neighbour_generator_;
 
     Params params;
@@ -46,13 +46,13 @@ private:
 
     static bool isUnitDemand(const network::MLCCNetwork& mlcc_network);
 
-    network::MLCMST leafSwapNeighbourhood(const network::MLCMST& mlcmst, const network::MLCCNetwork& mlcc_network);
-    network::MLCMST explodeSubtreeNeighbourhood(const network::MLCMST& mlcmst, const network::MLCCNetwork& mlcc_network);
-    network::MLCMST gatherSingleNodesNeighbourhood(const network::MLCMST& mlcmst, const network::MLCCNetwork& mlcc_network);
-    network::MLCMST levelDownRootSubtreeNeighbour(const network::MLCMST& mlcmst, const network::MLCCNetwork& mlcc_network);
-    network::MLCMST mergeRootSubtreesNeighbour(const network::MLCMST& mlcmst, const network::MLCCNetwork& mlcc_network);
+    network::MLCST leafSwapNeighbourhood(const network::MLCST& mlcmst, const network::MLCCNetwork& mlcc_network);
+    network::MLCST explodeSubtreeNeighbourhood(const network::MLCST& mlcmst, const network::MLCCNetwork& mlcc_network);
+    network::MLCST gatherSingleNodesNeighbourhood(const network::MLCST& mlcmst, const network::MLCCNetwork& mlcc_network);
+    network::MLCST levelDownRootSubtreeNeighbour(const network::MLCST& mlcmst, const network::MLCCNetwork& mlcc_network);
+    network::MLCST mergeRootSubtreesNeighbour(const network::MLCST& mlcmst, const network::MLCCNetwork& mlcc_network);
 
-    static network::MLCMST localSearch(network::MLCMST mlcmst, const network::MLCCNetwork& mlcc_network);
+    static network::MLCST localSearch(network::MLCST mlcmst, const network::MLCCNetwork& mlcc_network);
 };
 
 }

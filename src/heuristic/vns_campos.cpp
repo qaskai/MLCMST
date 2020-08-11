@@ -14,15 +14,15 @@ VNS_Campos::VNS_Campos(std::unique_ptr< MLCMST_Heuristic > init_solver, Params p
     : init_solver_(std::move(init_solver)), params(params), int_generator_(0,std::numeric_limits<int>::max())
 {
     random_neighbour_generator_ = {
-        [&] (const network::MLCMST& mlcmst, const network::MLCCNetwork& mlcc_network) { return leafSwapNeighbourhood(
+        [&] (const network::MLCST& mlcmst, const network::MLCCNetwork& mlcc_network) { return leafSwapNeighbourhood(
                 mlcmst, mlcc_network); },
-        [&] (const network::MLCMST& mlcmst, const network::MLCCNetwork& mlcc_network) { return explodeSubtreeNeighbourhood(
+        [&] (const network::MLCST& mlcmst, const network::MLCCNetwork& mlcc_network) { return explodeSubtreeNeighbourhood(
                 mlcmst, mlcc_network); },
-        [&] (const network::MLCMST& mlcmst, const network::MLCCNetwork& mlcc_network) { return gatherSingleNodesNeighbourhood(
+        [&] (const network::MLCST& mlcmst, const network::MLCCNetwork& mlcc_network) { return gatherSingleNodesNeighbourhood(
                 mlcmst, mlcc_network); },
-        [&] (const network::MLCMST& mlcmst, const network::MLCCNetwork& mlcc_network) { return levelDownRootSubtreeNeighbour(
+        [&] (const network::MLCST& mlcmst, const network::MLCCNetwork& mlcc_network) { return levelDownRootSubtreeNeighbour(
                 mlcmst, mlcc_network); },
-        [&] (const network::MLCMST& mlcmst, const network::MLCCNetwork& mlcc_network) { return mergeRootSubtreesNeighbour(
+        [&] (const network::MLCST& mlcmst, const network::MLCCNetwork& mlcc_network) { return mergeRootSubtreesNeighbour(
                 mlcmst,
                 mlcc_network); }
     };
@@ -38,13 +38,13 @@ bool VNS_Campos::isUnitDemand(const network::MLCCNetwork &mlcc_network) {
     return true;
 }
 
-network::MLCMST VNS_Campos::run(const network::MLCCNetwork &mlcc_network)
+network::MLCST VNS_Campos::run(const network::MLCCNetwork &mlcc_network)
 {
     if (!isUnitDemand(mlcc_network))
         throw std::invalid_argument(id() + " only supports unit demand MLCMST problem instances");
 
     struct BestTree {
-        network::MLCMST mlcmst;
+        network::MLCST mlcmst;
         double cost;
     };
     const int max_failed_cycles = 100;
@@ -59,7 +59,7 @@ network::MLCMST VNS_Campos::run(const network::MLCCNetwork &mlcc_network)
     int failed_cycles = 0;
     while (failed_cycles < max_failed_cycles) {
         for (auto & neighbour_drawer : random_neighbour_generator_) {
-            network::MLCMST mlcmst = neighbour_drawer(bestTree.mlcmst, mlcc_network);
+            network::MLCST mlcmst = neighbour_drawer(bestTree.mlcmst, mlcc_network);
             mlcmst = localSearch(mlcmst, mlcc_network);
             double cost = mlcmst.cost(mlcc_network);
             if (cost + 1e-9 < bestTree.cost) {
@@ -74,10 +74,10 @@ network::MLCMST VNS_Campos::run(const network::MLCCNetwork &mlcc_network)
     return bestTree.mlcmst;
 }
 
-network::MLCMST VNS_Campos::localSearch(network::MLCMST mlcmst, const network::MLCCNetwork &mlcc_network)
+network::MLCST VNS_Campos::localSearch(network::MLCST mlcmst, const network::MLCCNetwork &mlcc_network)
 {
     struct BestImprovement {
-        network::MLCMST mlcmst;
+        network::MLCST mlcmst;
         double cost;
     };
 
@@ -108,8 +108,8 @@ network::MLCMST VNS_Campos::localSearch(network::MLCMST mlcmst, const network::M
     return mlcmst;
 }
 
-network::MLCMST
-VNS_Campos::leafSwapNeighbourhood(const network::MLCMST &mlcmst, const network::MLCCNetwork &mlcc_network)
+network::MLCST
+VNS_Campos::leafSwapNeighbourhood(const network::MLCST &mlcmst, const network::MLCCNetwork &mlcc_network)
 {
     std::vector<int> leafs = mlcmst.leafs();
     if (leafs.size() == 1) {
@@ -120,13 +120,13 @@ VNS_Campos::leafSwapNeighbourhood(const network::MLCMST &mlcmst, const network::
     while (w==v)
         w = leafs[int_generator_.generate() % (int) leafs.size()];
 
-    network::MLCMST neighbour = mlcmst;
+    network::MLCST neighbour = mlcmst;
     std::swap(neighbour.parent(v), neighbour.parent(w));
     return neighbour;
 }
 
-network::MLCMST
-VNS_Campos::explodeSubtreeNeighbourhood(const network::MLCMST &mlcmst, const network::MLCCNetwork &mlcc_network)
+network::MLCST
+VNS_Campos::explodeSubtreeNeighbourhood(const network::MLCST &mlcmst, const network::MLCCNetwork &mlcc_network)
 {
 //    maybe add a neighbourhood where exploded subtree nodes are attached to old subtree root's parent instead of tree root
     std::vector<int> non_leaf_terminals = mlcmst.nonLeafTerminals();
@@ -135,7 +135,7 @@ VNS_Campos::explodeSubtreeNeighbourhood(const network::MLCMST &mlcmst, const net
 
     int v = non_leaf_terminals[int_generator_.generate() % (int)non_leaf_terminals.size()];
     std::vector<int> v_subtree = mlcmst.subtreeVertices(v);
-    network::MLCMST neighbour = mlcmst;
+    network::MLCST neighbour = mlcmst;
     for (int i : v_subtree) {
         neighbour.parent(i) = neighbour.parent(neighbour.root());
 //        neighbour.parent(i) = neighbour.parent(mlcmst.parent(v)); maybe in a new neighbourhood ?
@@ -144,8 +144,8 @@ VNS_Campos::explodeSubtreeNeighbourhood(const network::MLCMST &mlcmst, const net
     return neighbour;
 }
 
-network::MLCMST
-VNS_Campos::gatherSingleNodesNeighbourhood(const network::MLCMST &mlcmst, const network::MLCCNetwork &mlcc_network)
+network::MLCST
+VNS_Campos::gatherSingleNodesNeighbourhood(const network::MLCST &mlcmst, const network::MLCCNetwork &mlcc_network)
 {
     std::vector<std::vector<int>> children = mlcmst.childrenLists();
     std::vector<int> single_nodes;
@@ -158,7 +158,7 @@ VNS_Campos::gatherSingleNodesNeighbourhood(const network::MLCMST &mlcmst, const 
         return mlcmst;
     }
 
-    network::MLCMST neighbour = mlcmst;
+    network::MLCST neighbour = mlcmst;
     int C = (int_generator_.generate() % std::min(max_capacity, (int)single_nodes.size())) + 1;
     if (C==1) C++;
     std::shuffle(single_nodes.begin(), single_nodes.end(), random_engine_);
@@ -172,8 +172,8 @@ VNS_Campos::gatherSingleNodesNeighbourhood(const network::MLCMST &mlcmst, const 
     return neighbour;
 }
 
-network::MLCMST
-VNS_Campos::levelDownRootSubtreeNeighbour(const network::MLCMST &mlcmst, const network::MLCCNetwork &mlcc_network)
+network::MLCST
+VNS_Campos::levelDownRootSubtreeNeighbour(const network::MLCST &mlcmst, const network::MLCCNetwork &mlcc_network)
 {
 //    maybe add neighbourhood where not only root subtrees are considered, by all of the subtrees
     auto children = mlcmst.childrenLists();
@@ -189,7 +189,7 @@ VNS_Campos::levelDownRootSubtreeNeighbour(const network::MLCMST &mlcmst, const n
         return mlcmst;
     int v = (int_generator_.generate() % (int)root_non_leaf_children.size());
 
-    network::MLCMST neighbour = mlcmst;
+    network::MLCST neighbour = mlcmst;
     for (int c : children[v]) {
         neighbour.parent(c) = neighbour.root();
     }
@@ -197,8 +197,8 @@ VNS_Campos::levelDownRootSubtreeNeighbour(const network::MLCMST &mlcmst, const n
     return neighbour;
 }
 
-network::MLCMST
-VNS_Campos::mergeRootSubtreesNeighbour(const network::MLCMST &mlcmst, const network::MLCCNetwork &mlcc_network)
+network::MLCST
+VNS_Campos::mergeRootSubtreesNeighbour(const network::MLCST &mlcmst, const network::MLCCNetwork &mlcc_network)
 {
 //    maybe add neighbourhood where not only root children are merged or
 
@@ -226,7 +226,7 @@ VNS_Campos::mergeRootSubtreesNeighbour(const network::MLCMST &mlcmst, const netw
     }
     int subtree_root = subtrees_to_merge[0];
 
-    network::MLCMST neighbour = mlcmst;
+    network::MLCST neighbour = mlcmst;
     for (int v : subtrees_to_merge) {
         neighbour.parent(v) = subtree_root;
     }

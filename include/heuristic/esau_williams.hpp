@@ -16,7 +16,7 @@ public:
 
     ~EsauWilliams() override;
 
-    network::MLCMST run(const network::MLCCNetwork &mlcc_network) override;
+    network::MLCST run(const network::MLCCNetwork &mlcc_network) override;
 
 private:
     static std::vector<int> run(int root, const network::CapacitatedNetwork& network, const std::vector<int>& demands);

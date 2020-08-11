@@ -38,7 +38,7 @@ MLCMST_Solver::Result MLCMST_MPSolver::solve(const network::MLCCNetwork &mlcc_ne
 
     bool finished = result_status == MPSolver::OPTIMAL;
     return MLCMST_Solver::Result(
-        finished && _mp_solver.IsMIP() ? createMLCMST() : std::optional<network::MLCMST>(),
+        finished && _mp_solver.IsMIP() ? createMLCMST() : std::optional<network::MLCST>(),
         finished ? _mp_solver.Objective().Value() : std::optional<double>(),
         wall_time,
         finished

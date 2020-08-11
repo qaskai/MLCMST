@@ -11,7 +11,7 @@ public:
 
     Result solve(const network::MLCCNetwork &mlcc_network) final;
 
-    virtual network::MLCMST run(const network::MLCCNetwork &mlcc_network) = 0;
+    virtual network::MLCST run(const network::MLCCNetwork &mlcc_network) = 0;
 };
 
 }

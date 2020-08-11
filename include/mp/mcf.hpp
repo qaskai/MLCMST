@@ -39,7 +39,7 @@ private:
     void createObjective() override;
     void createConstraints() override;
 
-    network::MLCMST createMLCMST() override;
+    network::MLCST createMLCMST() override;
 
     void createFlowConstraints();
     void createCapacityConstraints();

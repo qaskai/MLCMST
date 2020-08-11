@@ -10,9 +10,9 @@ std::string Star::id()
 
 Star::~Star() = default;
 
-network::MLCMST Star::run(const network::MLCCNetwork &mlcc_network)
+network::MLCST Star::run(const network::MLCCNetwork &mlcc_network)
 {
-    return network::MLCMST::star(mlcc_network);
+    return network::MLCST::star(mlcc_network);
 }
 
 }

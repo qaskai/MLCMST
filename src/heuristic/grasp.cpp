@@ -16,16 +16,16 @@ GRASP::GRASP(std::unique_ptr<MLCMST_Heuristic> construction_phase, std::unique_p
 
 GRASP::~GRASP() = default;
 
-network::MLCMST GRASP::run(const network::MLCCNetwork &mlcc_network)
+network::MLCST GRASP::run(const network::MLCCNetwork &mlcc_network)
 {
     struct Solution {
-        network::MLCMST mlcmst;
+        network::MLCST mlcmst;
         double cost;
     };
 
-    Solution best_solution { .mlcmst=network::MLCMST(0,0), .cost=std::numeric_limits<double>::max() };
+    Solution best_solution { .mlcmst=network::MLCST(0, 0), .cost=std::numeric_limits<double>::max() };
     for (int i=0; i<params.iterations_no; i++) {
-        network::MLCMST mlcmst = construction_phase_->run(mlcc_network);
+        network::MLCST mlcmst = construction_phase_->run(mlcc_network);
         mlcmst = improvement_phase_->improve(mlcmst, mlcc_network);
 
         double cost = mlcmst.cost(mlcc_network);

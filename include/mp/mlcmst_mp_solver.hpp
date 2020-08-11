@@ -40,7 +40,7 @@ protected:
     virtual void createConstraints() = 0;
     virtual void createObjective() = 0;
 
-    virtual network::MLCMST createMLCMST() = 0;
+    virtual network::MLCST createMLCMST() = 0;
 };
 
 }

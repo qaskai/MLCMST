@@ -27,13 +27,13 @@ LinkUpgrade::LinkUpgrade(std::unique_ptr<MLCMST_Solver> init_solver, LinkUpgrade
 
 LinkUpgrade::~LinkUpgrade() = default;
 
-network::MLCMST LinkUpgrade::improve(long steps, network::MLCMST mlcmst, const network::MLCCNetwork &mlcc_network)
+network::MLCST LinkUpgrade::improve(long steps, network::MLCST mlcmst, const network::MLCCNetwork &mlcc_network)
 {
     network_ = &mlcc_network;
     return mainLoop(steps, mlcmst);
 }
 
-network::MLCMST LinkUpgrade::mainLoop(long steps, network::MLCMST mlcmst)
+network::MLCST LinkUpgrade::mainLoop(long steps, network::MLCST mlcmst)
 {
     struct Upgrade {
         double saving;
@@ -91,7 +91,7 @@ network::MLCMST LinkUpgrade::mainLoop(long steps, network::MLCMST mlcmst)
     return mlcmst;
 }
 
-void LinkUpgrade::implementUpgrade(network::MLCMST& mlcmst, int i, int level, const std::vector<int> &H)
+void LinkUpgrade::implementUpgrade(network::MLCST& mlcmst, int i, int level, const std::vector<int> &H)
 {
     mlcmst.edgeLevel(i) = level;
     for (int j : H) {
@@ -99,7 +99,7 @@ void LinkUpgrade::implementUpgrade(network::MLCMST& mlcmst, int i, int level, co
     }
 }
 
-std::pair<double, std::vector<int>> LinkUpgrade::findUpgradeSetH(int i, int level, network::MLCMST mlcmst)
+std::pair<double, std::vector<int>> LinkUpgrade::findUpgradeSetH(int i, int level, network::MLCST mlcmst)
 {
     double saving_amount =
             network_->edgeCost(i, mlcmst.parent(i), mlcmst.edgeLevel(i))
@@ -212,7 +212,7 @@ std::pair<double, std::vector<int>> LinkUpgrade::findUpgradeSetH(int i, int leve
     return {saving_amount, H};
 }
 
-double LinkUpgrade::d(int i, int j, const network::MLCMST &mlcmst)
+double LinkUpgrade::d(int i, int j, const network::MLCST &mlcmst)
 {
     int level = mlcmst.edgeLevel(j);
     return
@@ -220,12 +220,12 @@ double LinkUpgrade::d(int i, int j, const network::MLCMST &mlcmst)
             network_->edgeCost(j, i, level);
 }
 
-double LinkUpgrade::modified_d(int i, int j, const network::MLCMST& mlcmst, const std::vector<int> &load)
+double LinkUpgrade::modified_d(int i, int j, const network::MLCST& mlcmst, const std::vector<int> &load)
 {
     return d(i,j, mlcmst) / load[j];
 }
 
-std::vector<int> LinkUpgrade::getPathToRoot(int node, const network::MLCMST &mlcmst)
+std::vector<int> LinkUpgrade::getPathToRoot(int node, const network::MLCST &mlcmst)
 {
     std::vector<int> path { node };
     while (path.back() != mlcmst.root()) {

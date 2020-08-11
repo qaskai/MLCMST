@@ -64,7 +64,7 @@ public:
             const Params& params);
     ~GeneticGamvros() override;
 
-    network::MLCMST run(const network::MLCCNetwork &mlcc_network) override;
+    network::MLCST run(const network::MLCCNetwork &mlcc_network) override;
 
 private:
     static const double EPS_;

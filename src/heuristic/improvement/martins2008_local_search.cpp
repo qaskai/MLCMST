@@ -30,7 +30,7 @@ Martins2008_LocalSearch::Martins2008_LocalSearch(std::unique_ptr< MLCMST_Solver 
 
 Martins2008_LocalSearch::~Martins2008_LocalSearch() = default;
 
-network::MLCMST Martins2008_LocalSearch::improve(long steps, network::MLCMST mlcmst, const network::MLCCNetwork &mlcc_network)
+network::MLCST Martins2008_LocalSearch::improve(long steps, network::MLCST mlcmst, const network::MLCCNetwork &mlcc_network)
 {
     mlcc_network_ = &mlcc_network;
 
@@ -45,7 +45,7 @@ network::MLCMST Martins2008_LocalSearch::improve(long steps, network::MLCMST mlc
     return mlcmst;
 }
 
-void Martins2008_LocalSearch::step(std::set<int> &S, network::MLCMST &mlcmst)
+void Martins2008_LocalSearch::step(std::set<int> &S, network::MLCST &mlcmst)
 {
     int i = *std::next(S.begin(), int_generator_.generate() % S.size());
     std::vector<int> i_group;
@@ -83,7 +83,7 @@ void Martins2008_LocalSearch::step(std::set<int> &S, network::MLCMST &mlcmst)
     }
 }
 
-std::pair<std::vector<int>, double> Martins2008_LocalSearch::groupSubtrees(int i, const network::MLCMST& mlcmst)
+std::pair<std::vector<int>, double> Martins2008_LocalSearch::groupSubtrees(int i, const network::MLCST& mlcmst)
 {
     int h = params.h_low + (int_generator_.generate() % (params.h_high - params.h_low + 1));
     auto subnet = mlcmst.subnet();
@@ -124,7 +124,7 @@ std::set<int> Martins2008_LocalSearch::vectorToSet(const std::vector<int> &v)
     return std::set<int>(v.begin(), v.end());
 }
 
-double Martins2008_LocalSearch::subtreeCost(const std::vector<int>& vertices, const network::MLCMST &mlcmst)
+double Martins2008_LocalSearch::subtreeCost(const std::vector<int>& vertices, const network::MLCST &mlcmst)
 {
     double cost = 0;
     for (int v : vertices) {

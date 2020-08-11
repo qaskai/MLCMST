@@ -122,7 +122,7 @@ void MCF::createConstraints()
     createFacilityUtilizationConstraints();
 }
 
-network::MLCMST MCF::createMLCMST()
+network::MLCST MCF::createMLCMST()
 {
     return util::createMLCMST(*_mlcc_network, _arc_vars);
 }

@@ -71,7 +71,7 @@ void GeneralReporter::printSolutionGapStats(const std::vector<TestCase> &test_ca
     for (unsigned i=0; i<test_cases.size(); i++) {
         if (!results[i].mlcmst.has_value())
             continue;
-        const network::MLCMST& mlcmst = results[i].mlcmst.value();
+        const network::MLCST& mlcmst = results[i].mlcmst.value();
         if (mlcmst.checkValidity(test_cases[i].mlccNetwork())) {
             double mlcmst_cost = mlcmst.cost(test_cases[i].mlccNetwork());
             gap.push_back(mlcmst_cost / test_cases[i].lowerBound() - 1.0);

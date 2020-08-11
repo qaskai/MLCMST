@@ -11,11 +11,11 @@ namespace MLCMST::network {
  *
  * Assumes that parents vector forms a directed tree and its root (and only the root) has a parent set to itself.
  */
-class MLCMST final
+class MLCST final
 {
 public:
-    MLCMST(int N, int root);
-    ~MLCMST();
+    MLCST(int N, int root);
+    ~MLCST();
 
     /**
      * Sets minimal levels on edges that still make it viable.
@@ -46,7 +46,7 @@ public:
     [[nodiscard]] std::vector<int> reserves(const MLCCNetwork &network) const;
     [[nodiscard]] std::vector<int> subnet() const;
 
-    static MLCMST star(const MLCCNetwork& network);
+    static MLCST star(const MLCCNetwork& network);
 
 private:
     int _root;
