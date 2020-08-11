@@ -16,7 +16,7 @@ MLCMST_Improver::MLCMST_Improver(std::unique_ptr<MLCMST_Solver> init_solver) : i
 
 network::MLCST MLCMST_Improver::run(const network::MLCCNetwork &mlcc_network)
 {
-    network::MLCST mlcmst = init_solver_->solve(mlcc_network).mlcmst.value();
+    network::MLCST mlcmst = init_solver_->solve(mlcc_network).mlcst.value();
     mlcmst = improve(mlcmst, mlcc_network);
     return mlcmst;
 }

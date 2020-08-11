@@ -12,7 +12,7 @@ class MLCMST_Solver
 public:
     struct Result
     {
-        std::optional<network::MLCST> mlcmst;
+        std::optional<network::MLCST> mlcst;
         std::optional<double> lower_bound;
         double wall_time; // in milliseconds
         bool finished;

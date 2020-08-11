@@ -9,7 +9,7 @@
 
 namespace MLCMST::network {
 
-MLCST::MLCST(int N, int root) : _root(root), _parents(N, root), _edge_levels(N, 0)
+MLCST::MLCST(int N, int root) : _root(root), _parents(N, root), _facility_levels(N, 0)
 {
 }
 
@@ -25,7 +25,7 @@ bool MLCST::setMinimalViableLevels(const MLCCNetwork &mlcc_network)
         if (it == levels.end()) {
             return false;
         }
-        _edge_levels[v] = std::distance(levels.begin(), it);
+        _facility_levels[v] = std::distance(levels.begin(), it);
         for (int c : children[v]) {
             dfs(c);
         }
@@ -36,7 +36,7 @@ bool MLCST::setMinimalViableLevels(const MLCCNetwork &mlcc_network)
     for (int c : children[_root]) {
         valid_tree = valid_tree && dfs(c);
     }
-    _edge_levels[_root] = 0;
+    _facility_levels[_root] = 0;
     return valid_tree;
 }
 
@@ -65,19 +65,19 @@ const std::vector<int> &MLCST::parents() const
     return _parents;
 }
 
-int& MLCST::edgeLevel(int v)
+int& MLCST::facilityLevel(int v)
 {
-    return _edge_levels[v];
+    return _facility_levels[v];
 }
 
-int MLCST::edgeLevel(int v) const
+int MLCST::facilityLevel(int v) const
 {
-    return _edge_levels[v];
+    return _facility_levels[v];
 }
 
-const std::vector<int> &MLCST::edgeLevels() const
+const std::vector<int> &MLCST::facilityLevels() const
 {
-    return _edge_levels;
+    return _facility_levels;
 }
 
 double MLCST::cost(const MLCCNetwork& mlcc_network) const
@@ -86,7 +86,7 @@ double MLCST::cost(const MLCCNetwork& mlcc_network) const
     for (int i=0; i < mlcc_network.vertexCount(); i++) {
         if (i == _root)
             continue;
-        cost += mlcc_network.edgeCost(i, parent(i), edgeLevel(i));
+        cost += mlcc_network.edgeCost(i, parent(i), facilityLevel(i));
     }
     return cost;
 }
@@ -178,14 +178,14 @@ std::vector<int> MLCST::loads(const MLCCNetwork &network) const
     return load;
 }
 
-bool MLCST::checkValidity(const MLCCNetwork &network) const
+bool MLCST::checkFeasibility(const MLCCNetwork &network) const
 {
     std::vector<int> load = loads(network);
     if (_root != network.center()) {
         return false;
     }
     for (int i : vertexSet()) {
-        if (i != _root && load[i] > network.edgeCapacity(edgeLevel(i))) {
+        if (i != _root && load[i] > network.edgeCapacity(facilityLevel(i))) {
             return false;
         }
     }
@@ -198,7 +198,7 @@ std::vector<int> MLCST::slack(const MLCCNetwork &network) const
     std::vector<int> load = loads(network);
 
     for (int i : network.vertexSet()) {
-        slack[i] = network.edgeCapacity(edgeLevel(i)) - load[i];
+        slack[i] = network.edgeCapacity(facilityLevel(i)) - load[i];
     }
     slack[network.center()] = network.vertexCount();
     return slack;
@@ -247,10 +247,10 @@ MLCST MLCST::star(const MLCCNetwork& network)
     MLCST mlcmst(network.vertexCount(), network.center());
     for (int i=0; i<network.vertexCount(); i++) {
         mlcmst.parent(i) = network.center();
-        mlcmst.edgeLevel(i) = 0;
+        mlcmst.facilityLevel(i) = 0;
         for (int l = 0; l < network.levelsNumber(); l++) {
             if (network.demand(i) <= network.edgeCapacity(l)) {
-                mlcmst.edgeLevel(i) = l;
+                mlcmst.facilityLevel(i) = l;
                 break;
             }
         }

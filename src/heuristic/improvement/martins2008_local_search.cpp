@@ -34,7 +34,7 @@ network::MLCST Martins2008_LocalSearch::improve(long steps, network::MLCST mlcms
 {
     mlcc_network_ = &mlcc_network;
 
-    std::set<int> S = vectorToSet(mlcc_network.regularVertexSet());
+    std::set<int> S = vectorToSet(mlcc_network.terminalVertexSet());
     for (int l : mlcmst.leafs()) {
         S.erase(l);
     }
@@ -64,7 +64,7 @@ void Martins2008_LocalSearch::step(std::set<int> &S, network::MLCST &mlcmst)
                     continue;
 
                 mlcmst.parent(v_mapped) = result.mapping[result.mlcmst.parent(v)];
-                mlcmst.edgeLevel(v_mapped) = result.mlcmst.edgeLevel(v);
+                mlcmst.facilityLevel(v_mapped) = result.mlcmst.facilityLevel(v);
 
                 if (subtree_leafs.count(v)) {
                     S.erase(v_mapped);
@@ -105,7 +105,7 @@ std::pair<std::vector<int>, double> Martins2008_LocalSearch::groupSubtrees(int i
 
         bool found_improving_edge = false;
         for (int v : groups[g_id]) {
-            int level = mlcmst.edgeLevel(v);
+            int level = mlcmst.facilityLevel(v);
             if (mlcc_network_->edgeCost(v, i, level) < mlcc_network_->edgeCost(v, mlcmst.parent(v), level) - 1e-9) {
                 found_improving_edge = true;
                 break;
@@ -130,7 +130,7 @@ double Martins2008_LocalSearch::subtreeCost(const std::vector<int>& vertices, co
     for (int v : vertices) {
         if (v == mlcmst.root())
             continue;
-        cost += mlcc_network_->edgeCost(v, mlcmst.parent(v), mlcmst.edgeLevel(v));
+        cost += mlcc_network_->edgeCost(v, mlcmst.parent(v), mlcmst.facilityLevel(v));
     }
     return cost;
 }

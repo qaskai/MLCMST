@@ -136,7 +136,7 @@ std::vector<internal::Chromosome> GeneticGamvros::initializePopulation()
     while (population.size() < params_.population_size) {
         for (int i=0; i < init_population_solvers_.size() && population.size() < params_.population_size; i++){
             network::MLCST mlcmst = init_population_solvers_[i]->solve(
-                    network_->multiplyEdgeCosts(epsilon_generator.generate())).mlcmst.value();
+                    network_->multiplyEdgeCosts(epsilon_generator.generate())).mlcst.value();
             population.push_back(
                     internal::Chromosome(network_->center(), mlcmst.subnet()).refreshIds());
         }

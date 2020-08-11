@@ -18,7 +18,7 @@ TEST_CASE( "MLCMST serialization", "[network][serialization]" )
     std::vector<int> levels = {0, 0, 1, 2, 3};
     for (int i : mlcmst.vertexSet()) {
         mlcmst.parent(i) = parents[i];
-        mlcmst.edgeLevel(i) = levels[i];
+        mlcmst.facilityLevel(i) = levels[i];
     }
 
     std::string serialized_mlcmst =
@@ -44,6 +44,6 @@ TEST_CASE( "MLCMST serialization", "[network][serialization]" )
         REQUIRE( deserialized_mlcmst.vertexCount() == N );
         REQUIRE( deserialized_mlcmst.root() == root );
         REQUIRE( deserialized_mlcmst.parents() == mlcmst.parents() );
-        REQUIRE( deserialized_mlcmst.edgeLevels() == mlcmst.edgeLevels() );
+        REQUIRE(deserialized_mlcmst.facilityLevels() == mlcmst.facilityLevels() );
     }
 }

@@ -28,5 +28,5 @@ TEST_CASE( "setMinimalViableLevels", "[network]" )
 
     REQUIRE( valid_tree );
     std::vector<int> expected_levels = { 0, 2, 1, 0 };
-    REQUIRE( expected_levels == mlcmst.edgeLevels() );
+    REQUIRE( expected_levels == mlcmst.facilityLevels() );
 }

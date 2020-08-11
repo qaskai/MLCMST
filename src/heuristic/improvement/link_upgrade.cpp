@@ -41,11 +41,11 @@ network::MLCST LinkUpgrade::mainLoop(long steps, network::MLCST mlcmst)
         std::vector<int> H;
     };
 
-    std::vector<int> upgrade_candidates = network_->regularVertexSet();
+    std::vector<int> upgrade_candidates = network_->terminalVertexSet();
 
     auto viable_upgrade_set = [&] (int i) -> std::vector<int> {
-        std::vector<int> available_levels(network_->levelsNumber() - mlcmst.edgeLevel(i));
-        std::iota(available_levels.begin(), available_levels.end(), mlcmst.edgeLevel(i));
+        std::vector<int> available_levels(network_->levelsNumber() - mlcmst.facilityLevel(i));
+        std::iota(available_levels.begin(), available_levels.end(), mlcmst.facilityLevel(i));
         return available_levels;
     };
     auto loop = [&] (int set_level) -> void {
@@ -67,7 +67,7 @@ network::MLCST LinkUpgrade::mainLoop(long steps, network::MLCST mlcmst)
                         update_best_upgrade(i, l);
                     }
                 } else {
-                    if (mlcmst.edgeLevel(i) <= set_level)
+                    if (mlcmst.facilityLevel(i) <= set_level)
                         update_best_upgrade(i, set_level);
                 }
             }
@@ -93,7 +93,7 @@ network::MLCST LinkUpgrade::mainLoop(long steps, network::MLCST mlcmst)
 
 void LinkUpgrade::implementUpgrade(network::MLCST& mlcmst, int i, int level, const std::vector<int> &H)
 {
-    mlcmst.edgeLevel(i) = level;
+    mlcmst.facilityLevel(i) = level;
     for (int j : H) {
         mlcmst.parent(j) = i;
     }
@@ -102,9 +102,9 @@ void LinkUpgrade::implementUpgrade(network::MLCST& mlcmst, int i, int level, con
 std::pair<double, std::vector<int>> LinkUpgrade::findUpgradeSetH(int i, int level, network::MLCST mlcmst)
 {
     double saving_amount =
-            network_->edgeCost(i, mlcmst.parent(i), mlcmst.edgeLevel(i))
+            network_->edgeCost(i, mlcmst.parent(i), mlcmst.facilityLevel(i))
             - network_->edgeCost(i, mlcmst.parent(i), level);
-    mlcmst.edgeLevel(i) = level;
+    mlcmst.facilityLevel(i) = level;
 
     std::vector<int> loads = mlcmst.loads(*network_);
     std::vector<int> subnet = mlcmst.subnet();
@@ -121,7 +121,7 @@ std::pair<double, std::vector<int>> LinkUpgrade::findUpgradeSetH(int i, int leve
         auto leafs = mlcmst.leafs();
         candidates.insert(leafs.begin(), leafs.end());
     } else {
-        auto terminal_nodes = network_->regularVertexSet();
+        auto terminal_nodes = network_->terminalVertexSet();
         candidates.insert(terminal_nodes.begin(), terminal_nodes.end());
         for (int x : getPathToRoot(i, mlcmst)) {
             candidates.erase(x);
@@ -136,7 +136,7 @@ std::pair<double, std::vector<int>> LinkUpgrade::findUpgradeSetH(int i, int leve
 
         int child_load = loads[child];
         for (int v : node_path) {
-            if (loads[v] + child_load > network_->edgeCapacity(mlcmst.edgeLevel(v))) {
+            if (loads[v] + child_load > network_->edgeCapacity(mlcmst.facilityLevel(v))) {
                 return false;
             }
         }
@@ -214,7 +214,7 @@ std::pair<double, std::vector<int>> LinkUpgrade::findUpgradeSetH(int i, int leve
 
 double LinkUpgrade::d(int i, int j, const network::MLCST &mlcmst)
 {
-    int level = mlcmst.edgeLevel(j);
+    int level = mlcmst.facilityLevel(j);
     return
             network_->edgeCost(j, mlcmst.parent(j), level) -
             network_->edgeCost(j, i, level);

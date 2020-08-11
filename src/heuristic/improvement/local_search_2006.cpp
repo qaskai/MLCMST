@@ -93,8 +93,8 @@ LocalSearch2006::Network LocalSearch2006::buildNeighbourhoodGraph(const std::vec
     const std::unordered_map<int, int> group_demands = groupDemands(group_id);
 
     // regular node edges
-    for (int i : network_->regularVertexSet()) {
-        for (int j : network_->regularVertexSet()) {
+    for (int i : network_->terminalVertexSet()) {
+        for (int j : network_->terminalVertexSet()) {
             if (i==j || group_id[i] == group_id[j])
                 continue;
             if (group_demands.at(group_id[j]) + network_->demand(i) - network_->demand(j) > max_edge_capacity)
@@ -107,7 +107,7 @@ LocalSearch2006::Network LocalSearch2006::buildNeighbourhoodGraph(const std::vec
     }
 
     // pseudo node edges
-    for (int i : network_->regularVertexSet()) {
+    for (int i : network_->terminalVertexSet()) {
         for (const auto& group : subnetGroups) {
             int g_id = group.first;
             if (group_id[i] == g_id)
@@ -125,7 +125,7 @@ LocalSearch2006::Network LocalSearch2006::buildNeighbourhoodGraph(const std::vec
         int g_id = group.first;
         network.edgeCost(N + g_id, origin) = 0;
     }
-    for (int i : network_->regularVertexSet()) {
+    for (int i : network_->terminalVertexSet()) {
         std::vector<int> new_group = subnetGroups.at(group_id[i]);
         new_group.erase(std::find(new_group.begin(), new_group.end(), i));
         network.edgeCost(origin, i) = subnet_solver_.subnetTreeCost(*network_, new_group) - subnetCosts.at(group_id[i]);
@@ -139,7 +139,7 @@ std::optional<std::vector<int>> LocalSearch2006::findBestProfitableExchange(cons
     Network graph = buildNeighbourhoodGraph(group_id);
     std::pair<std::vector<int>, double> best_exchange = std::make_pair(std::vector<int>{}, 0);
 
-    for (int i : network_->regularVertexSet()) {
+    for (int i : network_->terminalVertexSet()) {
         auto maybe_exchange = findBestProfitableExchange(i, graph, group_id);
         if (maybe_exchange.has_value() && maybe_exchange.value().second < best_exchange.second) {
             best_exchange = maybe_exchange.value();

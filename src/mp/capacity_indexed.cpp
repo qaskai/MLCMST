@@ -64,7 +64,7 @@ void CapacityIndexed::createConstraints()
 
 void CapacityIndexed::createOneOutgoingConstraints()
 {
-    for (int i : _mlcc_network->regularVertexSet()) {
+    for (int i : _mlcc_network->terminalVertexSet()) {
         LinearExpr expr;
         for (int j : _mlcc_network->vertexSet()) {
             if (i == j) continue;
@@ -78,7 +78,7 @@ void CapacityIndexed::createOneOutgoingConstraints()
 
 void CapacityIndexed::createCapacityBalanceConstraints()
 {
-    for (int i : _mlcc_network->regularVertexSet()) {
+    for (int i : _mlcc_network->terminalVertexSet()) {
         LinearExpr expr;
         // outgoing edges
         for (int j : _mlcc_network->vertexSet()) {
@@ -88,7 +88,7 @@ void CapacityIndexed::createCapacityBalanceConstraints()
             }
         }
         // ingoing edges
-        for (int j : _mlcc_network->regularVertexSet()) {
+        for (int j : _mlcc_network->terminalVertexSet()) {
             if (i == j) continue;
             for (int p=1; p <= _mlcc_network->maxEdgeCapacity(); p++) {
                 expr += p * _arc_vars[j][i][p];
@@ -101,7 +101,7 @@ void CapacityIndexed::createCapacityBalanceConstraints()
 void CapacityIndexed::createObjective()
 {
     LinearExpr expr;
-    for (int i : _mlcc_network->regularVertexSet()) {
+    for (int i : _mlcc_network->terminalVertexSet()) {
         for (int j : _mlcc_network->vertexSet()) {
             for (int p=1; p <= _mlcc_network->maxEdgeCapacity(); p++) {
                 double cost = _mlcc_network->edgeCost(i, j, _first_facility_with_capacity[p]);
@@ -117,13 +117,13 @@ void CapacityIndexed::createObjective()
 network::MLCST CapacityIndexed::createMLCMST()
 {
     network::MLCST mlcmst(_mlcc_network->vertexCount(), _mlcc_network->center());
-    for (int i : _mlcc_network->regularVertexSet()) {
+    for (int i : _mlcc_network->terminalVertexSet()) {
         for (int j : _mlcc_network->vertexSet()) {
             for (int p=1; p <= _mlcc_network->maxEdgeCapacity(); p++) {
                 auto var = _arc_vars[i][j][p].terms().begin()->first;
                 if (std::abs(var->solution_value() - 1.0) < 1e-9) {
                     mlcmst.parent(i) = j;
-                    mlcmst.edgeLevel(i) = _first_facility_with_capacity[p];
+                    mlcmst.facilityLevel(i) = _first_facility_with_capacity[p];
                     goto found_parent;
                 }
             }

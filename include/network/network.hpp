@@ -18,6 +18,7 @@ public:
     [[nodiscard]] const std::vector<std::vector<double>>& costs() const;
     double& edgeCost(int v, int w);
     [[nodiscard]] const double& edgeCost(int v, int w) const;
+    [[nodiscard]] bool edgeExists(int v, int w) const;
 
     [[nodiscard]] std::vector<int> neighbourhood(int v) const;
     [[nodiscard]] std::vector<std::vector<int>> neighbourhoods() const;

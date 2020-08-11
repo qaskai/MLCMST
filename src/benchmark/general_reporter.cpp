@@ -69,10 +69,10 @@ void GeneralReporter::printSolutionGapStats(const std::vector<TestCase> &test_ca
     std::vector<double> gap;
     unsigned invalid_count = 0;
     for (unsigned i=0; i<test_cases.size(); i++) {
-        if (!results[i].mlcmst.has_value())
+        if (!results[i].mlcst.has_value())
             continue;
-        const network::MLCST& mlcmst = results[i].mlcmst.value();
-        if (mlcmst.checkValidity(test_cases[i].mlccNetwork())) {
+        const network::MLCST& mlcmst = results[i].mlcst.value();
+        if (mlcmst.checkFeasibility(test_cases[i].mlccNetwork())) {
             double mlcmst_cost = mlcmst.cost(test_cases[i].mlccNetwork());
             gap.push_back(mlcmst_cost / test_cases[i].lowerBound() - 1.0);
         } else {

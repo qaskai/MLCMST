@@ -26,7 +26,7 @@ public:
     [[nodiscard]] int center() const;
     [[nodiscard]] int vertexCount() const;
     [[nodiscard]] std::vector<int> vertexSet() const;
-    [[nodiscard]] std::vector<int> regularVertexSet() const;
+    [[nodiscard]] std::vector<int> terminalVertexSet() const;
     [[nodiscard]] int levelsNumber() const;
     [[nodiscard]] std::vector<int> levels() const;
     [[nodiscard]] int demand(int v) const;

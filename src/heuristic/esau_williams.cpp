@@ -25,10 +25,10 @@ network::MLCST EsauWilliams::run(const network::MLCCNetwork &mlcc_network)
     network::MLCST mlcmst(mlcc_network.vertexCount(), center);
     for (int i : mlcc_network.vertexSet()) {
         mlcmst.parent(i) = parents[i];
-        mlcmst.edgeLevel(i) = mlcc_network.levelsNumber()-1;
+        mlcmst.facilityLevel(i) = mlcc_network.levelsNumber() - 1;
     }
     mlcmst.parent(center) = center;
-    mlcmst.edgeLevel(center) = 0;
+    mlcmst.facilityLevel(center) = 0;
     mlcmst.setMinimalViableLevels(mlcc_network);
     return mlcmst;
 }

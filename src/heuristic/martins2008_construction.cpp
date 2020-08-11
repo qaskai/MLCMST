@@ -36,7 +36,7 @@ network::MLCST Martins2008_Construction::run(const network::MLCCNetwork &mlcc_ne
 
     std::set<int> unassigned;
     {
-        auto terminals = mlcc_network.regularVertexSet();
+        auto terminals = mlcc_network.terminalVertexSet();
         unassigned.insert(terminals.begin(), terminals.end());
     }
 

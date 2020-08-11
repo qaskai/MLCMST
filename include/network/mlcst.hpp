@@ -28,9 +28,9 @@ public:
     int& parent(int v);
     [[nodiscard]] int parent(int v) const;
     [[nodiscard]] const std::vector<int>& parents() const;
-    int& edgeLevel(int v);
-    [[nodiscard]] int edgeLevel(int v) const;
-    [[nodiscard]] const std::vector<int>& edgeLevels() const;
+    int& facilityLevel(int v);
+    [[nodiscard]] int facilityLevel(int v) const;
+    [[nodiscard]] const std::vector<int>& facilityLevels() const;
     [[nodiscard]] int root() const;
 
     [[nodiscard]] std::vector<std::vector<int>> childrenLists() const;
@@ -40,7 +40,7 @@ public:
     [[nodiscard]] std::vector<int> pathToRoot(int v) const;
 
     [[nodiscard]] double cost(const MLCCNetwork& mlcc_network) const;
-    [[nodiscard]] bool checkValidity(const MLCCNetwork& network) const;
+    [[nodiscard]] bool checkFeasibility(const MLCCNetwork& network) const;
     [[nodiscard]] std::vector<int> loads(const MLCCNetwork &network) const;
     [[nodiscard]] std::vector<int> slack(const MLCCNetwork& network) const;
     [[nodiscard]] std::vector<int> reserves(const MLCCNetwork &network) const;
@@ -51,7 +51,7 @@ public:
 private:
     int _root;
     std::vector<int> _parents;
-    std::vector<int> _edge_levels;
+    std::vector<int> _facility_levels;
 };
 
 }

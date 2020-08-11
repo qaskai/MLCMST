@@ -27,7 +27,7 @@ TEST_CASE( "Gavmros local search 2006 heuristic random", "[heuristic][local_sear
     MLCMST::heuristic::improvement::LocalSearch2006 solver;
     auto result = solver.solve(mlccNetwork);
 
-    REQUIRE( result.mlcmst.has_value() );
-    REQUIRE( result.mlcmst->checkValidity(mlccNetwork) );
+    REQUIRE( result.mlcst.has_value() );
+    REQUIRE(result.mlcst->checkFeasibility(mlccNetwork) );
 
 }

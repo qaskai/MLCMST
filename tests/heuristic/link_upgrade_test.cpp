@@ -31,11 +31,11 @@ TEST_CASE( "Link upgrade heuristic one step", "[heuristic][link_upgrade]" )
         {0, 1, 1, 1});
 
     LinkUpgrade::Result result = solver.solve(network);
-    network::MLCST mlcmst = result.mlcmst.value();
+    network::MLCST mlcmst = result.mlcst.value();
 
-    REQUIRE(mlcmst.checkValidity(network) );
+    REQUIRE(mlcmst.checkFeasibility(network) );
     REQUIRE( mlcmst.parents() == std::vector<int>({ 0, 0, 1, 1 }) );
-    REQUIRE( mlcmst.edgeLevels() == std::vector<int>({ 0, 1, 0, 0 }) );
+    REQUIRE(mlcmst.facilityLevels() == std::vector<int>({0, 1, 0, 0 }) );
 }
 
 TEST_CASE( "Link upgrade all variations functional", "[heuristic][link_upgrade]" )
@@ -52,7 +52,7 @@ TEST_CASE( "Link upgrade all variations functional", "[heuristic][link_upgrade]"
 
         auto result = linkUpgrade.solve(mlcc_network);
 
-        REQUIRE( result.mlcmst.has_value() );
-        REQUIRE( result.mlcmst.value().checkValidity(mlcc_network) );
+        REQUIRE( result.mlcst.has_value() );
+        REQUIRE(result.mlcst.value().checkFeasibility(mlcc_network) );
     }
 }

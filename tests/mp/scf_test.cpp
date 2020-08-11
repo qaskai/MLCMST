@@ -48,8 +48,8 @@ TEST_CASE( "SCF functional test", "[solver][mp][scf]" )
         for (int i=0; i<mlcc_network.vertexCount(); i++) {
             if (i == mlcc_network.center())
                 continue;
-            REQUIRE( result.mlcmst->parent(i) == expected_parents[i] );
-            REQUIRE( result.mlcmst->edgeLevel(i) == expected_levels[i] );
+            REQUIRE(result.mlcst->parent(i) == expected_parents[i] );
+            REQUIRE(result.mlcst->facilityLevel(i) == expected_levels[i] );
         }
     }
     SECTION( "linear programming" ) {
@@ -59,6 +59,6 @@ TEST_CASE( "SCF functional test", "[solver][mp][scf]" )
 
         REQUIRE( result.finished );
         REQUIRE( result.lower_bound.value() == Approx(12.5).margin(0.0001) );
-        REQUIRE( !result.mlcmst.has_value() );
+        REQUIRE( !result.mlcst.has_value() );
     }
 }

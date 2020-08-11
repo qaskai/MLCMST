@@ -42,11 +42,17 @@ const double& Network::edgeCost(int v, int w) const
     return _costs[v][w];
 }
 
+bool Network::edgeExists(int v, int w) const
+{
+    double cost = edgeCost(v,w);
+    return cost != infinity() && cost > 1e-9;
+}
+
 std::vector<int> Network::neighbourhood(int v) const
 {
     std::vector<int> neighbours;
     for (int i = 0; i < vertexCount(); i++) {
-        if (i != v && edgeCost(v,i) != infinity())
+        if (i != v && edgeExists(v, i))
             neighbours.push_back(i);
     }
     return neighbours;

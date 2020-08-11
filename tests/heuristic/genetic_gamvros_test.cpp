@@ -34,7 +34,7 @@ TEST_CASE( "Genetic Algorithm by Gamvros et. al.", "[heuristic]" )
 
     auto result = solver.solve(mlcc_network);
 
-    REQUIRE(result.mlcmst.has_value());
-    auto mlcmst = result.mlcmst.value();
-    REQUIRE(mlcmst.checkValidity(mlcc_network));
+    REQUIRE(result.mlcst.has_value());
+    auto mlcmst = result.mlcst.value();
+    REQUIRE(mlcmst.checkFeasibility(mlcc_network));
 }

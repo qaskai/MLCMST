@@ -36,7 +36,7 @@ network::MLCST createMLCMST(
                 auto var = arc_vars[i][j][l].terms().begin()->first;
                 if (var->solution_value() > 0.99) {
                     mlcmst.parent(i) = j;
-                    mlcmst.edgeLevel(i) = l;
+                    mlcmst.facilityLevel(i) = l;
                     goto found_parent;
                 }
             }

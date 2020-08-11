@@ -16,7 +16,7 @@ void MLCSTSerializer::serialize(const MLCST &mlcmst, std::ostream &stream)
     }
     stream << "\n";
     for (int i=0; i<N; i++) {
-        stream << mlcmst.edgeLevel(i) << " ";
+        stream << mlcmst.facilityLevel(i) << " ";
     }
     stream << "\n";
 }
@@ -33,7 +33,7 @@ MLCST MLCMSTDeserializer::deserialize(std::istream &stream)
         stream >> mlcmst.parent(i);
     }
     for (int i=0; i<N; i++) {
-        stream >> mlcmst.edgeLevel(i);
+        stream >> mlcmst.facilityLevel(i);
     }
 
     return mlcmst;

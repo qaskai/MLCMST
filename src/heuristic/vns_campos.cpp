@@ -31,7 +31,7 @@ VNS_Campos::VNS_Campos(std::unique_ptr< MLCMST_Heuristic > init_solver, Params p
 VNS_Campos::~VNS_Campos() = default;
 
 bool VNS_Campos::isUnitDemand(const network::MLCCNetwork &mlcc_network) {
-    for (int i : mlcc_network.regularVertexSet()) {
+    for (int i : mlcc_network.terminalVertexSet()) {
         if (mlcc_network.demand(i) != 1)
             return false;
     }

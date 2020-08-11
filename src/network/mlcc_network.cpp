@@ -68,7 +68,7 @@ std::vector<int> MLCCNetwork::vertexSet() const
     return util::firstN(vertexCount());
 }
 
-std::vector<int> MLCCNetwork::regularVertexSet() const
+std::vector<int> MLCCNetwork::terminalVertexSet() const
 {
     std::vector<int> vs = vertexSet();
     vs.erase(std::find(vs.begin(), vs.end(), center()));

@@ -90,8 +90,8 @@ MLCMST_SubnetSolver::solveSubnet(const network::MLCCNetwork &network, std::vecto
     auto result = solver_->solve(sub_network);
 
     return Result {
-        .cost = result.mlcmst.value().cost(sub_network),
-        .mlcmst = result.mlcmst.value(),
+        .cost = result.mlcst.value().cost(sub_network),
+        .mlcmst = result.mlcst.value(),
         .mapping = mapping
     };
 }
@@ -121,7 +121,7 @@ network::MLCST MLCMST_SubnetSolver::solveMLCMST(
         auto [ inner_mlcmst, mapping ] = subnetTree(network, group.second);
         for (int i=0; i<mapping.size(); i++) {
             mlcmst.parent(mapping[i]) = mapping[inner_mlcmst.parent(i)];
-            mlcmst.edgeLevel(mapping[i]) = inner_mlcmst.edgeLevel(i);
+            mlcmst.facilityLevel(mapping[i]) = inner_mlcmst.facilityLevel(i);
         }
     }
     return mlcmst;
