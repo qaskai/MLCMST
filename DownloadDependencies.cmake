@@ -3,7 +3,7 @@ include(FetchContent)
 FetchContent_Declare(
         or-tools
         GIT_REPOSITORY "https://github.com/google/or-tools.git"
-        GIT_TAG stable
+        GIT_TAG v7.7
 )
 FetchContent_MakeAvailable(or-tools)
 
@@ -17,7 +17,7 @@ FetchContent_MakeAvailable(glog)
 FetchContent_Declare(
         cxxopts
         GIT_REPOSITORY "https://github.com/jarro2783/cxxopts.git"
-        GIT_TAG master
+        GIT_TAG v2_2
 )
 FetchContent_MakeAvailable(cxxopts)
 
