@@ -11,20 +11,19 @@ network::MLCCNetwork Util::generateNetwork(int size, bool unit_demand, long seed
     using network::generation::EuclidMLCCNetworkGenerator;
     using Level = EuclidMLCCNetworkGenerator::Level;
     using CenterPosition = EuclidMLCCNetworkGenerator::CenterPosition;
-    using DemandType = EuclidMLCCNetworkGenerator::DemandType;
 
     int k =1;
     while (k*k < size*4) {
         k++;
     }
     std::vector<Level> levels = {
-            Level{1,1}, Level{3,2}, Level {10, 5}};
+            Level{1,1}, Level{3,2}, Level {10, 6}};
     CenterPosition centerPosition = CenterPosition ::CENTER;
-    DemandType demandType = unit_demand ? DemandType ::UNIT : DemandType ::RANDOM;
+    const int max_demand = unit_demand ? 1 : 3;
 
-    EuclidMLCCNetworkGenerator generator(size, centerPosition, demandType, levels,
-            std::move(std::make_unique<geometry::generation::IntPointGenerator>(0, k, seed)));
-    generator.setMaxRandomDemand(3);
+    EuclidMLCCNetworkGenerator generator(size, centerPosition, max_demand, levels,
+            std::move(std::make_unique<geometry::generation::IntPointGenerator>(0, k, seed)),
+            seed);
 
     return generator.generate();
 }

@@ -8,6 +8,7 @@
 #include <network/mlcc_network.hpp>
 #include <generator.hpp>
 #include <util/number/int_generator.hpp>
+#include <util/util.hpp>
 
 namespace MLCMST::network::generation {
 
@@ -27,34 +28,26 @@ public:
     {
         RANDOM, CORNER, CENTER
     };
-    enum class DemandType
-    {
-        UNIT, RANDOM, SET
-    };
-;
+
     EuclidMLCCNetworkGenerator(
-        int N, CenterPosition center_position, DemandType demand_type, const std::vector<Level>& levels,
-        std::unique_ptr< Generator<Point> > point_generator
+        int N, CenterPosition center_position, int max_demand, const std::vector<Level>& levels,
+        std::unique_ptr< Generator<Point> > point_generator,
+        long seed = util::clockMilliseconds()
     );
     ~EuclidMLCCNetworkGenerator() override;
 
     MLCCNetwork generate() override;
 
-    void setDemands(const std::vector<int>& demands);
-    void setMaxRandomDemand(int max_demand);
-
     [[nodiscard]] std::vector<Point> lastPointSet() const;
 
 private:
-    int _size;
-    CenterPosition _center_position;
-    DemandType _demand_type;
-    std::vector<int> _demands;
-    std::vector<Level> _levels;
+    const int _size;
+    const CenterPosition _center_position;
+    const int _max_demand;
+    const std::vector<Level> _levels;
 
-    std::unique_ptr< Generator<vector<Point>> > _point_set_generator;
-    util::number::IntGenerator _demand_int_generator;
-    util::number::IntGenerator _random_vertex_generator;
+    const std::unique_ptr< Generator<vector<Point>> > _point_set_generator;
+    util::number::IntGenerator _random_int_generator;
 
     std::vector<Point> _last_point_set;
 
@@ -62,9 +55,10 @@ private:
     EuclidMLCCNetworkGenerator(
         int N,
         CenterPosition center_position,
-        DemandType demand_type,
+        int max_demand,
         std::vector<Level> levels,
-        std::unique_ptr< Generator<std::vector<Point>> > point_set_generator
+        std::unique_ptr< Generator<std::vector<Point>> > point_set_generator,
+        long seed
     );
 
     int determineCenter(const std::vector<Point>& points);

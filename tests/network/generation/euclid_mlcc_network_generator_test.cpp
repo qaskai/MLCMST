@@ -18,7 +18,6 @@ TEST_CASE( "EuclidMLCCNetworkGenerator general functionality", "[network][genera
 {
     using Level = EuclidMLCCNetworkGenerator::Level;
     using CenterPosition = EuclidMLCCNetworkGenerator::CenterPosition;
-    using DemandType = EuclidMLCCNetworkGenerator::DemandType;
     using MLCMST::geometry::generation::RealPointGenerator;
 
     CenterPosition center_position = CenterPosition::RANDOM;
@@ -67,7 +66,7 @@ TEST_CASE( "EuclidMLCCNetworkGenerator general functionality", "[network][genera
     };
 
     MLCCNetwork network =EuclidMLCCNetworkGenerator(
-            size, center_position, DemandType::UNIT, levels, std::make_unique<RealPointGenerator>(from, to)).generate();
+            size, center_position, 1, levels, std::make_unique<RealPointGenerator>(from, to)).generate();
 
     REQUIRE(network.vertexCount() == size );
     REQUIRE(network.center() < size);
@@ -88,9 +87,8 @@ TEST_CASE( "EuclidMLCCNetworkGenerator center type ", "[network][generation]" )
 {
     using Level = EuclidMLCCNetworkGenerator::Level;
     using CenterPosition = EuclidMLCCNetworkGenerator::CenterPosition;
-    using DemandType = EuclidMLCCNetworkGenerator::DemandType;
 
-
+    constexpr int max_demand = 1;
     std::vector<Level> levels {
         Level{1, 1}
     };
@@ -101,7 +99,7 @@ TEST_CASE( "EuclidMLCCNetworkGenerator center type ", "[network][generation]" )
 
     SECTION( "random" ) {
         EuclidMLCCNetworkGenerator generator (
-                points.size(), CenterPosition::RANDOM, DemandType::UNIT, levels, std::move(point_generator));
+                points.size(), CenterPosition::RANDOM, max_demand, levels, std::move(point_generator));
 
         MLCCNetwork network = generator.generate();
 
@@ -110,7 +108,7 @@ TEST_CASE( "EuclidMLCCNetworkGenerator center type ", "[network][generation]" )
     }
     SECTION( "center" ) {
         EuclidMLCCNetworkGenerator generator (
-                points.size(), CenterPosition::CENTER, DemandType::UNIT, levels, std::move(point_generator));
+                points.size(), CenterPosition::CENTER, max_demand, levels, std::move(point_generator));
 
         MLCCNetwork network = generator.generate();
 
@@ -118,7 +116,7 @@ TEST_CASE( "EuclidMLCCNetworkGenerator center type ", "[network][generation]" )
     }
     SECTION( "corner" ) {
         EuclidMLCCNetworkGenerator generator (
-                points.size(), CenterPosition::CORNER, DemandType::UNIT, levels, std::move(point_generator));
+                points.size(), CenterPosition::CORNER, max_demand, levels, std::move(point_generator));
 
         MLCCNetwork network = generator.generate();
 
@@ -131,7 +129,6 @@ TEST_CASE( "EuclidMLCCNetworkGenerator demand type", "[network][generation]" )
 {
     using Level = EuclidMLCCNetworkGenerator::Level;
     using CenterPosition = EuclidMLCCNetworkGenerator::CenterPosition;
-    using DemandType = EuclidMLCCNetworkGenerator::DemandType;
     using MLCMST::geometry::generation::RealPointGenerator;
 
     const int size = 10;
@@ -140,13 +137,12 @@ TEST_CASE( "EuclidMLCCNetworkGenerator demand type", "[network][generation]" )
     };
     const int max_capacity = levels.back().capacity;
     CenterPosition center_position = CenterPosition::RANDOM;
-    DemandType demandType;
     auto point_gen = std::make_unique<RealPointGenerator>(0, 10);
 
     SECTION( "unit" ) {
-        demandType = DemandType::UNIT;
+        constexpr int max_demand = 1;
         EuclidMLCCNetworkGenerator generator(
-                size, center_position, demandType, levels, std::move(point_gen));
+                size, center_position, max_demand, levels, std::move(point_gen));
         std::vector<int> expected_demand(size, 1);
 
         MLCCNetwork mlcc_network = generator.generate();
@@ -155,9 +151,9 @@ TEST_CASE( "EuclidMLCCNetworkGenerator demand type", "[network][generation]" )
         REQUIRE( mlcc_network.demands() == expected_demand );
     }
     SECTION( "random" ) {
-        demandType = DemandType::RANDOM;
+        const int max_demand = max_capacity;
         EuclidMLCCNetworkGenerator generator(
-                size, center_position, demandType, levels, std::move(point_gen));
+                size, center_position, max_demand, levels, std::move(point_gen));
 
         MLCCNetwork mlcc_network = generator.generate();
 
@@ -170,19 +166,6 @@ TEST_CASE( "EuclidMLCCNetworkGenerator demand type", "[network][generation]" )
             }
         }
 
-    }
-    SECTION( "set" ) {
-        demandType = DemandType::SET;
-        EuclidMLCCNetworkGenerator generator(
-                size, center_position, demandType, levels, std::move(point_gen));
-        std::vector<int> demands(10, 0);
-        std::iota(demands.begin(), demands.end(), 1);
-        generator.setDemands(demands);
-
-        MLCCNetwork mlcc_network = generator.generate();
-        demands[mlcc_network.center()] = 0;
-
-        REQUIRE( mlcc_network.demands() == demands );
     }
 
 }

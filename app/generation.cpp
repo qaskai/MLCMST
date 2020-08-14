@@ -14,6 +14,8 @@
 #include <geometry/generation/real_point_generator.hpp>
 #include <geometry/generation/int_point_generator.hpp>
 
+#include <util/util.hpp>
+
 #include "app.hpp"
 
 typedef MLCMST::network::MLCCNetwork MLCCNetwork;
@@ -30,7 +32,7 @@ struct GenerationParams
     double from, to;
     bool integer;
     int max_demand;
-    std::optional<long> seed;
+    long seed;
     CenterPosition center_position;
     std::vector<Level> levels;
 };
@@ -133,7 +135,7 @@ GenerationParams GenerationApp::extractParams(const cxxopts::ParseResult &result
     if (result.count("seed")) {
         params.seed = result["seed"].as<long>();
     } else {
-        params.seed = std::nullopt;
+        params.seed = MLCMST::util::clockMilliseconds();
     }
     params.center_position = center_positions.at(result["center"].as<std::string>());
 
@@ -159,27 +161,16 @@ void GenerationApp::run(const GenerationParams& params)
 std::vector<MLCCNetwork> GenerationApp::generateNetworks(const GenerationParams &params)
 {
     using namespace MLCMST::geometry;
-    using DemandType = EuclidMLCCNetworkGenerator::DemandType;
     using MLCMST::Generator;
 
     std::unique_ptr< Generator<Point> > point_generator;
     if (params.integer)
-        point_generator = params.seed.has_value() ?
-                std::make_unique<generation::IntPointGenerator>(params.from, params.to, params.seed.value())
-                : std::make_unique<generation::IntPointGenerator>(params.from, params.to);
+        point_generator = std::make_unique<generation::IntPointGenerator>(params.from, params.to, params.seed);
     else
-        point_generator = params.seed.has_value() ?
-                          std::make_unique<generation::RealPointGenerator>(params.from, params.to, params.seed.value())
-                          : std::make_unique<generation::RealPointGenerator>(params.from, params.to);
-
-    DemandType demand_type = DemandType ::UNIT;
-    if (params.max_demand != 1) {
-        demand_type = DemandType ::RANDOM;
-    }
+        point_generator = std::make_unique<generation::RealPointGenerator>(params.from, params.to, params.seed);
 
     EuclidMLCCNetworkGenerator generator(
-        params.size, params.center_position, demand_type, params.levels, std::move(point_generator));
-    generator.setMaxRandomDemand(params.max_demand);
+        params.size, params.center_position, params.max_demand, params.levels, std::move(point_generator), params.seed);
 
     std::vector<MLCCNetwork> networks;
     while (networks.size() < params.number) {
