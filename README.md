@@ -35,5 +35,8 @@ briefly described here. For further usage information please run `<app_path> -h`
 
 
 ### Todo
-- add to the [the paper](https://github.com/qaskai/MLCMST_paper "the paper") short description of main design of this project and computation results
-- verify that GA, VNS, GRASP heurisits give expected results and fix if not
+- Add to the [the paper](https://github.com/qaskai/MLCMST_paper "the paper") short description of main design of this 
+project and computation results.
+- Verify that GA, VNS, GRASP heuristics give expected results and fix if not.
+- In places where random numbers are used (generators, heuristics), not everywhere seeds are accepted and even if they are, 
+they are often used for only seeding some of the randomness. This should be taken care of.

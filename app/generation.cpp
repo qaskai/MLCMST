@@ -29,6 +29,7 @@ struct GenerationParams
     unsigned size;
     double from, to;
     bool integer;
+    int max_demand;
     std::optional<long> seed;
     CenterPosition center_position;
     std::vector<Level> levels;
@@ -74,6 +75,7 @@ cxxopts::Options GenerationApp::createOptions()
         ("capacity", "Graph levels edge capacity | required", cxxopts::value<std::vector<unsigned>>())
         ("cost", "Graph levels cost multiplier | required", cxxopts::value<std::vector<double>>())
         ("center", "enum: " + center_positions_string + " | required", cxxopts::value<std::string>())
+        ("max_demand", "Node demand limit. Terminal demands are random integer from [1,max_demand]", cxxopts::value<unsigned>()->default_value("1"))
         ("seed", "seed used in random points generator", cxxopts::value<long>())
         ("h,help", "Print usage")
         ;
@@ -127,6 +129,7 @@ GenerationParams GenerationApp::extractParams(const cxxopts::ParseResult &result
     params.number = result["number"].as<unsigned>();
     params.size = result["size"].as<unsigned>();
     params.integer = result["integer"].as<bool>();
+    params.max_demand = result["max_demand"].as<unsigned>();
     if (result.count("seed")) {
         params.seed = result["seed"].as<long>();
     } else {
@@ -156,6 +159,7 @@ void GenerationApp::run(const GenerationParams& params)
 std::vector<MLCCNetwork> GenerationApp::generateNetworks(const GenerationParams &params)
 {
     using namespace MLCMST::geometry;
+    using DemandType = EuclidMLCCNetworkGenerator::DemandType;
     using MLCMST::Generator;
 
     std::unique_ptr< Generator<Point> > point_generator;
@@ -168,9 +172,14 @@ std::vector<MLCCNetwork> GenerationApp::generateNetworks(const GenerationParams 
                           std::make_unique<generation::RealPointGenerator>(params.from, params.to, params.seed.value())
                           : std::make_unique<generation::RealPointGenerator>(params.from, params.to);
 
+    DemandType demand_type = DemandType ::UNIT;
+    if (params.max_demand != 1) {
+        demand_type = DemandType ::RANDOM;
+    }
+
     EuclidMLCCNetworkGenerator generator(
-        params.size, params.center_position, EuclidMLCCNetworkGenerator::DemandType::UNIT,
-        params.levels, std::move(point_generator));
+        params.size, params.center_position, demand_type, params.levels, std::move(point_generator));
+    generator.setMaxRandomDemand(params.max_demand);
 
     std::vector<MLCCNetwork> networks;
     while (networks.size() < params.number) {
