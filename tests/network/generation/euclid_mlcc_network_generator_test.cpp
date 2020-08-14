@@ -95,7 +95,7 @@ TEST_CASE( "EuclidMLCCNetworkGenerator center type ", "[network][generation]" )
         Level{1, 1}
     };
     std::vector<Point> points {
-        Point(1,3), Point(3,1), Point(5,3), Point(3,5), Point(3,3)
+        Point(1,3), Point(3,1), Point(5,3), Point(1,5), Point(3,3)
     };
     auto point_generator = std::make_unique<geometry::generation::CyclicPointGenerator>(points);
 
@@ -122,7 +122,7 @@ TEST_CASE( "EuclidMLCCNetworkGenerator center type ", "[network][generation]" )
 
         MLCCNetwork network = generator.generate();
 
-        REQUIRE( network.center() == 1 );
+        REQUIRE( network.center() == 0 );
     }
 
 }

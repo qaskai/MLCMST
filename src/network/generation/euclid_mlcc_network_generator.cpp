@@ -67,7 +67,7 @@ int EuclidMLCCNetworkGenerator::determineCenter(const std::vector<Point>& points
         case CenterPosition::CORNER:
         {
             auto it = std::min_element(points.begin(), points.end(), [] (const Point& p, const Point& q) -> bool {
-                return (p.y != q.y) ? p.y < q.y : p.x < q.x;
+                return (p.x != q.x) ? p.x < q.x : p.y < q.y;
             });
             return std::distance(points.begin(), it);
         }
