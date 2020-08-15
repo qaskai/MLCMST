@@ -103,6 +103,7 @@ void GeneralReporter::printStatistics(const std::vector<double> &v)
     _out << "avg " << util::mean(v) << " ";
     _out << "min " << *std::min_element(v.begin(), v.end()) << " ";
     _out << "max " << *std::max_element(v.begin(), v.end()) << " ";
+    _out << "stdev " << util::stdev(v) << " ";
     _out << "\n";
 }
 
