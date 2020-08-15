@@ -1,0 +1,29 @@
+{
+    "id": "GRASP",
+    "params": {
+        "construction_phase": {
+            "id": "martins2008_construction",
+            "params":  {
+                "subnet_solver": {
+                    "id": "MP_capacity_indexed",
+                    "params": { "exact": true }
+                },
+                "alpha": 0.4,
+                "subnet_size": 6
+            }
+        },
+        "improvement_phase": {
+            "id": "martins2008_local_search",
+            "params": {
+                "init_solver": { "id": "star" },
+                "subnet_solver": {
+                    "id": "MP_capacity_indexed",
+                    "params": { "exact": true }
+                },
+                "h_low": 5,
+                "h_high": 10
+            }
+        },
+        "iterations_no": 10
+    }
+}

@@ -1,0 +1,26 @@
+{
+    "id": "local_search_2006",
+    "params": {
+        "init_solver":{
+            "id": "link_upgrade",
+            "name": "leafs_all_links",
+            "params": {
+                "init_solver": { "id": "star" },
+                "H_leafs_only": true,
+                "check_all_link_types": true,
+                "reupgrade_nodes": true
+            }
+        },
+        "subnet_solver": {
+            "id": "link_upgrade",
+            "name": "leafs_all_links",
+            "params": {
+                "init_solver": { "id": "star" },
+                "H_leafs_only": true,
+                "check_all_link_types": true,
+                "reupgrade_nodes": true
+            }
+        } 
+
+    }
+}

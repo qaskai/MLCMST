@@ -133,6 +133,7 @@ std::vector<TestCase> TestCaseWrapperApp::createTestCases(
     test_cases.reserve(networks.size());
     for (const MLCCNetwork& n : networks) {
         double lower_bound = solver->solve(n).lower_bound.value();
+        std::cerr << "." << std::flush;
         test_cases.emplace_back(lower_bound, n);
     }
     return test_cases;

@@ -1,5 +1,7 @@
 #include <benchmark/benchmark.hpp>
 
+#include <iostream>
+
 namespace MLCMST::benchmark {
 
 Benchmark::Benchmark(std::unique_ptr<Reporter> reporter) : _reporter(std::move(reporter))
@@ -31,6 +33,7 @@ void Benchmark::run()
         for (const TestCase &test_case : _test_cases) {
             MLCMST_Solver::Result result = named_solver.second->solve(test_case.mlccNetwork());
             solver_results.push_back(result);
+            std::cerr << "." << std::flush;
         }
     }
     _reporter->report(_test_cases, results);

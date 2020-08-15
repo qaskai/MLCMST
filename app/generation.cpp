@@ -2,7 +2,7 @@
 #include <stdexcept>
 #include <vector>
 #include <string>
-#include <optional>
+#include <sstream>
 #include <map>
 
 #include <cxxopts.hpp>
@@ -13,6 +13,7 @@
 
 #include <geometry/generation/real_point_generator.hpp>
 #include <geometry/generation/int_point_generator.hpp>
+#include <geometry/serialization/point_set_serialization.hpp>
 
 #include <util/util.hpp>
 
@@ -29,12 +30,13 @@ struct GenerationParams
 {
     unsigned number;
     unsigned size;
-    double from, to;
-    bool integer;
     int max_demand;
-    long seed;
     CenterPosition center_position;
     std::vector<Level> levels;
+    double from, to;
+    bool integer;
+    long seed;
+    bool print_points;
 };
 
 class GenerationApp : public App<GenerationParams>
@@ -48,6 +50,8 @@ private:
         std::make_pair("CORNER", CenterPosition::CORNER),
         std::make_pair("RANDOM", CenterPosition::RANDOM)
     };
+
+    std::string suffix;
 
     cxxopts::Options createOptions() override;
     void validateParseResult(const cxxopts::ParseResult& result) override;
@@ -79,6 +83,7 @@ cxxopts::Options GenerationApp::createOptions()
         ("center", "enum: " + center_positions_string + " | required", cxxopts::value<std::string>())
         ("max_demand", "Node demand limit. Terminal demands are random integer from [1,max_demand]", cxxopts::value<unsigned>()->default_value("1"))
         ("seed", "seed used in random points generator", cxxopts::value<long>())
+        ("print_points", "Prepend network with underling node 2D point sets", cxxopts::value<bool>()->default_value("false"))
         ("h,help", "Print usage")
         ;
 
@@ -137,6 +142,7 @@ GenerationParams GenerationApp::extractParams(const cxxopts::ParseResult &result
     } else {
         params.seed = MLCMST::util::clockMilliseconds();
     }
+    params.print_points = result["print_points"].as<bool>();
     params.center_position = center_positions.at(result["center"].as<std::string>());
 
     std::vector<double> range = result["range"].as<std::vector<double>>();
@@ -156,12 +162,17 @@ void GenerationApp::run(const GenerationParams& params)
 {
     auto networks = generateNetworks(params);
     printNetworks(networks);
+    if (params.print_points) {
+        std::cout << suffix;
+    }
 }
 
 std::vector<MLCCNetwork> GenerationApp::generateNetworks(const GenerationParams &params)
 {
     using namespace MLCMST::geometry;
     using MLCMST::Generator;
+
+    const bool print_points = params.print_points;
 
     std::unique_ptr< Generator<Point> > point_generator;
     if (params.integer)
@@ -173,9 +184,15 @@ std::vector<MLCCNetwork> GenerationApp::generateNetworks(const GenerationParams 
         params.size, params.center_position, params.max_demand, params.levels, std::move(point_generator), params.seed);
 
     std::vector<MLCCNetwork> networks;
+    std::stringstream points_info;
+    points_info << params.number << "\n\n";
+
     while (networks.size() < params.number) {
         networks.push_back(generator.generate());
+        MLCMST::geometry::serialization::PointSetSerializer().serialize(generator.lastPointSet(), points_info);
+        points_info << "\n";
     }
+    suffix = points_info.str();
     return networks;
 }
 

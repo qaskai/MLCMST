@@ -1,0 +1,18 @@
+[{
+    "id": "MP_capacity_indexed",
+    "params": {
+        "exact": false
+    }
+},
+{
+    "id": "MP_ESCF",
+    "params": {
+        "exact": false
+    }
+},
+{
+    "id": "MP_SCF",
+    "params": {
+        "exact": false
+    }
+}]
