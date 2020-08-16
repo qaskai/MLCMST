@@ -56,9 +56,10 @@ void GeneralReporter::printLowerBoundGapStats(const std::vector<TestCase> &test_
         if (!results[i].lower_bound.has_value())
             continue;
         double lower_bound = results[i].lower_bound.value();
-        lower_bound_gap.push_back(1.0 - (lower_bound/test_cases[i].lowerBound()));
+        double gap = (1.0 - (lower_bound/test_cases[i].lowerBound()));
+        lower_bound_gap.push_back(gap * 100.0);
     }
-    _out << "lower bound gap\n";
+    _out << "lower bound gap (in %)\n";
     _out << "of " << lower_bound_gap.size() << " qualified solutions\n";
     printStatistics(lower_bound_gap);
 }
@@ -66,7 +67,7 @@ void GeneralReporter::printLowerBoundGapStats(const std::vector<TestCase> &test_
 void GeneralReporter::printSolutionGapStats(const std::vector<TestCase> &test_cases,
         const std::vector<MLCMST_Solver::Result> &results)
 {
-    std::vector<double> gap;
+    std::vector<double> percent_gaps;
     unsigned invalid_count = 0;
     for (unsigned i=0; i<test_cases.size(); i++) {
         if (!results[i].mlcst.has_value())
@@ -74,14 +75,15 @@ void GeneralReporter::printSolutionGapStats(const std::vector<TestCase> &test_ca
         const network::MLCST& mlcmst = results[i].mlcst.value();
         if (mlcmst.checkFeasibility(test_cases[i].mlccNetwork())) {
             double mlcmst_cost = mlcmst.cost(test_cases[i].mlccNetwork());
-            gap.push_back(mlcmst_cost / test_cases[i].lowerBound() - 1.0);
+            double gap = (mlcmst_cost / test_cases[i].lowerBound() - 1.0);
+            percent_gaps.push_back(gap * 100.0);
         } else {
             invalid_count++;
         }
     }
     _out << "solution gap stats\n";
-    _out << "of " << gap.size() << " qualified solutions " << invalid_count << " were invalid\n";
-    printStatistics(gap);
+    _out << "of " << percent_gaps.size() << " qualified solutions " << invalid_count << " were invalid\n";
+    printStatistics(percent_gaps);
 }
 
 void GeneralReporter::printTimeStats(const std::vector<MLCMST_Solver::Result> &results)
