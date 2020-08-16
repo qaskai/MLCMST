@@ -36,6 +36,7 @@ void Benchmark::run()
             std::cerr << "." << std::flush;
         }
     }
+    std::cerr << std::endl;
     _reporter->report(_test_cases, results);
 }
 

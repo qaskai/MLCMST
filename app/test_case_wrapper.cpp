@@ -136,6 +136,7 @@ std::vector<TestCase> TestCaseWrapperApp::createTestCases(
         std::cerr << "." << std::flush;
         test_cases.emplace_back(lower_bound, n);
     }
+    std::cerr << std::endl;
     return test_cases;
 }
 
