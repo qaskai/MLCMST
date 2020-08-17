@@ -13,6 +13,7 @@
 #include <benchmark/test_case.hpp>
 #include <benchmark/benchmark.hpp>
 #include <benchmark/general_reporter.hpp>
+#include <benchmark/latex_table_reporter.hpp>
 #include <benchmark/serialization/test_case_serialization.hpp>
 
 #include "../app.hpp"
@@ -151,6 +152,7 @@ Benchmark BenchmarkApp::createBenchmark(std::unique_ptr<Reporter> reporter,
 std::unique_ptr<Reporter> BenchmarkApp::createReporter()
 {
     return std::make_unique<GeneralReporter>(std::cout);
+//    return std::make_unique<benchmark::LatexTableReporter>(std::cout);
 }
 
 std::vector<std::pair<std::string, std::unique_ptr<MLCMST_Solver >>>

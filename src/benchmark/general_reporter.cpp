@@ -14,8 +14,8 @@ GeneralReporter::GeneralReporter(std::ostream &out) : _out(out)
 GeneralReporter::~GeneralReporter() = default;
 
 void GeneralReporter::report(
-        std::vector<TestCase> &test_cases,
-        std::unordered_map<std::string, std::vector<MLCMST_Solver::Result>> results)
+        const std::vector<TestCase> &test_cases,
+        const std::unordered_map<std::string, std::vector<MLCMST_Solver::Result>>& results)
 {
     printTestCaseStats(test_cases);
     for (const auto& p : results) {
@@ -23,7 +23,7 @@ void GeneralReporter::report(
     }
 }
 
-void GeneralReporter::printReport(const std::string& solver_name, std::vector<TestCase> &test_cases,
+void GeneralReporter::printReport(const std::string& solver_name, const std::vector<TestCase> &test_cases,
         const std::vector<MLCMST_Solver::Result>& results)
 {
     _out << "****************   " << solver_name << " statistics report" << "    **************\n";
