@@ -17,10 +17,12 @@ void GeneralReporter::report(
         const std::vector<TestCase> &test_cases,
         const std::unordered_map<std::string, std::vector<MLCMST_Solver::Result>>& results)
 {
+    _out << "************** GeneralReporter report ******************\n";
     printTestCaseStats(test_cases);
     for (const auto& p : results) {
         printReport(p.first, test_cases, p.second);
     }
+    _out << "\n";
 }
 
 void GeneralReporter::printReport(const std::string& solver_name, const std::vector<TestCase> &test_cases,

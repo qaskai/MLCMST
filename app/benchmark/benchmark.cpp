@@ -46,10 +46,10 @@ private:
 
     std::vector<TestCase> readTestCases(std::istream& in);
     std::vector<std::pair<std::string, std::unique_ptr< MLCMST_Solver >>> createSolvers(const rapidjson::Value& json);
-    Benchmark createBenchmark(std::unique_ptr< Reporter > reporter,
+    Benchmark createBenchmark(std::vector<std::unique_ptr< Reporter >> reporters,
             std::vector<std::pair<std::string, std::unique_ptr< MLCMST_Solver >>> solvers,
             const std::vector<TestCase>& test_cases);
-    std::unique_ptr< Reporter > createReporter();
+    std::vector<std::unique_ptr< Reporter >> createReporters();
 };
 
 bool BenchmarkApp::fileExistenceCheck(const std::string &path)
@@ -117,7 +117,7 @@ void BenchmarkApp::run(const Params &params)
     rapidjson::IStreamWrapper json_stream(file_stream);
     rapidjson::Document document;
     document.ParseStream(json_stream);
-    Benchmark benchmark = createBenchmark(createReporter(), createSolvers(document), test_cases);
+    Benchmark benchmark = createBenchmark(createReporters(), createSolvers(document), test_cases);
     benchmark.run();
 }
 
@@ -135,10 +135,10 @@ std::vector<TestCase> BenchmarkApp::readTestCases(std::istream &in)
     return test_cases;
 }
 
-Benchmark BenchmarkApp::createBenchmark(std::unique_ptr<Reporter> reporter,
+Benchmark BenchmarkApp::createBenchmark(std::vector<std::unique_ptr<Reporter>> reporters,
                                         std::vector<std::pair<std::string, std::unique_ptr<MLCMST_Solver>>> solvers,
                                         const std::vector<TestCase> &test_cases) {
-    Benchmark benchmark(std::move(reporter));
+    Benchmark benchmark(std::move(reporters));
     for (const TestCase& test_case : test_cases) {
         benchmark.addTestCase(test_case);
     }
@@ -149,10 +149,12 @@ Benchmark BenchmarkApp::createBenchmark(std::unique_ptr<Reporter> reporter,
     return std::move(benchmark);
 }
 
-std::unique_ptr<Reporter> BenchmarkApp::createReporter()
+std::vector<std::unique_ptr<Reporter>> BenchmarkApp::createReporters()
 {
-    return std::make_unique<GeneralReporter>(std::cout);
-//    return std::make_unique<benchmark::LatexTableReporter>(std::cout);
+    std::vector<std::unique_ptr<Reporter>> reporters;
+    reporters.push_back(std::make_unique<GeneralReporter>(std::cout));
+    reporters.push_back(std::make_unique<benchmark::LatexTableReporter>(std::cout));
+    return std::move(reporters);
 }
 
 std::vector<std::pair<std::string, std::unique_ptr<MLCMST_Solver >>>

@@ -15,7 +15,7 @@ namespace MLCMST::benchmark {
 class Benchmark
 {
 public:
-    explicit Benchmark(std::unique_ptr< Reporter > reporter);
+    explicit Benchmark(std::vector<std::unique_ptr< Reporter >> reporters);
     Benchmark(Benchmark&& benchmark) noexcept;
     ~Benchmark();
 
@@ -24,7 +24,7 @@ public:
     void run();
 
 private:
-    std::unique_ptr< Reporter > _reporter;
+    std::vector<std::unique_ptr< Reporter >> _reporters;
     std::vector<TestCase> _test_cases;
     std::unordered_map<std::string, std::unique_ptr< MLCMST_Solver >> _solvers;
 };

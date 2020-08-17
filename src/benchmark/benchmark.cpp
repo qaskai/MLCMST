@@ -4,11 +4,11 @@
 
 namespace MLCMST::benchmark {
 
-Benchmark::Benchmark(std::unique_ptr<Reporter> reporter) : _reporter(std::move(reporter))
+Benchmark::Benchmark(std::vector<std::unique_ptr<Reporter>> reporters) : _reporters(std::move(reporters))
 {
 }
 
-Benchmark::Benchmark(Benchmark &&benchmark) noexcept : _reporter(std::move(benchmark._reporter)),
+Benchmark::Benchmark(Benchmark &&benchmark) noexcept : _reporters(std::move(benchmark._reporters)),
     _test_cases(std::move(benchmark._test_cases)), _solvers(std::move(benchmark._solvers))
 {
 }
@@ -37,7 +37,9 @@ void Benchmark::run()
         }
     }
     std::cerr << std::endl;
-    _reporter->report(_test_cases, results);
+    for (const auto& reporter : _reporters) {
+        reporter->report(_test_cases, results);
+    }
 }
 
 }
