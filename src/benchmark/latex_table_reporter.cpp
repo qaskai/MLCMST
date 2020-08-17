@@ -1,6 +1,7 @@
 #include <benchmark/latex_table_reporter.hpp>
 
 #include <algorithm>
+#include <iomanip>
 
 #include <util/util.hpp>
 
@@ -30,17 +31,25 @@ void LatexTableReporter::printRow(const std::string& name, const std::vector<dou
         return;
     }
 
+    // save stream settings
+    std::ios state(nullptr);
+    state.copyfmt(_out);
+
+    _out << std::setprecision(2) << std::fixed;
     _out << "$" << util::mean(v) << "$ & ";
     _out << "$" << *std::min_element(v.begin(), v.end()) << " - " << *std::max_element(v.begin(), v.end()) << "$ & ";
     _out << "$" << util::stdev(v) << "$ & ";
     _out << "% " << name;
     _out << "\n";
+
+    // restore stream settings
+    _out.copyfmt(state);
 }
 
 void
 LatexTableReporter::printTimeTable(const std::unordered_map<std::string, std::vector<MLCMST_Solver::Result>> &results)
 {
-    _out << "time table (seconds)\n";
+    _out << "time table (in seconds)\n";
     _out << "avg, range, stdev\n";
     for (const auto& [name, solver_results] : results) {
         std::vector<double> solver_times;
@@ -58,7 +67,7 @@ void
 LatexTableReporter::printLowerBoundGapTable(const std::vector<TestCase> &test_cases,
                                     const std::unordered_map<std::string, std::vector<MLCMST_Solver::Result>> &results)
 {
-    _out << "lower bound gap table\n";
+    _out << "lower bound gap table (in %)\n";
     _out << "avg, range, stdev\n";
     for (const auto& [name, solver_results] : results) {
         if (!solver_results[0].lower_bound.has_value()) {
@@ -82,7 +91,7 @@ void
 LatexTableReporter::printSolutionGapTable(const std::vector<TestCase> &test_cases,
                                    const std::unordered_map<std::string, std::vector<MLCMST_Solver::Result>> &results)
 {
-    _out << "solution gap table\n";
+    _out << "solution gap table (in %)\n";
     _out << "avg, range, stdev\n";
     for (const auto& [name, solver_results] : results) {
         if (!solver_results[0].mlcst.has_value()) {
