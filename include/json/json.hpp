@@ -25,6 +25,9 @@ void setDataPropertyI(T&& object, const rapidjson::Value& data)
 {
     constexpr auto property = std::get<i>(std::decay_t<T>::properties);
     using Type = typename decltype(property)::Type;
+    if (!data.HasMember(property.name)) {
+        throw std::invalid_argument(std::string("missing ") + property.name + std::string(" property"));
+    }
     object.*(property.member) = fromJson<Type>(data[property.name]);
 }
 
