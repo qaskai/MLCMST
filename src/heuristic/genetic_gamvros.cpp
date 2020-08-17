@@ -310,7 +310,7 @@ std::vector<internal::Chromosome> GeneticGamvros::crossoverChromosomes(const std
 std::vector<internal::Chromosome> GeneticGamvros::selectChromosomes(
         int N, const std::vector<std::pair<internal::Chromosome, double>> &population_with_fitness)
 {
-    const double stdev_multiplier_constant = 3;
+    const double sigma_truncation = params_.sigma_truncation;
 
     std::vector<double> chromosome_fitness;
     chromosome_fitness.reserve(params_.population_size);
@@ -322,8 +322,8 @@ std::vector<internal::Chromosome> GeneticGamvros::selectChromosomes(
     double mean_fitness = util::mean(chromosome_fitness);
     double stdev_fitness = util::stdev(chromosome_fitness);
 
-    auto modifiedFitness = [mean_fitness, stdev_fitness, stdev_multiplier_constant] (double f) {
-        return f + mean_fitness - stdev_multiplier_constant * stdev_fitness;
+    auto modifiedFitness = [mean_fitness, stdev_fitness, sigma_truncation] (double f) {
+        return f + mean_fitness - sigma_truncation * stdev_fitness;
     };
     double probability_divider = std::accumulate(chromosome_fitness.begin(), chromosome_fitness.end(), 0.0,
         [f_max, modifiedFitness] (double acc, double f) {

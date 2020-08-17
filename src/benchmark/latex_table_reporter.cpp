@@ -40,13 +40,13 @@ void LatexTableReporter::printRow(const std::string& name, const std::vector<dou
 void
 LatexTableReporter::printTimeTable(const std::unordered_map<std::string, std::vector<MLCMST_Solver::Result>> &results)
 {
-    _out << "time table\n";
+    _out << "time table (seconds)\n";
     _out << "avg, range, stdev\n";
     for (const auto& [name, solver_results] : results) {
         std::vector<double> solver_times;
         solver_times.reserve(solver_results.size());
         for (const auto& r : solver_results) {
-            solver_times.push_back(r.wall_time);
+            solver_times.push_back(r.wall_time / 1000.0);
         }
 
         printRow(name, solver_times);

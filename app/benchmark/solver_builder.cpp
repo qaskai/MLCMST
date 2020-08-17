@@ -227,6 +227,7 @@ R""""(
     "parents_number": int,
     "generations_number": int,
     "network_fuzzing_epsilon": double,
+    "sigma_truncation": double,
     "crossover_shrunk_move_probability": double,
     "crossover_move_less_than_k": int
 }

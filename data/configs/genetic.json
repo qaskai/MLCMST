@@ -26,6 +26,7 @@
         "parents_number": 70,
         "generations_number": 10,
         "network_fuzzing_epsilon": 0.7,
+        "sigma_truncation": 3.0,
         "crossover_shrunk_move_probability": 1.0,
         "crossover_move_less_than_k": 7
 
