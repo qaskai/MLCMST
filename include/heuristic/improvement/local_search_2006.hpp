@@ -43,17 +43,13 @@ public:
 private:
     static double EPS_;
 
-    using MLCMST = network::MLCST;
-    using MLCCNetwork = network::MLCCNetwork;
-    using Network = network::Network;
-
     Params params_;
 
     MLCMST_SubnetSolver subnet_solver_;
 
     util::number::IntGenerator random_int_generator_;
 
-    const MLCCNetwork* network_ = nullptr;
+    const network::MLCCNetwork* network_ = nullptr;
 
     /**
      * Graph structure :
@@ -62,15 +58,15 @@ private:
      * 2N --> origin node
      * @return Neighbourhood graph
      */
-    Network buildNeighbourhoodGraph(const std::vector<int>& group_id);
+    network::Network buildNeighbourhoodGraph(const std::vector<int>& group_id);
 
     std::unordered_map<int, int> groupDemands(const std::vector<int>& group_id);
     std::unordered_map<int, std::vector<int>> groups(const std::vector<int>& group_id);
-    static std::optional<std::pair<std::vector<int>, double>> findBestProfitableExchange(int s, const Network& net,
+    std::optional<std::pair<std::vector<int>, double>> findBestProfitableExchange(int s, const network::Network& net,
             const std::vector<int>& group_id);
 
     std::optional<std::vector<int>> findBestProfitableExchange(const std::vector<int>& group_id);
-    static void implementExchange(std::vector<int> exchange, std::vector<int>& group_id);
+    void implementExchange(std::vector<int> exchange, std::vector<int>& group_id);
 
 };
 

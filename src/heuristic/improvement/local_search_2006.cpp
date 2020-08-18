@@ -4,6 +4,8 @@
 #include <chrono>
 #include <numeric>
 #include <queue>
+#include <stack>
+#include <stdexcept>
 
 #include <heuristic/star.hpp>
 
@@ -63,25 +65,25 @@ LocalSearch2006::improvementStep(const network::MLCCNetwork &network, std::vecto
 void LocalSearch2006::implementExchange(std::vector<int> exchange, std::vector<int> &group_id)
 {
     const int N = group_id.size();
-    std::optional<std::pair<int,int>> close;
+    std::pair<int,int> close;
     if (exchange.back() >= N) {
         int g_id = exchange.back()-N;
         exchange.pop_back();
         close= std::make_pair(exchange.back(), g_id);
+    } else {
+        throw std::logic_error("Unexpected error, should be >= N");
     }
     for (int i=0; i < exchange.size()-1; i++) {
         int v = exchange[i], w = exchange[i+1];
         group_id[v] = group_id[w];
     }
-    if (close.has_value()) {
-        auto [ v, g ] = close.value();
-        group_id[v] = g;
-    }
+    auto [ v, g ] = close;
+    group_id[v] = g;
 }
 
-LocalSearch2006::Network LocalSearch2006::buildNeighbourhoodGraph(const std::vector<int> &group_id)
+network::Network LocalSearch2006::buildNeighbourhoodGraph(const std::vector<int> &group_id)
 {
-    Network network(2*network_->vertexCount() + 1);
+    network::Network network(2*network_->vertexCount() + 1);
     const int N = network_->vertexCount();
     const int origin = 2*N;
     const int max_edge_capacity = network_->edgeCapacity(network_->levelsNumber()-1);
@@ -133,7 +135,7 @@ LocalSearch2006::Network LocalSearch2006::buildNeighbourhoodGraph(const std::vec
 
 std::optional<std::vector<int>> LocalSearch2006::findBestProfitableExchange(const std::vector<int> &group_id)
 {
-    Network graph = buildNeighbourhoodGraph(group_id);
+    network::Network graph = buildNeighbourhoodGraph(group_id);
     std::pair<std::vector<int>, double> best_exchange = std::make_pair(std::vector<int>{}, 0);
     std::vector<int> starting_vertices = network_->terminalVertexSet();
     if (!params_.cycle_search_iterate_all) {
@@ -143,7 +145,7 @@ std::optional<std::vector<int>> LocalSearch2006::findBestProfitableExchange(cons
 
     for (int i : starting_vertices) {
         auto maybe_exchange = findBestProfitableExchange(i, graph, group_id);
-        if (maybe_exchange.has_value() && maybe_exchange.value().second < best_exchange.second) {
+        if (maybe_exchange.has_value() && maybe_exchange.value().second + EPS_ < best_exchange.second) {
             best_exchange = maybe_exchange.value();
         }
     }
@@ -152,7 +154,7 @@ std::optional<std::vector<int>> LocalSearch2006::findBestProfitableExchange(cons
 }
 
 std::optional<std::pair<std::vector<int>, double>>
-LocalSearch2006::findBestProfitableExchange(int s, const LocalSearch2006::Network &net, const std::vector<int> &group_id)
+LocalSearch2006::findBestProfitableExchange(int s, const network::Network &net, const std::vector<int> &group_id)
 {
     const int N = group_id.size();
     const int origin = 2*N;
@@ -161,20 +163,20 @@ LocalSearch2006::findBestProfitableExchange(int s, const LocalSearch2006::Networ
     double cost = 0;
     std::vector<int> exchange;
 
-    std::vector<double> d(N, std::numeric_limits<double>::infinity());
-    d[s] = 0;
+    std::vector<double> d(N, std::numeric_limits<double>::max());
     std::vector<int> pred(N);
-    pred[s] = s;
     std::queue<int> fifo;
+
+    d[s] = 0;
+    pred[s] = s;
     fifo.push(s);
 
     auto getPath = [&] (int v) {
         std::vector<int> path;
-        while (v != s) {
+        do {
             path.push_back(v);
             v = pred[v];
-        }
-        path.push_back(s);
+        } while (path.back() != s);
         std::reverse(path.begin(), path.end());
         return path;
     };
@@ -204,27 +206,26 @@ LocalSearch2006::findBestProfitableExchange(int s, const LocalSearch2006::Networ
     };
 
     auto process_arc = [&] (int i, int j) {
-        if (d[j] <= d[i] + net.edgeCost(i, j) + EPS_) {
-            return;
-        }
+        bool continue_search = (d[j] > d[i] + net.edgeCost(i, j));
+
         std::vector<int> path = getPath(i);
         std::vector<int> groups;
         std::transform(path.begin(), path.end(), std::back_inserter(groups), [&](int v) { return group_id[v]; });
 
         if (j < N) { // regular
-            if (std::find(path.begin(), path.end(), j) != path.end()) { // found cycle {j - path.back()}
+            if (std::find(path.begin(), path.end(), j) != path.end()) { // found cycle {j - path.back()} - cyclic exchange
                 path.erase(path.begin(), std::find(path.begin(), path.end(), j));
                 double cost = getCost(path) + net.edgeCost(i,j);
                 path.push_back(N+group_id[j]);
                 update(path, cost);
-            } else if (std::find(groups.begin(), groups.end(), group_id[j]) == groups.end()) { // found path {s - j}
+            } else if (std::find(groups.begin(), groups.end(), group_id[j]) == groups.end() && continue_search) { // found path {s - j}
                 d[j] = d[i] + net.edgeCost(i, j);
                 pred[j] = i;
                 fifo.push(j);
             }
         } else { // pseudo node
             const int g_id = j-N;
-            if (std::find(groups.begin(), groups.end(), g_id) == groups.end()) { // found disjoint path
+            if (std::find(groups.begin(), groups.end(), g_id) == groups.end()) { // found disjoint cycle - path exchange
                 path.push_back(j);
                 update(path, getCost(path) + net.edgeCost(origin, s));
             }
@@ -239,7 +240,6 @@ LocalSearch2006::findBestProfitableExchange(int s, const LocalSearch2006::Networ
         std::transform(path.begin(), path.end(), std::back_inserter(groups), [&](int v) { return group_id[v]; });
         if (!checkUnique(groups))
             continue;
-        d[i] = getCost(path);
 
         for (int j : graph[i]) {
             process_arc(i, j);
