@@ -5,7 +5,7 @@
 #include <numeric>
 #include <queue>
 
-#include <heuristic/improvement/link_upgrade.hpp>
+#include <heuristic/star.hpp>
 
 namespace MLCMST::heuristic::improvement {
 
@@ -17,18 +17,15 @@ std::string LocalSearch2006::id()
 
 double LocalSearch2006::EPS_ = 1e-9;
 
-LocalSearch2006::LocalSearch2006() :
-    LocalSearch2006(std::make_unique<LinkUpgrade>(LinkUpgrade::Params{
-        true, false, false
-    }), std::make_unique<LinkUpgrade>(LinkUpgrade::Params{
-        true, false, false
-    }))
+LocalSearch2006::LocalSearch2006(std::unique_ptr< MLCMST_Solver > subnet_solver, Params params)
+    : LocalSearch2006(std::make_unique<Star>(), std::move(subnet_solver), params)
 {
 }
 
 LocalSearch2006::LocalSearch2006(std::unique_ptr< MLCMST_Solver > init_solver,
-                                 std::unique_ptr< MLCMST_Solver > subnet_solver)
-    : MLCMST_Improver(std::move(init_solver)), subnet_solver_(std::move(subnet_solver))
+                                 std::unique_ptr< MLCMST_Solver > subnet_solver, Params params)
+    : MLCMST_Improver(std::move(init_solver)),
+    params_(params), subnet_solver_(std::move(subnet_solver)), random_int_generator_(0, std::numeric_limits<int>::max())
 {
 }
 
@@ -138,8 +135,13 @@ std::optional<std::vector<int>> LocalSearch2006::findBestProfitableExchange(cons
 {
     Network graph = buildNeighbourhoodGraph(group_id);
     std::pair<std::vector<int>, double> best_exchange = std::make_pair(std::vector<int>{}, 0);
+    std::vector<int> starting_vertices = network_->terminalVertexSet();
+    if (!params_.cycle_search_iterate_all) {
+        int s = starting_vertices[random_int_generator_.generate() % starting_vertices.size()];
+        starting_vertices = { s };
+    }
 
-    for (int i : network_->terminalVertexSet()) {
+    for (int i : starting_vertices) {
         auto maybe_exchange = findBestProfitableExchange(i, graph, group_id);
         if (maybe_exchange.has_value() && maybe_exchange.value().second < best_exchange.second) {
             best_exchange = maybe_exchange.value();

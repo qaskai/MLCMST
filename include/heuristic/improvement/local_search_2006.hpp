@@ -13,6 +13,10 @@
 #include <network/mlcc_network.hpp>
 #include <network/mlcst.hpp>
 
+#include <json/property.hpp>
+
+#include <util/number/int_generator.hpp>
+
 namespace MLCMST::heuristic::improvement {
 
 class LocalSearch2006 : public MLCMST_Improver
@@ -20,21 +24,34 @@ class LocalSearch2006 : public MLCMST_Improver
 public:
     static std::string id();
 
-    LocalSearch2006();
-    LocalSearch2006(std::unique_ptr< MLCMST_Solver > init_solver, std::unique_ptr< MLCMST_Solver > subnet_solver);
+    struct Params {
+        bool cycle_search_iterate_all;
+
+        constexpr static auto properties = std::make_tuple(
+            json::Property<Params,bool>{&Params::cycle_search_iterate_all, "cycle_search_iterate_all"}
+        );
+    };
+
+    LocalSearch2006(std::unique_ptr< MLCMST_Solver > subnet_solver, Params params);
+    LocalSearch2006(std::unique_ptr< MLCMST_Solver > init_solver,
+                    std::unique_ptr< MLCMST_Solver > subnet_solver, Params params);
     ~LocalSearch2006() override;
 
     network::MLCST improve(long steps, network::MLCST mlcmst, const network::MLCCNetwork &mlcc_network) override;
     std::vector<int> improvementStep(const network::MLCCNetwork& network, std::vector<int> group_ids);
 
 private:
+    static double EPS_;
+
     using MLCMST = network::MLCST;
     using MLCCNetwork = network::MLCCNetwork;
     using Network = network::Network;
 
-    static double EPS_;
+    Params params_;
 
     MLCMST_SubnetSolver subnet_solver_;
+
+    util::number::IntGenerator random_int_generator_;
 
     const MLCCNetwork* network_ = nullptr;
 

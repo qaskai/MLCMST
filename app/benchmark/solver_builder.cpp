@@ -85,8 +85,9 @@ std::unique_ptr<MLCMST_Solver> SolverBuilder::buildLocalSearch2006(const Value &
     const Value& params = v["params"];
     auto init_solver = buildSolver(params["init_solver"]);
     auto subproblem_solver = buildSolver(params["subnet_solver"]);
+    auto solver_params = json::fromJson< heuristic::improvement::LocalSearch2006::Params >(params);
     return std::make_unique<heuristic::improvement::LocalSearch2006>(
-            std::move(init_solver), std::move(subproblem_solver));
+            std::move(init_solver), std::move(subproblem_solver), solver_params);
 }
 
 std::unique_ptr<MLCMST_Solver> SolverBuilder::buildGeneticGamvros(const Value &v)
@@ -212,7 +213,8 @@ R""""(
 R""""(
 {
     "init_solver": <solver_json>,
-    "subnet_solver": <solver_json>
+    "subnet_solver": <solver_json>,
+    "cycle_search_iterate_all": bool
 }
 )"""" + "\n"},
 
