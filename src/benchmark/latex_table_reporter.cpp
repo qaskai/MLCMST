@@ -7,6 +7,8 @@
 
 namespace MLCMST::benchmark {
 
+const double LatexTableReporter::INF_ = std::numeric_limits<double>::infinity();
+
 LatexTableReporter::LatexTableReporter(std::ostream &out) : _out(out)
 {
 }
@@ -46,20 +48,32 @@ void LatexTableReporter::printRow(const std::string& name, const std::vector<dou
     _out.copyfmt(state);
 }
 
+void LatexTableReporter::printTable(
+        const std::function<double(const TestCase &, const MLCMST_Solver::Result &)>& getStat,
+        const std::vector <TestCase> &test_cases,
+        const std::unordered_map<std::string, std::vector<MLCMST_Solver::Result>> &results)
+{
+    _out << "avg, range, stdev\n";
+    for (const auto& [name, solver_results] : results) {
+        std::vector<double> stats;
+        stats.reserve(solver_results.size());
+        for (int i=0; i<solver_results.size(); i++) {
+            stats.push_back(getStat(test_cases[i], solver_results[i]));
+        }
+        if (std::find(stats.begin(), stats.end(), INF_) == stats.end()) {
+            printRow(name, stats);
+        }
+    }
+}
+
 void
 LatexTableReporter::printTimeTable(const std::unordered_map<std::string, std::vector<MLCMST_Solver::Result>> &results)
 {
     _out << "time table (in seconds)\n";
-    _out << "avg, range, stdev\n";
-    for (const auto& [name, solver_results] : results) {
-        std::vector<double> solver_times;
-        solver_times.reserve(solver_results.size());
-        for (const auto& r : solver_results) {
-            solver_times.push_back(r.wall_time / 1000.0);
-        }
-
-        printRow(name, solver_times);
-    }
+    auto getStat = [] (const TestCase& test_case, const MLCMST_Solver::Result& result) {
+        return result.wall_time / 1000.0;
+    };
+    printTable(getStat, {}, results);
     _out << "--------------\n";
 }
 
@@ -68,22 +82,16 @@ LatexTableReporter::printLowerBoundGapTable(const std::vector<TestCase> &test_ca
                                     const std::unordered_map<std::string, std::vector<MLCMST_Solver::Result>> &results)
 {
     _out << "lower bound gap table (in %)\n";
-    _out << "avg, range, stdev\n";
-    for (const auto& [name, solver_results] : results) {
-        if (!solver_results[0].lower_bound.has_value()) {
-            continue;
-        }
 
-        std::vector<double> solver_lower_bound_gaps;
-        solver_lower_bound_gaps.reserve(solver_results.size());
-        for (int i=0; i<solver_results.size(); i++) {
-            double lower_bound = solver_results[i].lower_bound.value();
-            double gap = (1.0 - (lower_bound/test_cases[i].lowerBound()));
-            solver_lower_bound_gaps.push_back(gap * 100.0);
+    auto getStat = [] (const TestCase& test_case, const MLCMST_Solver::Result& result) {
+        if (!result.lower_bound.has_value()) {
+            return INF_;
         }
-
-        printRow(name, solver_lower_bound_gaps);
-    }
+        double lower_bound = result.lower_bound.value();
+        double gap = (1.0 - (lower_bound/test_case.lowerBound()));
+        return gap * 100.0;
+    };
+    printTable(getStat, test_cases, results);
     _out << "--------------\n";
 }
 
@@ -92,23 +100,17 @@ LatexTableReporter::printSolutionGapTable(const std::vector<TestCase> &test_case
                                    const std::unordered_map<std::string, std::vector<MLCMST_Solver::Result>> &results)
 {
     _out << "solution gap table (in %)\n";
-    _out << "avg, range, stdev\n";
-    for (const auto& [name, solver_results] : results) {
-        if (!solver_results[0].mlcst.has_value()) {
-            continue;
-        }
 
-        std::vector<double> solver_solution_gaps;
-        solver_solution_gaps.reserve(solver_results.size());
-        for (int i=0; i<solver_results.size(); i++) {
-            const network::MLCST& mlcmst = solver_results[i].mlcst.value();
-            double mlcmst_cost = mlcmst.cost(test_cases[i].mlccNetwork());
-            double gap = (mlcmst_cost / test_cases[i].lowerBound() - 1.0);
-            solver_solution_gaps.push_back(gap * 100.0);
+    auto getStat = [] (const TestCase& test_case, const MLCMST_Solver::Result& result) {
+        if (!result.mlcst.has_value()) {
+            return INF_;
         }
-
-        printRow(name, solver_solution_gaps);
-    }
+        const network::MLCST& mlcmst = result.mlcst.value();
+        double mlcmst_cost = mlcmst.cost(test_case.mlccNetwork());
+        double gap = (mlcmst_cost / test_case.lowerBound() - 1.0);
+        return gap * 100.0;
+    };
+    printTable(getStat, test_cases, results);
     _out << "--------------\n";
 }
 
