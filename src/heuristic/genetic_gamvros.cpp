@@ -46,7 +46,21 @@ int Chromosome::freeId() const
     }
 }
 
-Chromosome Chromosome::refreshIds() const
+bool Chromosome::hasVertexWithId(int id) const
+{
+    bool found = false;
+    for (int i=0; i<vertex_group.size(); i++) {
+        if (i == center)
+            continue;
+        if (vertex_group[i] == id) {
+            found = true;
+            break;
+        }
+    }
+    return found;
+}
+
+Chromosome Chromosome::refresh() const
 {
     std::unordered_map<int, int> mapping;
     std::vector<int> new_vertex_group(vertex_group.size());
@@ -65,8 +79,8 @@ bool operator==(const Chromosome& c1, const Chromosome& c2)
 {
     if (c1.center != c2.center || c1.vertex_group.size() != c2.vertex_group.size() || c1.group_ids.size() != c2.group_ids.size())
         return false;
-    Chromosome c1_fresh = c1.refreshIds();
-    Chromosome c2_fresh = c2.refreshIds();
+    Chromosome c1_fresh = c1.refresh();
+    Chromosome c2_fresh = c2.refresh();
     for (int i=0; i < c1_fresh.vertex_group.size(); i++) {
         if (c1_fresh.vertex_group[i] != c2_fresh.vertex_group[i])
             return false;
@@ -106,7 +120,6 @@ network::MLCST GeneticGamvros::run(const network::MLCCNetwork &mlcc_network)
     network_ = &mlcc_network;
 
     std::vector< internal::Chromosome > population = forceDiversity(initializePopulation());
-//    std::vector< internal::Chromosome > population = initializePopulation();
     for (int i=0; i < params_.generations_number; i++) {
         auto population_with_fitness = evaluateFitness(population);
         auto copied_chromosomes = selectChromosomes(
@@ -120,8 +133,9 @@ network::MLCST GeneticGamvros::run(const network::MLCCNetwork &mlcc_network)
         new_population.insert(new_population.end(), copied_chromosomes.begin(), copied_chromosomes.end());
         new_population.insert(new_population.end(), children.begin(), children.end());
         new_population.insert(new_population.end(), mutated_chromosomes.begin(), mutated_chromosomes.end());
+
+
         population = forceDiversity(new_population);
-//        population = new_population;
     }
     internal::Chromosome most_fit_chromosome = selectMostFit(1, evaluateFitness(population))[0];
 
@@ -130,20 +144,41 @@ network::MLCST GeneticGamvros::run(const network::MLCCNetwork &mlcc_network)
 
 std::vector<internal::Chromosome> GeneticGamvros::initializePopulation()
 {
-    util::number::RealNumberGenerator epsilon_generator(
-            1.0 - params_.network_fuzzing_epsilon, 1.0 + params_.network_fuzzing_epsilon);
     std::vector<internal::Chromosome> population;
     population.reserve(params_.population_size);
+    for (int i=0; i < init_population_solvers_.size() && population.size() < params_.population_size; i++) {
+        network::MLCST mlcmst = init_population_solvers_[i]->solve(*network_).mlcst.value();
+        population.emplace_back(network_->center(), mlcmst.subnet());
+    }
     while (population.size() < params_.population_size) {
-        for (int i=0; i < init_population_solvers_.size() && population.size() < params_.population_size; i++){
-            network::MLCST mlcmst = init_population_solvers_[i]->solve(
-                    network_->multiplyEdgeCosts(epsilon_generator.generate())).mlcst.value();
-            population.push_back(
-                    internal::Chromosome(network_->center(), mlcmst.subnet()).refreshIds());
+        for (int i=0; i < init_population_solvers_.size() && population.size() < params_.population_size; i++) {
+            network::MLCCNetwork fuzzed_network = fuzzMLCCNetwork(*network_);
+            network::MLCST mlcmst = init_population_solvers_[i]->solve(fuzzed_network).mlcst.value();
+            population.emplace_back(network_->center(), mlcmst.subnet());
         }
     }
 
     return population;
+}
+
+network::MLCCNetwork GeneticGamvros::fuzzMLCCNetwork(const network::MLCCNetwork& mlcc_network) const
+{
+    const int N = mlcc_network.vertexCount();
+    util::number::RealNumberGenerator epsilon_generator(
+            1.0 - params_.network_fuzzing_epsilon, 1.0 + params_.network_fuzzing_epsilon);
+
+    auto networks = mlcc_network.networks();
+    for (int i=0; i<N; i++) {
+        for (int j=0; j<N; j++) {
+            double eps = epsilon_generator.generate();
+            for (network::CapacitatedNetwork& cap_net : networks) {
+                double cost = cap_net.edgeCost(i, j);
+                cap_net.edgeCost(i,j) = cap_net.edgeCost(j,i) = eps * cost;
+            }
+        }
+    }
+
+    return network::MLCCNetwork(mlcc_network.center(), networks, mlcc_network.demands());
 }
 
 std::vector<internal::Chromosome> GeneticGamvros::forceDiversity(std::vector<internal::Chromosome> population)
@@ -162,28 +197,25 @@ std::vector<internal::Chromosome> GeneticGamvros::forceDiversity(std::vector<int
 internal::Chromosome GeneticGamvros::diversify(internal::Chromosome c)
 {
     util::number::IntGenerator int_gen(0, std::numeric_limits<int>::max());
-    const int force_new_group_subtrees = 3;
+    util::number::RealNumberGenerator probability_gen(0, 1);
+    const double create_new_group_prob = 0.9;
 
     int i = c.center;
     while (i == c.center) {
         i = int_gen.generate() % (int)c.vertex_group.size();
     }
-    int old_g = c.vertex_group[i];
-    if (c.group_ids.size() < force_new_group_subtrees ) {
-        int g = c.freeId();
-        c.group_ids.push_back(g);
-        c.vertex_group[i] = g;
+    const int old_g = c.vertex_group[i];
+    if (probability_gen.generate() > create_new_group_prob && c.vertex_group.size() > c.group_ids.size() + 1) {
+        // create a new group
+        c.vertex_group[i] = c.freeId();
     } else {
-        int g = old_g;
-        while (g == c.vertex_group[i]) {
-            g = c.group_ids[int_gen.generate() % (int)c.group_ids.size()];
+        int closest_v = closestTerminalInDifferentGroup(i, c.vertex_group, *network_);
+        if (closest_v != network_->center()) {
+            c.vertex_group[i] = c.vertex_group[closest_v];
         }
-        c.vertex_group[i] = g;
     }
-    if (std::find(c.vertex_group.begin(), c.vertex_group.end(), old_g) == c.vertex_group.end()) {
-        util::erase(c.group_ids, old_g);
-    }
-    return c;
+
+    return c.refresh();
 }
 
 internal::Chromosome
@@ -219,7 +251,13 @@ GeneticGamvros::crossoverChromosomes(const internal::Chromosome &parent1, const 
 
     std::pair<int,int> dividers1 = generate_dividers(int_generator_1);
     std::pair<int,int> dividers2 = generate_dividers(int_generator_2);
-    // TODO: dividers1.first == dividers2.second -- in that case child == parent2, so do sth about it
+    if (dividers1.first == dividers2.second) {
+        if (dividers1.first > 0) {
+            dividers1.first--;
+        } else {
+            dividers1.second++;
+        }
+    }
 
     // phase 1 -- move override grouping int parent2 with selected groups of parent1
     std::unordered_map<int, int> id_mapping;
@@ -257,6 +295,7 @@ GeneticGamvros::crossoverChromosomes(const internal::Chromosome &parent1, const 
 
     // phase 2 -- randomly move vertices from shrunk groups to the closest group
     {
+        auto old_child_vertex_groups = child.vertex_group;
         auto child_groups = util::groupIndexesByValue(child.vertex_group);
         const int maximal_capacity = network_->edgeCapacity(network_->levelsNumber()-1);
         for (int g : shrunk_groups) {
@@ -266,34 +305,28 @@ GeneticGamvros::crossoverChromosomes(const internal::Chromosome &parent1, const 
             for (int i : old_child_group) {
                 if (probability_generator.generate() > move_p)
                     continue;
-                auto distances = network_->network(0).costs()[i];
-                distances[network_->center()] = std::numeric_limits<double>::max();
-                for (int j : old_child_group) {
-                    distances[j] = std::numeric_limits<double>::max();
-                }
-                int closest_v = std::distance(distances.begin(), std::min_element(distances.begin(), distances.end()));
+                int closest_v = closestTerminalInDifferentGroup(i, old_child_vertex_groups, *network_);
                 int closest_v_group = child.vertex_group[closest_v];
                 if (closest_v == network_->center() || closest_v_group == g) {
                     continue;
                 }
+
                 int group_load = std::accumulate(
                     child_groups.at(closest_v_group).begin(), child_groups.at(closest_v_group).end(), 0,
                     [&] (int acc, int v) {
                         return acc + network_->demand(v);
                     });
                 if (group_load + network_->demand(i) <= maximal_capacity) {
-                    child_groups[closest_v_group].push_back(i);
-                    util::erase(child_groups.at(g), i);
                     child.vertex_group[i] = child.vertex_group[closest_v];
                 }
             }
-            if (child_groups.at(g).empty()) {
-                child.group_ids.erase(std::find(child.group_ids.begin(), child.group_ids.end(), g));
+            if (!child.hasVertexWithId(g)) {
+                util::erase(child.group_ids, g);
             }
         }
     }
 
-    return child.refreshIds();
+    return child.refresh();
 }
 
 std::vector<internal::Chromosome> GeneticGamvros::crossoverChromosomes(const std::vector<internal::Chromosome>& parents)
@@ -399,11 +432,10 @@ internal::Chromosome GeneticGamvros::mutate(internal::Chromosome chromosome)
     using improvement::LinkUpgrade;
     using improvement::LocalSearch2006;
     LocalSearch2006 mutator(std::make_unique<LinkUpgrade>(LinkUpgrade::Params{
-        true, false, false
+        true, true, false
     }), LocalSearch2006::Params { true });
     chromosome.vertex_group = mutator.improvementStep(*network_, chromosome.vertex_group);
-    chromosome.group_ids = internal::Chromosome::createGroupIdVector(chromosome.center, chromosome.vertex_group);
-    return chromosome;
+    return internal::Chromosome(chromosome.center, chromosome.vertex_group).refresh();
 }
 
 std::vector<internal::Chromosome> GeneticGamvros::mutate(std::vector<internal::Chromosome> chromosomes)
@@ -411,6 +443,18 @@ std::vector<internal::Chromosome> GeneticGamvros::mutate(std::vector<internal::C
     std::transform(chromosomes.begin(), chromosomes.end(), chromosomes.begin(),
             [&] (const internal::Chromosome& chromosome) { return mutate(chromosome); });
     return chromosomes;
+}
+
+int GeneticGamvros::closestTerminalInDifferentGroup(
+        int v, const std::vector<int> &vertex_group, const network::MLCCNetwork &mlcc_network)
+{
+    auto distances = mlcc_network.network(0).costs()[v];
+    auto v_group = util::groupIndexesByValue(vertex_group)[vertex_group[v]];
+    for (int j : v_group) {
+        distances[j] = std::numeric_limits<double>::max();
+    }
+    distances[mlcc_network.center()] = std::numeric_limits<double>::max();
+    return std::distance(distances.begin(), std::min_element(distances.begin(), distances.end()));
 }
 
 }

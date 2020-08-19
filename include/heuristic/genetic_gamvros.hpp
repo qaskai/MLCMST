@@ -24,7 +24,8 @@ struct Chromosome
 public:
     static std::vector<int> createGroupIdVector(int center, const std::vector<int>& vertex_group);
     [[nodiscard]] int freeId() const;
-    [[nodiscard]] Chromosome refreshIds() const;
+    bool hasVertexWithId(int id) const;
+    [[nodiscard]] Chromosome refresh() const;
 };
 bool operator==(const Chromosome& c1, const Chromosome& c2);
 bool operator!=(const Chromosome& c1, const Chromosome& c2);
@@ -71,13 +72,14 @@ public:
 private:
     static const double EPS_;
 
-    const network::MLCCNetwork* network_;
+    const network::MLCCNetwork* network_ = nullptr;
 
     Params params_;
     std::vector<std::unique_ptr< MLCMST_Solver >> init_population_solvers_;
     MLCMST_SubnetSolver subnet_solver_;
 
     std::vector<internal::Chromosome> initializePopulation();
+    [[nodiscard]] network::MLCCNetwork fuzzMLCCNetwork(const network::MLCCNetwork& mlcc_network) const;
     std::vector< internal::Chromosome > forceDiversity(std::vector<internal::Chromosome> population);
     internal::Chromosome diversify(internal::Chromosome c);
 
@@ -95,6 +97,9 @@ private:
             int N, const std::vector< std::pair<internal::Chromosome, double> >& population_with_fitness);
     internal::Chromosome mutate(internal::Chromosome chromosome);
     std::vector< internal::Chromosome > mutate(std::vector< internal::Chromosome > chromosomes);
+
+    static int closestTerminalInDifferentGroup(
+            int v, const std::vector<int>& vertex_group, const network::MLCCNetwork& mlcc_network);
 };
 
 }
