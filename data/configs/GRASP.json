@@ -34,7 +34,7 @@
                     }
                 },
                 "subnet_size_low": 10,
-                "subnet_size_high": 20,
+                "subnet_size_high": 25,
                 "seed": 1
             }
         },
@@ -76,7 +76,7 @@
                     }
                 },
                 "subnet_size_low": 10,
-                "subnet_size_high": 70,
+                "subnet_size_high": 50,
                 "seed": 1
             }
         },
