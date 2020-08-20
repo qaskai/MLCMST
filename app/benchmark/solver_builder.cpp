@@ -19,6 +19,8 @@
 
 #include <json/json.hpp>
 
+#include <util/util.hpp>
+
 using namespace MLCMST;
 using rapidjson::Value;
 
@@ -121,7 +123,7 @@ std::unique_ptr<MLCMST_Solver> SolverBuilder::buildMartins2008_Construction(cons
     auto solver_params = json::fromJson<heuristic::Martins2008_Construction::Params>(params);
     auto subnet_solver = buildSolver(params["subnet_solver"]);
     return std::make_unique<heuristic::Martins2008_Construction>(
-            std::move(subnet_solver), solver_params
+            std::move(subnet_solver), getSeed(params), solver_params
             );
 }
 
@@ -132,7 +134,7 @@ std::unique_ptr<MLCMST_Solver> SolverBuilder::buildMartins2008_LocalSearch(const
     auto subnet_solver = buildSolver(params["subnet_solver"]);
     auto solver_params = json::fromJson<heuristic::improvement::Martins2008_LocalSearch::Params>(params);
     return std::make_unique<heuristic::improvement::Martins2008_LocalSearch>(
-        std::move(init_solver), std::move(subnet_solver), solver_params);
+        std::move(init_solver), std::move(subnet_solver), getSeed(params), solver_params);
 }
 
 std::unique_ptr<MLCMST_Solver> SolverBuilder::buildVNS_Campos(const Value &v)
@@ -171,6 +173,11 @@ std::unique_ptr<MLCMST_Solver> SolverBuilder::buildMCF(const Value &v)
 std::unique_ptr<MLCMST_Solver> SolverBuilder::buildCapacityIndexed(const Value &v)
 {
     return buildMPSolver(v, [](bool exact) { return std::make_unique<mp::CapacityIndexed>(exact); });
+}
+
+long SolverBuilder::getSeed(const Value& v)
+{
+    return v.HasMember("seed") ? v["seed"].GetInt64() : util::clockMilliseconds();
 }
 
 bool SolverBuilder::checkContainsMembers(const Value& v, const std::vector<std::string>& required_member_ids)
@@ -252,7 +259,8 @@ R""""(
     "init_solver": <solver_json>,
     "subnet_solver": <solver_json>,
     "subnet_size": int,
-    "alpha": double // in [0,1], 0-deterministic, 1-completely random
+    "alpha": double, // in [0,1], 0-deterministic, 1-completely random
+    "seed": long, optional
 }
 )"""" + "\n"},
 
@@ -263,7 +271,8 @@ R""""(
     "init_solver": <solver_json>,
     "subnet_solver": <solver_json>,
     "h_low": int,
-    "h_high": int
+    "h_high": int,
+    "seed": long, optional
 }
 )"""" + "\n"},
 

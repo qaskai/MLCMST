@@ -35,8 +35,6 @@ private:
     static std::unique_ptr< MLCMST_Solver > buildMartins2008_LocalSearch(const Value& v);
     static std::unique_ptr< MLCMST_Solver > buildVNS_Campos(const Value& v);
 
-    // mlcmst improver
-
     // mp
     static std::unique_ptr< MLCMST_Solver > buildSCF(const Value& v);
     static std::unique_ptr< MLCMST_Solver > buildESCF(const Value& v);
@@ -45,6 +43,8 @@ private:
 
     static std::unique_ptr< MLCMST_Solver > buildMPSolver(
             const Value& v, const std::function<std::unique_ptr<MLCMST_Solver>(bool)>& creator);
+
+    static long getSeed(const Value& v);
 
     static bool checkContainsMembers(const Value& v, const std::vector<std::string>& required_member_ids);
 };
