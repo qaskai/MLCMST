@@ -20,11 +20,11 @@ class Martins2008_Construction : public MLCMST_Heuristic
 public:
     struct Params {
         int subnet_size;
-        double alpha; // in [0,1], 0-deterministic, 1-completely random
+        double RCL_alpha; // in [0,1], 0-deterministic, 1-completely random
 
         constexpr static auto properties = std::make_tuple(
             json::Property<Params, int>{&Params::subnet_size, "subnet_size"},
-            json::Property<Params, double>{&Params::alpha, "alpha"}
+            json::Property<Params, double>{&Params::RCL_alpha, "RCL_alpha"}
             );
     };
 

@@ -1,15 +1,23 @@
+[
 {
     "id": "GRASP",
+    "name": "small-subnet",
     "params": {
         "construction_phase": {
             "id": "martins2008_construction",
             "params":  {
                 "subnet_solver": {
-                    "id": "MP_capacity_indexed",
-                    "params": { "exact": true }
+                    "id": "link_upgrade",
+                    "params": {
+                        "init_solver": { "id": "star" },
+                        "H_leafs_only": false,
+                        "check_all_link_types": true,
+                        "reupgrade_nodes": true
+                    }
                 },
-                "alpha": 0.4,
-                "subnet_size": 6
+                "RCL_alpha": 0.3,
+                "subnet_size": 10,
+                "seed": 1
             }
         },
         "improvement_phase": {
@@ -17,13 +25,62 @@
             "params": {
                 "init_solver": { "id": "star" },
                 "subnet_solver": {
-                    "id": "MP_capacity_indexed",
-                    "params": { "exact": true }
+                    "id": "link_upgrade",
+                    "params": {
+                        "init_solver": { "id": "star" },
+                        "H_leafs_only": false,
+                        "check_all_link_types": true,
+                        "reupgrade_nodes": true
+                    }
                 },
-                "h_low": 5,
-                "h_high": 10
+                "subnet_size_low": 10,
+                "subnet_size_high": 20,
+                "seed": 1
             }
         },
-        "iterations_no": 10
+        "iterations_no": 50
+    }
+},
+{
+    "id": "GRASP",
+    "name": "big-subnet",
+    "params": {
+        "construction_phase": {
+            "id": "martins2008_construction",
+            "params":  {
+                "subnet_solver": {
+                    "id": "link_upgrade",
+                    "params": {
+                        "init_solver": { "id": "star" },
+                        "H_leafs_only": false,
+                        "check_all_link_types": true,
+                        "reupgrade_nodes": true
+                    }
+                },
+                "RCL_alpha": 0.3,
+                "subnet_size": 20,
+                "seed": 1
+            }
+        },
+        "improvement_phase": {
+            "id": "martins2008_local_search",
+            "params": {
+                "init_solver": { "id": "star" },
+                "subnet_solver": {
+                    "id": "link_upgrade",
+                    "params": {
+                        "init_solver": { "id": "star" },
+                        "H_leafs_only": false,
+                        "check_all_link_types": true,
+                        "reupgrade_nodes": true
+                    }
+                },
+                "subnet_size_low": 10,
+                "subnet_size_high": 70,
+                "seed": 1
+            }
+        },
+        "iterations_no": 50
     }
 }
+]

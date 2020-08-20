@@ -259,7 +259,7 @@ R""""(
     "init_solver": <solver_json>,
     "subnet_solver": <solver_json>,
     "subnet_size": int,
-    "alpha": double, // in [0,1], 0-deterministic, 1-completely random
+    "RCL_alpha": double, // in [0,1], 0-deterministic, 1-completely random
     "seed": long, optional
 }
 )"""" + "\n"},
@@ -270,8 +270,8 @@ R""""(
 {
     "init_solver": <solver_json>,
     "subnet_solver": <solver_json>,
-    "h_low": int,
-    "h_high": int,
+    "subnet_size_low": int,
+    "subnet_size_high": int,
     "seed": long, optional
 }
 )"""" + "\n"},

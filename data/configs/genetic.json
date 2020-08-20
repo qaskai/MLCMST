@@ -1,7 +1,8 @@
 {
     "id": "genetic_gamvros",
     "params": {
-        "init_solvers": [{
+        "init_solvers": [
+        {
             "id" : "link_upgrade",
             "params" : {
                 "init_solver": { "id": "star" },
@@ -9,16 +10,18 @@
                 "check_all_link_types": false,
                 "reupgrade_nodes": false
             }
-        }, {
+        },
+        {
             "id": "esau_williams"
-        }],
+        }
+        ],
         "subnet_solver": {
             "id" : "link_upgrade",
             "params" : {
                 "init_solver": { "id": "star" },
-                "H_leafs_only": true,
-                "check_all_link_types": false,
-                "reupgrade_nodes": false
+                "H_leafs_only": false,
+                "check_all_link_types": true,
+                "reupgrade_nodes": true
             }
         },
         "population_size": 100,

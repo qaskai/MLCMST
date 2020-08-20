@@ -72,7 +72,7 @@ std::vector<int> Martins2008_Construction::createNewGroup(const std::set<int>& u
         auto [d_min, d_max] = std::make_pair(d_min_it->second, d_max_it->second);
 
         std::vector<int> RCL;
-        double threshold = d_min + params.alpha * (d_max - d_min);
+        double threshold = d_min + params.RCL_alpha * (d_max - d_min);
         for (auto [idx, d] : distance) {
             if (d < threshold + 1e-9) {
                 RCL.push_back(idx);

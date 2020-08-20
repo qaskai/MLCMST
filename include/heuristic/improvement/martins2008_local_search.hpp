@@ -16,11 +16,11 @@ class Martins2008_LocalSearch : public improvement::MLCMST_Improver
 {
 public:
     struct Params {
-        int h_low, h_high;
+        int subnet_size_low, subnet_size_high;
 
         constexpr static auto properties = std::make_tuple(
-            json::Property<Params, int>{&Params::h_low, "h_low"},
-            json::Property<Params, int>{&Params::h_high, "h_high"}
+            json::Property<Params, int>{&Params::subnet_size_low, "subnet_size_low"},
+            json::Property<Params, int>{&Params::subnet_size_high, "subnet_size_high"}
             );
     };
 

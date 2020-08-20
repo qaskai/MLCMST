@@ -92,7 +92,7 @@ void Martins2008_LocalSearch::step(std::set<int> &S, network::MLCST &mlcmst)
 
 std::pair<std::vector<int>, double> Martins2008_LocalSearch::groupSubtrees(int i, const network::MLCST& mlcmst)
 {
-    int h = params.h_low + (int_generator_.generate() % (params.h_high - params.h_low + 1));
+    int h = params.subnet_size_low + (int_generator_.generate() % (params.subnet_size_high - params.subnet_size_low + 1));
     auto subnet = mlcmst.subnet();
     auto groups = util::groupIndexesByValue(subnet);
 
