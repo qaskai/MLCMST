@@ -57,7 +57,7 @@ void Martins2008_LocalSearch::step(std::set<int> &S, network::MLCST &mlcmst)
     if (P.size() > i_group.size() + 1) {
         MLCMST_SubnetSolver::Result result = subnet_solver_.solveSubnet(*mlcc_network_, P);
         if (result.cost < old_cost - 1e-9) {
-            std::set<int> subtree_leafs = vectorToSet(result.mlcmst.leafs());
+            // update the tree
             for (int v=0; v<result.mapping.size(); v++) {
                 int v_mapped = result.mapping[v];
                 if (v_mapped == mlcc_network_->center())
@@ -65,6 +65,13 @@ void Martins2008_LocalSearch::step(std::set<int> &S, network::MLCST &mlcmst)
 
                 mlcmst.parent(v_mapped) = result.mapping[result.mlcmst.parent(v)];
                 mlcmst.facilityLevel(v_mapped) = result.mlcmst.facilityLevel(v);
+            }
+            // update set S
+            std::set<int> subtree_leafs = vectorToSet(result.mlcmst.leafs());
+            for (int v=0; v<result.mapping.size(); v++) {
+                int v_mapped = result.mapping[v];
+                if (v_mapped == mlcc_network_->center())
+                    continue;
 
                 if (subtree_leafs.count(v)) {
                     S.erase(v_mapped);
@@ -100,7 +107,7 @@ std::pair<std::vector<int>, double> Martins2008_LocalSearch::groupSubtrees(int i
     while (P.size() < h && !remaining_groups.empty()) {
         int g_id = *std::next(remaining_groups.begin(), int_generator_.generate() % remaining_groups.size());
         util::erase(remaining_groups, g_id);
-        if (P.size() + groups[g_id].size() <= h)
+        if (P.size() + groups[g_id].size() > h)
             continue;
 
         bool found_improving_edge = false;

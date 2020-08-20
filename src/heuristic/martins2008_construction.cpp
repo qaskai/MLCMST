@@ -57,14 +57,12 @@ std::vector<int> Martins2008_Construction::createNewGroup(const std::set<int>& u
 {
     std::vector<int> group;
     std::unordered_map< int, double > distance;
-    {
-        int i = *std::next(unassigned.begin(), int_generator_.generate() % unassigned.size());
-        for (int x : unassigned) {
-            distance[x] = mlcc_network_->edgeCost(x, i, 0);
-        }
-        distance.erase(i);
-        group.push_back(i);
+    int i = *std::next(unassigned.begin(), int_generator_.generate() % unassigned.size());
+    for (int x : unassigned) {
+        distance[x] = mlcc_network_->edgeCost(x, i, 0);
     }
+    distance.erase(i);
+    group.push_back(i);
 
     while (group.size() < params.subnet_size && !distance.empty()) {
         auto [d_min_it, d_max_it] = std::minmax_element(distance.begin(), distance.end(),
