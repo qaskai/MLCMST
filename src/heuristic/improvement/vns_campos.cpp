@@ -1,8 +1,10 @@
-#include <heuristic/vns_campos.hpp>
+#include <heuristic/improvement/vns_campos.hpp>
 
 #include <stdexcept>
 
-namespace MLCMST::heuristic {
+#include <util/util.hpp>
+
+namespace MLCMST::heuristic::improvement {
 
 std::string VNS_Campos::id()
 {
@@ -10,8 +12,14 @@ std::string VNS_Campos::id()
     return id;
 }
 
-VNS_Campos::VNS_Campos(std::unique_ptr< MLCMST_Heuristic > init_solver, Params params)
-    : init_solver_(std::move(init_solver)), params(params), int_generator_(0,std::numeric_limits<int>::max())
+VNS_Campos::VNS_Campos(std::unique_ptr<MLCMST_Heuristic> init_solver, VNS_Campos::Params params)
+    : VNS_Campos(std::move(init_solver), util::clockMilliseconds(), params)
+{
+}
+
+VNS_Campos::VNS_Campos(std::unique_ptr< MLCMST_Heuristic > init_solver, long seed, Params params)
+    : MLCMST_Improver(std::move(init_solver)), params(params),
+    int_generator_(0,std::numeric_limits<int>::max(), seed), random_engine_(seed)
 {
     random_neighbour_generator_ = {
         [&] (const network::MLCST& mlcmst, const network::MLCCNetwork& mlcc_network) { return leafSwapNeighbourhood(
@@ -38,7 +46,7 @@ bool VNS_Campos::isUnitDemand(const network::MLCCNetwork &mlcc_network) {
     return true;
 }
 
-network::MLCST VNS_Campos::run(const network::MLCCNetwork &mlcc_network)
+network::MLCST VNS_Campos::improve(long steps, network::MLCST mlcmst, const network::MLCCNetwork &mlcc_network)
 {
     if (!isUnitDemand(mlcc_network))
         throw std::invalid_argument(id() + " only supports unit demand MLCMST problem instances");
@@ -47,24 +55,23 @@ network::MLCST VNS_Campos::run(const network::MLCCNetwork &mlcc_network)
         network::MLCST mlcmst;
         double cost;
     };
-    const int max_failed_cycles = 100;
-
 
     BestTree bestTree{
-        .mlcmst = localSearch(init_solver_->run(mlcc_network), mlcc_network),
+        .mlcmst = localSearch(mlcmst, mlcc_network),
     };
     bestTree.mlcmst.setMinimalViableLevels(mlcc_network);
     bestTree.cost = bestTree.mlcmst.cost(mlcc_network);
 
     int failed_cycles = 0;
-    while (failed_cycles < max_failed_cycles) {
+    while (failed_cycles < params.max_failed_iterations && steps > 0) {
         for (auto & neighbour_drawer : random_neighbour_generator_) {
-            network::MLCST mlcmst = neighbour_drawer(bestTree.mlcmst, mlcc_network);
-            mlcmst = localSearch(mlcmst, mlcc_network);
-            double cost = mlcmst.cost(mlcc_network);
+            network::MLCST candidate = neighbour_drawer(bestTree.mlcmst, mlcc_network);
+            candidate = localSearch(candidate, mlcc_network);
+            double cost = candidate.cost(mlcc_network);
             if (cost + 1e-9 < bestTree.cost) {
-                bestTree = { .mlcmst= mlcmst, .cost = cost };
+                bestTree = { .mlcmst= candidate, .cost = cost };
                 failed_cycles = -1;
+                steps--;
                 break;
             }
         }

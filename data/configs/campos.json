@@ -1,19 +1,30 @@
+[
+{
+    "id": "link_upgrade",
+    "name": "init_solver",
+    "params": {
+        "init_solver": { "id": "star" },
+        "H_leafs_only": true,
+        "check_all_link_types": false,
+        "reupgrade_nodes": false
+    }
+},
 {
     "id": "VNS_campos",
     "params": {
         "init_solver": {
             "id": "link_upgrade",
-            "name": "standard",
             "params": {
                 "init_solver": { "id": "star" },
                 "H_leafs_only": true,
                 "check_all_link_types": false,
-                "reupgrade_nodes": false 
+                "reupgrade_nodes": false
             }
         },
-        "max_failed_iterations": 100
+        "max_failed_iterations": 100,
+        "seed": 1
     }
 }
-
+]
 
 

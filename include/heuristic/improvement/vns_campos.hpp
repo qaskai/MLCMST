@@ -8,15 +8,17 @@
 #include <random>
 
 #include <network/mlcc_network.hpp>
+
 #include <heuristic/mlcmst_heuristic.hpp>
+#include <heuristic/improvement/mlcmst_improver.hpp>
 
 #include <util/number/int_generator.hpp>
 
 #include <json/property.hpp>
 
-namespace MLCMST::heuristic {
+namespace MLCMST::heuristic::improvement {
 
-class VNS_Campos : public MLCMST_Heuristic
+class VNS_Campos : public MLCMST_Improver
 {
 public:
     struct Params {
@@ -30,12 +32,12 @@ public:
     static std::string id();
 
     VNS_Campos(std::unique_ptr< MLCMST_Heuristic > init_solver, Params params);
+    VNS_Campos(std::unique_ptr< MLCMST_Heuristic > init_solver, long seed, Params params);
     ~VNS_Campos() override;
 
-    network::MLCST run(const network::MLCCNetwork &mlcc_network) override;
+    network::MLCST improve(long steps, network::MLCST mlcmst, const network::MLCCNetwork &mlcc_network) override;
 
 private:
-    std::unique_ptr< MLCMST_Heuristic > init_solver_;
     std::vector<std::function<network::MLCST(const network::MLCST&, const network::MLCCNetwork&)>>
     random_neighbour_generator_;
 
