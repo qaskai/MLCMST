@@ -1,8 +1,8 @@
-#include <mp/util.hpp>
+#include <lp/util.hpp>
 
 #include <util/util.hpp>
 
-namespace MLCMST::mp::util
+namespace MLCMST::lp::util
 {
 
 operations_research::LinearExpr createDefaultObjectiveExpression(

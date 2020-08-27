@@ -8,7 +8,7 @@
 
 #include <ortools/linear_solver/linear_solver.h>
 
-namespace MLCMST::mp::util {
+namespace MLCMST::lp::util {
 
 operations_research::LinearExpr createDefaultObjectiveExpression(
     const network::MLCCNetwork& mlcc_network,

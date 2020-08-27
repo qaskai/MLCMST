@@ -2,10 +2,10 @@
 
 #include <stdexcept>
 
-#include <mp/scf.hpp>
-#include <mp/escf.hpp>
-#include <mp/mcf.hpp>
-#include <mp/capacity_indexed.hpp>
+#include <lp/scf.hpp>
+#include <lp/escf.hpp>
+#include <lp/mcf.hpp>
+#include <lp/capacity_indexed.hpp>
 
 #include <heuristic/star.hpp>
 #include <heuristic/esau_williams.hpp>
@@ -27,19 +27,19 @@ using rapidjson::Value;
 const std::map<std::string, std::function<std::unique_ptr<MLCMST_Solver>(const Value& v)>>
 SolverBuilder::id_to_solver_builder =
 {
-    { heuristic::Star::id(), buildStar },
-    { heuristic::EsauWilliams::id(), buildEsauWilliams },
-    { heuristic::improvement::LinkUpgrade::id(), SolverBuilder::buildLinkUpgrade },
-    { heuristic::improvement::LocalSearch2006::id(), SolverBuilder::buildLocalSearch2006 },
-    { heuristic::GeneticGamvros::id(), SolverBuilder::buildGeneticGamvros },
-    { heuristic::GRASP::id(), SolverBuilder::buildGRASP },
-    { heuristic::Martins2008_Construction::id(), SolverBuilder::buildMartins2008_Construction },
-    { heuristic::improvement::Martins2008_LocalSearch::id(), SolverBuilder::buildMartins2008_LocalSearch },
-    { heuristic::improvement::VNS_Campos::id(), SolverBuilder::buildVNS_Campos },
-    { mp::SCF::id(), SolverBuilder::buildSCF },
-    { mp::ESCF::id(), SolverBuilder::buildESCF },
-    { mp::MCF::id(), SolverBuilder::buildMCF },
-    { mp::CapacityIndexed::id(), SolverBuilder::buildCapacityIndexed }
+    {heuristic::Star::id(),                                 buildStar },
+    {heuristic::EsauWilliams::id(),                         buildEsauWilliams },
+    {heuristic::improvement::LinkUpgrade::id(),             SolverBuilder::buildLinkUpgrade },
+    {heuristic::improvement::LocalSearch2006::id(),         SolverBuilder::buildLocalSearch2006 },
+    {heuristic::GeneticGamvros::id(),                       SolverBuilder::buildGeneticGamvros },
+    {heuristic::GRASP::id(),                                SolverBuilder::buildGRASP },
+    {heuristic::Martins2008_Construction::id(),             SolverBuilder::buildMartins2008_Construction },
+    {heuristic::improvement::Martins2008_LocalSearch::id(), SolverBuilder::buildMartins2008_LocalSearch },
+    {heuristic::improvement::VNS_Campos::id(),              SolverBuilder::buildVNS_Campos },
+    {lp::SCF::id(),                                         SolverBuilder::buildSCF },
+    {lp::ESCF::id(),                                        SolverBuilder::buildESCF },
+    {lp::MCF::id(),                                         SolverBuilder::buildMCF },
+    {lp::CapacityIndexed::id(),                             SolverBuilder::buildCapacityIndexed }
 };
 
 std::pair<std::string, std::unique_ptr<MLCMST_Solver >> SolverBuilder::buildNamedSolver(const Value &v)
@@ -157,22 +157,22 @@ std::unique_ptr<MLCMST_Solver> SolverBuilder::buildMPSolver(
 
 std::unique_ptr<MLCMST_Solver> SolverBuilder::buildSCF(const Value &v)
 {
-    return buildMPSolver(v, [](bool exact) { return std::make_unique<mp::SCF>(exact); });
+    return buildMPSolver(v, [](bool exact) { return std::make_unique<lp::SCF>(exact); });
 }
 
 std::unique_ptr<MLCMST_Solver> SolverBuilder::buildESCF(const Value &v)
 {
-    return buildMPSolver(v, [](bool exact) { return std::make_unique<mp::ESCF>(exact); });
+    return buildMPSolver(v, [](bool exact) { return std::make_unique<lp::ESCF>(exact); });
 }
 
 std::unique_ptr<MLCMST_Solver> SolverBuilder::buildMCF(const Value &v)
 {
-    return buildMPSolver(v, [](bool exact) { return std::make_unique<mp::MCF>(exact); });
+    return buildMPSolver(v, [](bool exact) { return std::make_unique<lp::MCF>(exact); });
 }
 
 std::unique_ptr<MLCMST_Solver> SolverBuilder::buildCapacityIndexed(const Value &v)
 {
-    return buildMPSolver(v, [](bool exact) { return std::make_unique<mp::CapacityIndexed>(exact); });
+    return buildMPSolver(v, [](bool exact) { return std::make_unique<lp::CapacityIndexed>(exact); });
 }
 
 long SolverBuilder::getSeed(const Value& v)
@@ -287,26 +287,26 @@ R""""(
 }
 )"""" + "\n"},
 
-{ mp::SCF::id(),
-  "id == \"" + mp::SCF::id() + "\", params:"
+{lp::SCF::id(),
+        "id == \"" + lp::SCF::id() + "\", params:"
 R""""(
 { "exact": bool }
 )"""" + "\n"},
 
-{ mp::ESCF::id(),
-  "id == \"" + mp::ESCF::id() + "\", params:"
+{lp::ESCF::id(),
+        "id == \"" + lp::ESCF::id() + "\", params:"
 R""""(
 { "exact": bool }
 )"""" + "\n"},
 
-{ mp::MCF::id(),
-  "id == \"" + mp::MCF::id() + "\", params:"
+{lp::MCF::id(),
+        "id == \"" + lp::MCF::id() + "\", params:"
 R""""(
 { "exact": bool }
 )"""" + "\n"},
 
-{ mp::CapacityIndexed::id(),
-  "id == \"" + mp::CapacityIndexed::id() + "\", params:"
+{lp::CapacityIndexed::id(),
+        "id == \"" + lp::CapacityIndexed::id() + "\", params:"
 R""""(
 { "exact": bool }
 )"""" + "\n"}

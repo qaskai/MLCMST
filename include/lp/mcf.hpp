@@ -4,22 +4,22 @@
 #include <tuple>
 #include <string>
 
-#include <mp/mlcmst_mp_solver.hpp>
+#include <lp/mlcmst_lp_solver.hpp>
 
-namespace MLCMST::mp {
+namespace MLCMST::lp {
 
 /**
  * Multicommodity formulation
  *
  * MLCMST solver
  */
-class MCF : public MLCMST_MPSolver
+class MCF : public MLCMST_LPSolver
 {
 public:
     static std::string id();
 
     explicit MCF(bool exact_solution=false);
-    explicit MCF(MLCMST::mp::MPSolverFactory mp_solver_factory);
+    explicit MCF(MLCMST::lp::LPSolverFactory mp_solver_factory);
     ~MCF() override;
 
     void printVariableSolutionValue(std::ostream& out) override;

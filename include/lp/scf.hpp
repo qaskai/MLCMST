@@ -5,23 +5,23 @@
 #include <functional>
 #include <vector>
 
-#include <mp/mlcmst_mp_solver.hpp>
-#include <mp/mp_solver_factory.hpp>
+#include <lp/mlcmst_lp_solver.hpp>
+#include <lp/lp_solver_factory.hpp>
 
-namespace MLCMST::mp {
+namespace MLCMST::lp {
 
 /**
  * Single Commodity Formulation
  *
  * MLCMST solver
  */
-class SCF : public MLCMST_MPSolver
+class SCF : public MLCMST_LPSolver
 {
 public:
     static std::string id();
 
     explicit SCF(bool exact_solution=false);
-    explicit SCF(MLCMST::mp::MPSolverFactory mp_solver_factory);
+    explicit SCF(MLCMST::lp::LPSolverFactory mp_solver_factory);
     ~SCF() override;
 
     void printVariableSolutionValue(std::ostream& out) override;

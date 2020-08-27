@@ -1,12 +1,12 @@
-#include <mp/capacity_indexed.hpp>
+#include <lp/capacity_indexed.hpp>
 
 #include <stdexcept>
 
-#include <mp/util.hpp>
+#include <lp/util.hpp>
 
 #include <util/util.hpp>
 
-namespace MLCMST::mp {
+namespace MLCMST::lp {
 
 std::string CapacityIndexed::id()
 {
@@ -14,11 +14,11 @@ std::string CapacityIndexed::id()
     return id;
 }
 
-CapacityIndexed::CapacityIndexed(bool exact_solution) : MLCMST_MPSolver(exact_solution)
+CapacityIndexed::CapacityIndexed(bool exact_solution) : MLCMST_LPSolver(exact_solution)
 {
 }
 
-CapacityIndexed::CapacityIndexed(MPSolverFactory mp_solver_factory) : MLCMST_MPSolver(mp_solver_factory)
+CapacityIndexed::CapacityIndexed(LPSolverFactory mp_solver_factory) : MLCMST_LPSolver(mp_solver_factory)
 {
 }
 

@@ -2,7 +2,7 @@
 
 #include <network/mlcc_network.hpp>
 #include <network/mlcst.hpp>
-#include <mp/scf.hpp>
+#include <lp/scf.hpp>
 
 using namespace MLCMST;
 using namespace MLCMST::network;
@@ -35,7 +35,7 @@ TEST_CASE( "SCF functional test", "[solver][mp][scf]" )
         {0, 1, 1, 1}
     );
 
-    using SCF = mp::SCF;
+    using SCF = lp::SCF;
     SECTION( "exact solution" ) {
         SCF scf(true);
         std::vector<int> expected_parents { 0, 2, 0, 2 };

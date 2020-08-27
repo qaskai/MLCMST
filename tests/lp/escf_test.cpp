@@ -2,23 +2,24 @@
 
 #include <network/mlcc_network.hpp>
 #include <network/mlcst.hpp>
-#include <mp/mcf.hpp>
+#include <lp/escf.hpp>
 
 using namespace MLCMST;
 using namespace MLCMST::network;
 
-TEST_CASE( "MCF functional test", "[solver][mp][mcf]" ) {
-    auto multiply_vector = [](double scalar, std::vector<double> v) {
-        for (double &d : v) {
+TEST_CASE( "ESCF functional test", "[solver][mp][escf]" )
+{
+    auto multiply_vector = [] (double scalar, std::vector<double> v) {
+        for (double& d : v) {
             d *= scalar;
         }
         return v;
     };
-    std::vector<std::vector<double>> costs{
-        {0,    4,    5, 5.83},
-        {4,    0,    3, 3.16},
-        {5,    3,    0, 1},
-        {5.83, 3.16, 1, 0}
+    std::vector<std::vector<double>> costs {
+        { 0, 4, 5, 5.83 },
+        { 4, 0, 3, 3.16 },
+        { 5, 3, 0, 1 },
+        { 5.83, 3.16, 1, 0 }
     };
     MLCCNetwork mlcc_network(
         0,
@@ -31,16 +32,16 @@ TEST_CASE( "MCF functional test", "[solver][mp][mcf]" ) {
                 multiply_vector(2, costs[3])
             })),
         },
-{0, 1, 1, 1}
+        {0, 1, 1, 1}
     );
 
-    using MCF = mp::MCF;
+    using ESCF = lp::ESCF;
     SECTION( "exact solution" ) {
-        MCF mcf(true);
+        ESCF scf(true);
         std::vector<int> expected_parents { 0, 2, 0, 2 };
         std::vector<int> expected_levels { -1, 0, 1, 0 };
 
-        MCF::Result result = mcf.solve(mlcc_network);
+        ESCF::Result result = scf.solve(mlcc_network);
 
         REQUIRE( result.finished );
         REQUIRE( result.lower_bound.value() == Approx(14).margin(0.0001) );
@@ -52,13 +53,12 @@ TEST_CASE( "MCF functional test", "[solver][mp][mcf]" ) {
         }
     }
     SECTION( "linear programming" ) {
-        MCF mcf;
+        ESCF scf;
 
-        MCF::Result result = mcf.solve(mlcc_network);
+        ESCF::Result result = scf.solve(mlcc_network);
 
         REQUIRE( result.finished );
         REQUIRE( result.lower_bound.value() == Approx(12.5).margin(0.0001) );
         REQUIRE( !result.mlcst.has_value() );
     }
-
 }

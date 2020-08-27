@@ -1,6 +1,6 @@
-#include <mp/escf.hpp>
+#include <lp/escf.hpp>
 
-namespace MLCMST::mp {
+namespace MLCMST::lp {
 
 std::string ESCF::id()
 {
@@ -13,7 +13,7 @@ ESCF::ESCF(bool exact_solution) : SCF(exact_solution)
 
 }
 
-ESCF::ESCF(MLCMST::mp::MPSolverFactory mp_solver_factory) : SCF(mp_solver_factory)
+ESCF::ESCF(MLCMST::lp::LPSolverFactory mp_solver_factory) : SCF(mp_solver_factory)
 {
 
 }

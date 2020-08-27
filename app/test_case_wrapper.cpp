@@ -12,11 +12,11 @@
 #include <benchmark/test_case.hpp>
 #include <benchmark/serialization/test_case_serialization.hpp>
 
-#include <mp/mlcmst_mp_solver.hpp>
-#include <mp/scf.hpp>
-#include <mp/escf.hpp>
-#include <mp/mcf.hpp>
-#include <mp/capacity_indexed.hpp>
+#include <lp/mlcmst_lp_solver.hpp>
+#include <lp/scf.hpp>
+#include <lp/escf.hpp>
+#include <lp/mcf.hpp>
+#include <lp/capacity_indexed.hpp>
 
 #include "app.hpp"
 
@@ -38,11 +38,11 @@ public:
     ~TestCaseWrapperApp() override;
 
 private:
-    const std::map<std::string, std::function<std::shared_ptr< mp::MLCMST_MPSolver >(bool)> > solvers {
-        { mp::SCF::id(), [] (bool optimal) { return std::make_shared<mp::SCF>(optimal); } },
-        { mp::ESCF::id(), [] (bool optimal) { return std::make_shared<mp::ESCF>(optimal); } },
-        { mp::MCF::id(), [] (bool optimal) { return std::make_shared<mp::MCF>(optimal); } },
-        { mp::CapacityIndexed::id(), [] (bool optimal) { return std::make_shared<mp::CapacityIndexed>(optimal); } }
+    const std::map<std::string, std::function<std::shared_ptr< lp::MLCMST_LPSolver >(bool)> > solvers {
+        {lp::SCF::id(),             [] (bool optimal) { return std::make_shared<lp::SCF>(optimal); } },
+        {lp::ESCF::id(),            [] (bool optimal) { return std::make_shared<lp::ESCF>(optimal); } },
+        {lp::MCF::id(),             [] (bool optimal) { return std::make_shared<lp::MCF>(optimal); } },
+        {lp::CapacityIndexed::id(), [] (bool optimal) { return std::make_shared<lp::CapacityIndexed>(optimal); } }
     };
 
     cxxopts::Options createOptions() override;
@@ -52,9 +52,9 @@ private:
 
     std::vector<MLCCNetwork> readNetworks();
     std::vector<TestCase> createTestCases(
-            const std::vector<MLCCNetwork>& networks, const std::shared_ptr< mp::MLCMST_MPSolver >& solver);
+            const std::vector<MLCCNetwork>& networks, const std::shared_ptr< lp::MLCMST_LPSolver >& solver);
     void printTestCases(const std::vector<TestCase>& test_cases);
-    std::shared_ptr< mp::MLCMST_MPSolver > getSolver(const std::string& id, bool optimal, int thread_num=1);
+    std::shared_ptr< lp::MLCMST_LPSolver > getSolver(const std::string& id, bool optimal, int thread_num=1);
 };
 
 TestCaseWrapperApp::~TestCaseWrapperApp() = default;
@@ -127,7 +127,7 @@ std::vector<MLCCNetwork> TestCaseWrapperApp::readNetworks()
 }
 
 std::vector<TestCase> TestCaseWrapperApp::createTestCases(
-        const std::vector<MLCCNetwork> &networks, const std::shared_ptr<mp::MLCMST_MPSolver>& solver)
+        const std::vector<MLCCNetwork> &networks, const std::shared_ptr<lp::MLCMST_LPSolver>& solver)
 {
     std::vector<TestCase> test_cases;
     test_cases.reserve(networks.size());
@@ -153,7 +153,7 @@ void TestCaseWrapperApp::printTestCases(const std::vector<TestCase> &test_cases)
     }
 }
 
-std::shared_ptr<mp::MLCMST_MPSolver> TestCaseWrapperApp::getSolver(const std::string &id, bool optimal, int thread_num)
+std::shared_ptr<lp::MLCMST_LPSolver> TestCaseWrapperApp::getSolver(const std::string &id, bool optimal, int thread_num)
 {
     if (solvers.count(id)) {
         auto solver = solvers.at(id)(optimal);

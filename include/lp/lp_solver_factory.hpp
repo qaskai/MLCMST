@@ -4,14 +4,14 @@
 
 #include <ortools/linear_solver/linear_solver.h>
 
-namespace MLCMST::mp {
+namespace MLCMST::lp {
 
 namespace or_ = operations_research;
 
-class MPSolverFactory
+class LPSolverFactory
 {
 public:
-    explicit MPSolverFactory(bool mip);
+    explicit LPSolverFactory(bool mip);
 
     or_::MPSolver create();
     or_::MPSolver create(bool mip);

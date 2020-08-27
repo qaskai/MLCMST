@@ -1,12 +1,12 @@
-#include <mp/mcf.hpp>
+#include <lp/mcf.hpp>
 
 #include <cstdlib>
 #include <numeric>
 
 #include <util/util.hpp>
-#include <mp/util.hpp>
+#include <lp/util.hpp>
 
-namespace MLCMST::mp {
+namespace MLCMST::lp {
 
 std::string MCF::id()
 {
@@ -14,11 +14,11 @@ std::string MCF::id()
     return id;
 }
 
-MCF::MCF(bool exact_solution) : MLCMST_MPSolver(exact_solution)
+MCF::MCF(bool exact_solution) : MLCMST_LPSolver(exact_solution)
 {
 }
 
-MCF::MCF(MLCMST::mp::MPSolverFactory mp_solver_factory) : MLCMST_MPSolver(mp_solver_factory)
+MCF::MCF(MLCMST::lp::LPSolverFactory mp_solver_factory) : MLCMST_LPSolver(mp_solver_factory)
 {
 }
 

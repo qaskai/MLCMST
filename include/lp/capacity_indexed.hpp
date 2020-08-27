@@ -2,18 +2,18 @@
 
 #include <string>
 
-#include <mp/mlcmst_mp_solver.hpp>
-#include <mp/mp_solver_factory.hpp>
+#include <lp/mlcmst_lp_solver.hpp>
+#include <lp/lp_solver_factory.hpp>
 
-namespace MLCMST::mp {
+namespace MLCMST::lp {
 
-class CapacityIndexed : public MLCMST_MPSolver
+class CapacityIndexed : public MLCMST_LPSolver
 {
 public:
     static std::string id();
 
     explicit CapacityIndexed(bool exact_solution);
-    explicit CapacityIndexed(MPSolverFactory mp_solver_factory);
+    explicit CapacityIndexed(LPSolverFactory mp_solver_factory);
     ~CapacityIndexed() override;
 
     void printVariableSolutionValue(std::ostream &out) override;

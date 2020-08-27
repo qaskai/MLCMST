@@ -1,27 +1,27 @@
-#include <mp/mlcmst_mp_solver.hpp>
+#include <lp/mlcmst_lp_solver.hpp>
 
 #include <chrono>
 
-namespace MLCMST::mp {
+namespace MLCMST::lp {
 
 
-MLCMST_MPSolver::MLCMST_MPSolver(bool exact_solution) : _mp_solver(mp::MPSolverFactory(exact_solution).create() )
+MLCMST_LPSolver::MLCMST_LPSolver(bool exact_solution) : _mp_solver(lp::LPSolverFactory(exact_solution).create() )
 {
 }
 
-MLCMST_MPSolver::MLCMST_MPSolver(mp::MPSolverFactory mp_solver_factory) : _mp_solver(mp_solver_factory.create())
+MLCMST_LPSolver::MLCMST_LPSolver(lp::LPSolverFactory mp_solver_factory) : _mp_solver(mp_solver_factory.create())
 {
 }
 
-MLCMST_MPSolver::~MLCMST_MPSolver() = default;
+MLCMST_LPSolver::~MLCMST_LPSolver() = default;
 
-bool MLCMST_MPSolver::setThreadNum(int thread_num)
+bool MLCMST_LPSolver::setThreadNum(int thread_num)
 {
     auto status = _mp_solver.SetNumThreads(thread_num);
     return status == absl::OkStatus();
 }
 
-MLCMST_Solver::Result MLCMST_MPSolver::solve(const network::MLCCNetwork &mlcc_network)
+MLCMST_Solver::Result MLCMST_LPSolver::solve(const network::MLCCNetwork &mlcc_network)
 {
     _mp_solver.Clear();
     _mlcc_network = &mlcc_network;

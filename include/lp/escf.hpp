@@ -1,8 +1,8 @@
 #pragma once
 
-#include <mp/scf.hpp>
+#include <lp/scf.hpp>
 
-namespace MLCMST::mp {
+namespace MLCMST::lp {
 
 /**
  * Enhanced Single Commodity Formulation
@@ -15,7 +15,7 @@ public:
     static std::string id();
 
     explicit ESCF(bool exact_solution=false);
-    explicit ESCF(MLCMST::mp::MPSolverFactory mp_solver_factory);
+    explicit ESCF(MLCMST::lp::LPSolverFactory mp_solver_factory);
     ~ESCF() override;
 
 private:
